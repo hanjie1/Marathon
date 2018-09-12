@@ -1,0 +1,133 @@
+#include "GetTrees.h"
+
+void Check(int nrun)
+{
+     TChain *T;
+     T=GetTree(nrun,"T");
+     if(T==NULL)return;
+
+     Int_t nentries=T->GetEntries();
+     if(nentries<30000)return;
+
+     Double_t ped_val[16]={0.0},ped_wid[16]={0.0},peak[16]={0.0},peak_wid[16]={0.0};
+     
+    for(int ii=0;ii<16;ii++){
+        delete gROOT->FindObject(Form("hs2_rp[%d]",ii));
+        delete gROOT->FindObject(Form("hs2_rc[%d]",ii));
+    }
+     TH1F *hs2_rp[16];
+     TCanvas *c1=new TCanvas("c1");
+     c1->Divide(4,4);
+     for(int ii=0;ii<16;ii++){
+         c1->cd(ii+1);
+         hs2_rp[ii]=new TH1F(Form("hs2_rp[%d]",ii),"s2 ra_p",300,-200,1000);
+	 T->Draw(Form("L.s2.ra_p[%d]>>hs2_rp[%d]",ii,ii));
+         Int_t max_bin = hs2_rp[ii]->GetMaximumBin();
+         Double_t bin_center = hs2_rp[ii]->GetBinCenter(max_bin);
+
+         TF1 *g1=new TF1("g1","gaus",bin_center-20,bin_center+20);  
+
+         hs2_rp[ii]->Fit(g1,"NQR");
+         Double_t min = g1->GetParameter(1) - g1->GetParameter(2);
+         Double_t max = g1->GetParameter(1) + g1->GetParameter(2);
+
+         hs2_rp[ii]->Fit(g1,"Q","",min,max);
+         ped_val[ii] = g1->GetParameter(1);
+         ped_wid[ii] = g1->GetParameter(2);
+         gPad->SetLogy();
+    }  
+
+     TH1F *hs2_rc[16];
+     TCanvas *c2=new TCanvas("c2");
+     c2->Divide(4,4);
+     int flag=0;
+     for(int ii=0;ii<16;ii++){
+         c2->cd(ii+1);
+         hs2_rc[ii]=new TH1F(Form("hs2_rc[%d]",ii),"s2 ra_c",300,-200,1000);
+         T->Draw(Form("L.s2.ra_c[%d]>>hs2_rc[%d]",ii,ii));
+         Int_t tmp1=hs2_rc[ii]->FindBin(150);
+         Double_t ninte=hs2_rc[ii]->Integral(tmp1,300);
+         if(ninte<200)return;
+
+         TF1 *g1=new TF1("g1","landau",200,500);
+
+         hs2_rc[ii]->Fit(g1,"QR");
+         Double_t mean1 = g1->GetParameter(1);
+         Double_t sigma1 = g1->GetParameter(2);
+         if(mean1<200||mean1>500){
+                peak[ii]=mean1;
+                peak_wid[ii]=sigma1;
+                flag=1;
+                gPad->SetLogy();
+                continue;
+         }
+
+         hs2_rc[ii]->Fit(g1,"NQ","",mean1-100,mean1+150);
+         Double_t mean2 = g1->GetParameter(1);
+         Double_t sigma2 = g1->GetParameter(2);
+         if(mean2<200||mean2>500){
+                peak[ii]=mean1;
+                peak_wid[ii]=sigma1;
+                flag=1;
+                hs2_rc[ii]->Fit(g1,"Q","",200,500);
+                gPad->SetLogy();
+                continue;
+         }
+
+         hs2_rc[ii]->Fit(g1,"Q","",mean2-100,mean2+150);
+         Double_t mean3 = g1->GetParameter(1);
+         Double_t sigma3 = g1->GetParameter(2);
+         if(mean3<200||mean3>500){
+                peak[ii]=mean2;
+                peak_wid[ii]=sigma2;
+                flag=1;
+                hs2_rc[ii]->Fit(g1,"Q","",mean1-100,mean1+150);
+                gPad->SetLogy();
+                continue;
+         }
+
+         peak[ii] = mean3;
+         peak_wid[ii] = sigma3;
+         gPad->SetLogy();
+    }
+
+    ofstream outfile1,outfile2,outfile3,outfile4;
+    outfile1.open("OUT/Ls2R_ped.dat",fstream::app);
+    outfile2.open("OUT/Ls2R_ped_wid.dat",fstream::app);
+    outfile3.open("OUT/Ls2R_peak.dat",fstream::app);
+    outfile4.open("OUT/Ls2R_peak_wid.dat",fstream::app);
+    outfile1<<nrun<<"  ";
+    outfile2<<nrun<<"  ";
+    outfile3<<nrun<<"  ";
+    outfile4<<nrun<<"  ";
+    for(int ii=0;ii<16;ii++){
+      outfile1<<fixed<<setprecision(2)<<ped_val[ii]<<"  ";
+      outfile2<<fixed<<setprecision(2)<<ped_wid[ii]<<"  ";
+      outfile3<<fixed<<setprecision(2)<<peak[ii]<<"  ";
+      outfile4<<fixed<<setprecision(2)<<peak_wid[ii]<<"  ";
+    }
+    outfile1<<endl;
+    outfile2<<endl;
+    outfile3<<flag<<endl;
+    outfile4<<flag<<endl;
+
+    outfile1.close();
+    outfile2.close();
+    outfile3.close();
+    outfile4.close();
+    c1->Print(Form("PDF/s2R_%d.pdf[",nrun));
+    c1->Print(Form("PDF/s2R_%d.pdf",nrun));
+    c2->Print(Form("PDF/s2R_%d.pdf",nrun));
+    c2->Print(Form("PDF/s2R_%d.pdf]",nrun));
+
+    return;
+
+}
+
+void S2R_check(){
+     for(int ii=1206;ii<2826;ii++){
+	 Check(ii);
+     }
+     exit(0);
+}
+
