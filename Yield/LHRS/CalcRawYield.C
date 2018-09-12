@@ -132,7 +132,7 @@ void CalcRawYield(){
 	     T->GetEntry(electron->GetEntry(jj));
              for(int kk=0;kk<nBin;kk++){
 		 Double_t dxbj=axbj-xbj[kk];
-                 if(dxbj<0.01 && dxbj>=0){
+                 if(dxbj<0.02 && dxbj>=0){
 		    totalNe[kk]+=1.0/livetime;
 		    NNe[kk]++;
                     RawNe[kk]++;
@@ -161,7 +161,7 @@ void CalcRawYield(){
     Double_t avgXbj[nBin]={0.0};
     for(int ii=0;ii<nBin;ii++){
         totalNe_err[ii]=sqrt(totalNe_err[ii]);
-        cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
+        //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
 	rawYield[ii]=totalNe[ii]/LUM;
 	rawYield_err[ii]=totalNe_err[ii]/LUM;
         double tmp_x=0.17+ii*0.02;
