@@ -67,7 +67,7 @@ void CalcRawYield(){
      }
 
     ofstream myfile;
-    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target.Data(),kin));
+    myfile.open(Form("RawYield/vz009_eloss/%s_kin%d.txt",target.Data(),kin));
     //myfile.open(Form("RawYield/test/%s_kin%d.txt",target.Data(),kin));
     myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
@@ -112,17 +112,17 @@ void CalcRawYield(){
 
          T->SetBranchStatus("*",0);
          T->SetBranchStatus("L.gold.p",1);
-         T->SetBranchStatus("EKLx.angle",1);
-         T->SetBranchStatus("EKLx.x_bj",1);
-         T->SetBranchStatus("EKLx.Q2",1);
+         T->SetBranchStatus("EKLxe.angle",1);
+         T->SetBranchStatus("EKLxe.x_bj",1);
+         T->SetBranchStatus("EKLxe.Q2",1);
          T->SetBranchStatus("LeftBCMev.isrenewed",1);
 
          Double_t aEprime=0.0,aTheta=0.0,axbj=0.0,aQ2=0.0;
          Double_t isrenewed=0;
          T->SetBranchAddress("L.gold.p",&aEprime);
-         T->SetBranchAddress("EKLx.angle",&aTheta);
-         T->SetBranchAddress("EKLx.x_bj",&axbj);
-         T->SetBranchAddress("EKLx.Q2",&aQ2);
+         T->SetBranchAddress("EKLxe.angle",&aTheta);
+         T->SetBranchAddress("EKLxe.x_bj",&axbj);
+         T->SetBranchAddress("EKLxe.Q2",&aQ2);
          T->SetBranchAddress("LeftBCMev.isrenewed",&isrenewed);
 
          Double_t Radcor=1.0;
