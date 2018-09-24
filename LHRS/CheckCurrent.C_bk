@@ -1,0 +1,41 @@
+#include "GetTrees.h"
+#include "SetCut.h"
+
+void CheckCurrent(int run_number)
+{
+     TString TreeName="T";
+     TChain* T=GetTree(run_number,TreeName);
+
+     Double_t Current[10];
+     for(int ii=0;ii<10;ii++){
+	 Current[ii]=0;
+     }
+
+     TCut timeup="LeftBCMev.BeamUp_time_v1495[0]>60";
+     T->Draw(">>beamup",timeup);
+     TEventList *beamup;
+     gDirectory->GetObject("beamup",beamup);
+     T->SetEventList(beamup);
+
+     Int_t nentries=beamup->GetN();
+
+     T->SetBranchStatus("*",0);
+     T->SetBranchStatus("LeftBCMev.current_dnew",1);
+
+     Double_t c_dnew;
+     T->SetBranchAddress("LeftBCMev.current_dnew",&c_dnew);
+
+     Double_t lastcurrent=0;
+     int index=0;
+     for(int ii=0;ii<nentries;ii++){
+        T->GetEntry(beamup->GetEntry(ii));
+        if(abs(c_dnew-lastcurrent)>2){
+           Current[index++]=c_dnew;
+	   lastcurrent=c_dnew;
+	}
+     }
+    
+     for(int ii=0;ii<10;ii++)
+         cout<<Current[ii]<<endl;
+
+}

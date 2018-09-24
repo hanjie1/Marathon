@@ -41,54 +41,51 @@ void Allkin_CalcRawYield(){
    TString target[4]={"H1","D2","He3","H3"};
    int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
-   for(int nn=0;nn<4;nn++){   
-    for(int mm=0;mm<11;mm++){
+   for(int nn=0;nn<1;nn++){   
+    for(int mm=1;mm<3;mm++){
      if(nn==0&&mm>4)break;
      Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
     ofstream myfile;
-    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target[nn].Data(),kin[mm]));
-    //myfile.open(Form("RawYield/test/%s_kin%d.txt",target.Data(),kin));
+    myfile.open(Form("RawYield/vz009_bin001_25per/%s_kin%d.txt",target[nn].Data(),kin[mm]));
     myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<Int_t> runList;
      int run_number=0,nrun=0;
-     nrun=GetRunList(runList,kin,target);
+     nrun=GetRunList(runList,kin[mm],target[nn]);
      cout<<nrun<<" runs are added "<<endl;
      if(nrun==0)exit(0);
 
      Double_t bin_max=0;
      Double_t bin_min=0;
      int nkin=0;
-     if(kin<6)nkin=kin;
-     if(kin==7)nkin=kin-1;
-     if(kin==9)nkin=kin-2;
-     if(kin==11)nkin=kin-3;
-     if(kin==13)nkin=kin-4;
-     if(kin==15)nkin=kin-5;
-     if(target=="H1"){
+     if(kin[mm]<6)nkin=kin[mm];
+     if(kin[mm]==7)nkin=kin[mm]-1;
+     if(kin[mm]==9)nkin=kin[mm]-2;
+     if(kin[mm]==11)nkin=kin[mm]-3;
+     if(kin[mm]==13)nkin=kin[mm]-4;
+     if(kin[mm]==15)nkin=kin[mm]-5;
+     if(target[nn]=="H1"){
          bin_min=H1_xmin[nkin];
          bin_max=H1_xmax[nkin];
      }
-     if(target=="D2"){
+     if(target[nn]=="D2"){
          bin_min=D2_xmin[nkin];
          bin_max=D2_xmax[nkin];
      }
-     if(target=="He3"){
+     if(target[nn]=="He3"){
          bin_min=He_xmin[nkin];
          bin_max=He_xmax[nkin];
      }
-     if(target=="H3"){
+     if(target[nn]=="H3"){
          bin_min=H3_xmin[nkin];
          bin_max=H3_xmax[nkin];
      }
-     cout<<bin_max<<"  "<<bin_min<<endl;
      int nBin=(bin_max-bin_min)/dBin;
      Double_t xbj[35];
      for(int ii=0;ii<nBin;ii++){
          xbj[ii]=bin_min+ii*dBin;
-         cout<<xbj[ii]<<" ";
          //xbj[ii]=0.25+ii*0.01;
      }
      cout<<endl;
@@ -106,7 +103,7 @@ void Allkin_CalcRawYield(){
          Double_t livetime=LT.value; 
          Double_t livetime_err=LT.err; 
          cout<<"Get LT:  "<<livetime<<"  "<<livetime_err<<endl;
-         T=GetTree(run_number,kin,TreeName);
+         T=GetTree(run_number,kin[mm],TreeName);
          T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK);
          TEventList *electron;
          gDirectory->GetObject("electron",electron);
@@ -166,14 +163,13 @@ void Allkin_CalcRawYield(){
         //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
 	rawYield[ii]=totalNe[ii]/LUM;
 	rawYield_err[ii]=totalNe_err[ii]/LUM;
-        double tmp_x=0.17+ii*0.02;
         if(RawNe[ii]!=0){
            avgQ2[ii]=totalQ2[ii]/RawNe[ii];
 	   avgXbj[ii]=totalXbj[ii]/RawNe[ii];
         }
 	if(avgXbj[ii]==0)continue;
         else{
-           myfile<<ii<<", "<<avgXbj[ii]<<", "<<avgQ2[ii]<<", "<<rawYield[ii]<<", "<<rawYield_err[ii]<<endl;
+           myfile<<xbj[ii]<<", "<<avgXbj[ii]<<", "<<avgQ2[ii]<<", "<<rawYield[ii]<<", "<<rawYield_err[ii]<<endl;
         }
     }
 

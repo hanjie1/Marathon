@@ -1,5 +1,4 @@
 #include "GetTrees.h"
-#include "GetRunList.h"
 #include "SetCut.h"
 #include "SetCons.h"
 #include "CalcLum.h"
@@ -37,42 +36,93 @@ TRI_VAR GetLT(int run_number)
      return LT;      
 }
 
-void CalcRawYield(){
-     TString target;
-     int kin;
-     cout<<"Target:  ";
-     cin>>target;
-     cout<<"Kin:     ";
-     cin>>kin;
+void CalcYield(){
+     TString filename;
+     cout<<"Input file name: "<<endl;
+     cin>>filename;
+     filename="/w/halla-scifs17exp/triton/Runlist/"+filename;
+//     filename=""+filename;
 
-     Double_t LUM=CalcLum(kin,target); //total luminosity get for this kinematics;
+     Double_t LUM=CalcLum(filename); //total luminosity get for this kinematics;
      cout<<"Get total Luminosity:  "<<LUM<<endl;
 
+     ifstream infile;
+     infile.open(filename);
+     if(!infile.is_open()){cout<<"!!! run list file not found "<<endl;return 0;}
+
+     
+     TString tmp;
+     TString target;
+     int kin=0;
+     if(tmp.ReadToken(infile))target=tmp;
+     else{
+          cout<<"No target type!!!"<<endl;
+          exit(0);
+     }
+
+     if(tmp.ReadToken(infile))kin=atoi(tmp);
+     else{
+          cout<<"No kinematic!!!"<<endl;
+          exit(0);
+     }
 
     ofstream myfile;
-    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target.Data(),kin));
-    //myfile.open(Form("RawYield/test/%s_kin%d.txt",target.Data(),kin));
-    myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
+    myfile.open(Form("RC_Yield/vz007/%s_kin%d.txt",target.Data(),kin));
+    myfile<<"xbj  Yield"<<endl;
 
      vector<Int_t> runList;
-     int run_number=0,nrun=0;
-     nrun=GetRunList(runList,kin,target);
-     cout<<nrun<<" runs are added "<<endl;
-     if(nrun==0)exit(0);
-
-     Double_t xbj[nBin];
-     for(int ii=0;ii<nBin;ii++){
-         xbj[ii]=0.16+ii*0.02;
-         //xbj[ii]=0.25+ii*0.01;
+     int run_number,nrun=0;
+     Ssiz_t from=0;
+     TString content;
+     if(tmp.ReadLine(infile)){
+        while(tmp.Tokenize(content,from,","))
+         {
+              run_number = atoi(content);
+              if(run_number>0){runList.push_back(run_number);nrun++;}
+         }
      }
+ 
+     infile.close();
+
+     Double_t xbj[17];
+     for(int ii=0;ii<17;ii++){
+         xbj[ii]=0.16+ii*0.02;
+     }
+
+     // read XS table
+     Double_t xs_rad[nTh][nEp];
+     Double_t xs_born[nTh][nEp];
+     Double_t theta[nTh],Eprime[nEp];
+     ifstream infile1;
+     infile1.open(Form("RadCor/event/%s_kin%d_xs.out",target.Data(),kin));
+     if(!infile1.is_open()){cout<<"!!! radiative correction file not found "<<endl;return 0;}
+     tmp.ReadLine(infile1);
+     from=0;
+     int xx=0,yy=0,nline=0; 
+     while(tmp.ReadLine(infile1)){
+        for(int ii=0;ii<4;ii++){
+           tmp.Tokenize(content,from,"  ");
+           if(ii==0)theta[xx]=atof(content); 
+           if(ii==1)Eprime[yy]=atof(content); 
+           if(ii==2)xs_born[xx][yy]=atof(content); 
+           if(ii==3)xs_rad[xx][yy]=atof(content); 
+	}
+        from=0;
+       // cout<<theta[xx]<<"  "<<Eprime[yy]<<"  "<<xs_born[xx][yy]/xs_rad[xx][yy]<<endl;
+        yy++;
+        nline++;
+        if(nline%nEp==0){xx++;yy=0;}
+     }
+     infile1.close();
+
 
      TString TreeName="T";
      TChain* T;
-     Double_t totalNe[nBin]={0.0};
-     Double_t RawNe[nBin]={0.0};
-     Double_t totalQ2[nBin]={0.0};
-     Double_t totalXbj[nBin]={0.0};
-     Double_t totalNe_err[nBin]={0.0};
+     Double_t totalNe[17]={0.0};
+     Double_t RawNe[17]={0.0};
+     Double_t totalQ2[17]={0.0};
+     Double_t totalXbj[17]={0.0};
+     Double_t totalNe_err[17]={0.0};
      for(int ii=0;ii<nrun;ii++){
          run_number=runList[ii];
          TRI_VAR LT=GetLT(run_number);
@@ -101,14 +151,20 @@ void CalcRawYield(){
          T->SetBranchAddress("LeftBCMev.isrenewed",&isrenewed);
 
          Double_t Radcor=1.0;
-	 Int_t NNe[nBin]={0};
+	 Int_t NNe[17]={0};
          Int_t nentries=electron->GetN();
          for(int jj=0;jj<nentries;jj++){
 	     T->GetEntry(electron->GetEntry(jj));
-             for(int kk=0;kk<nBin;kk++){
+         //    cout<<aTheta<<endl;
+	     Radcor=SearchXS(kin,aEprime,aTheta,theta,Eprime,xs_born,xs_rad);
+             if(Radcor==0.0){
+                cout<<"This event can't find Radcor"<<endl;
+                Radcor=1.0;
+             }
+             for(int kk=0;kk<17;kk++){
 		 Double_t dxbj=axbj-xbj[kk];
                  if(dxbj<0.02 && dxbj>=0){
-		    totalNe[kk]+=1.0/livetime;
+		    totalNe[kk]+=1.0/livetime*Radcor;
 		    NNe[kk]++;
                     RawNe[kk]++;
 		    totalQ2[kk]+=aQ2;
@@ -118,10 +174,10 @@ void CalcRawYield(){
 	     }
          } 
 
-         for(int jj=0;jj<nBin;jj++){
+         for(int jj=0;jj<17;jj++){
            Double_t tmp_err=0.0;
            if(NNe[jj]!=0){
-              tmp_err=sqrt(1.0/NNe[jj]+(livetime_err/livetime)*(livetime_err/livetime))*NNe[jj]/livetime;
+              tmp_err=sqrt(1.0/NNe[jj]+(livetime_err/livetime)*(livetime_err/livetime))*NNe[jj]/livetime*Radcor;
            }
 	   totalNe_err[jj]+=tmp_err*tmp_err;
          }
@@ -130,13 +186,13 @@ void CalcRawYield(){
      }
 
 
-    Double_t rawYield[nBin]={0.0};
-    Double_t rawYield_err[nBin]={0.0};
-    Double_t avgQ2[nBin]={0.0};
-    Double_t avgXbj[nBin]={0.0};
-    for(int ii=0;ii<nBin;ii++){
+    Double_t rawYield[17]={0.0};
+    Double_t rawYield_err[17]={0.0};
+    Double_t avgQ2[17]={0.0};
+    Double_t avgXbj[17]={0.0};
+    for(int ii=0;ii<17;ii++){
         totalNe_err[ii]=sqrt(totalNe_err[ii]);
-        //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
+        //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<totalNe_err[ii]<<endl;
 	rawYield[ii]=totalNe[ii]/LUM;
 	rawYield_err[ii]=totalNe_err[ii]/LUM;
         double tmp_x=0.17+ii*0.02;
@@ -144,10 +200,9 @@ void CalcRawYield(){
            avgQ2[ii]=totalQ2[ii]/RawNe[ii];
 	   avgXbj[ii]=totalXbj[ii]/RawNe[ii];
         }
-	if(avgXbj[ii]==0)continue;
-        else{
-           myfile<<ii<<", "<<avgXbj[ii]<<", "<<avgQ2[ii]<<", "<<rawYield[ii]<<", "<<rawYield_err[ii]<<endl;
-        }
+        myfile<<avgXbj[ii]<<"   "<<rawYield[ii]<<"   "<<rawYield_err[ii]<<"  "<<avgQ2[ii]<<endl;
+        //cout<<avgXbj[ii]<<"   "<<rawYield[ii]<<"   "<<rawYield_err[ii]<<"  "<<avgQ2[ii]<<"  "<<RawNe[ii]<<endl;
+        
     }
 
    myfile.close();
