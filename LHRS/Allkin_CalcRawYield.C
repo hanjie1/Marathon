@@ -37,20 +37,18 @@ TRI_VAR GetLT(int run_number)
      return LT;      
 }
 
-void CalcRawYield(){
-     TString target;
-     int kin;
-     cout<<"Target:  ";
-     cin>>target;
-     cout<<"Kin:     ";
-     cin>>kin;
+void Allkin_CalcRawYield(){
+   TString target[4]={"H1","D2","He3","H3"};
+   int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
-     Double_t LUM=CalcLum(kin,target); //total luminosity get for this kinematics;
-     cout<<"Get total Luminosity:  "<<LUM<<endl;
-
+   for(int nn=0;nn<4;nn++){   
+    for(int mm=0;mm<11;mm++){
+     if(nn==0&&mm>4)break;
+     Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;
+     cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
     ofstream myfile;
-    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target.Data(),kin));
+    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target[nn].Data(),kin[mm]));
     //myfile.open(Form("RawYield/test/%s_kin%d.txt",target.Data(),kin));
     myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
@@ -180,5 +178,7 @@ void CalcRawYield(){
     }
 
    myfile.close();
+  }
+ }
 
 }

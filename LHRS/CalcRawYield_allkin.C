@@ -60,48 +60,19 @@ void CalcRawYield(){
      cout<<nrun<<" runs are added "<<endl;
      if(nrun==0)exit(0);
 
-     Double_t bin_max=0;
-     Double_t bin_min=0;
-     int nkin=0;
-     if(kin<6)nkin=kin;
-     if(kin==7)nkin=kin-1;
-     if(kin==9)nkin=kin-2;
-     if(kin==11)nkin=kin-3;
-     if(kin==13)nkin=kin-4;
-     if(kin==15)nkin=kin-5;
-     if(target=="H1"){
-         bin_min=H1_xmin[nkin];
-         bin_max=H1_xmax[nkin];
-     }
-     if(target=="D2"){
-         bin_min=D2_xmin[nkin];
-         bin_max=D2_xmax[nkin];
-     }
-     if(target=="He3"){
-         bin_min=He_xmin[nkin];
-         bin_max=He_xmax[nkin];
-     }
-     if(target=="H3"){
-         bin_min=H3_xmin[nkin];
-         bin_max=H3_xmax[nkin];
-     }
-     cout<<bin_max<<"  "<<bin_min<<endl;
-     int nBin=(bin_max-bin_min)/dBin;
-     Double_t xbj[35];
+     Double_t xbj[nBin];
      for(int ii=0;ii<nBin;ii++){
-         xbj[ii]=bin_min+ii*dBin;
-         cout<<xbj[ii]<<" ";
+         xbj[ii]=0.16+ii*0.02;
          //xbj[ii]=0.25+ii*0.01;
      }
-     cout<<endl;
 
      TString TreeName="T";
      TChain* T;
-     Double_t totalNe[35]={0.0};
-     Double_t RawNe[35]={0.0};
-     Double_t totalQ2[35]={0.0};
-     Double_t totalXbj[35]={0.0};
-     Double_t totalNe_err[35]={0.0};
+     Double_t totalNe[nBin]={0.0};
+     Double_t RawNe[nBin]={0.0};
+     Double_t totalQ2[nBin]={0.0};
+     Double_t totalXbj[nBin]={0.0};
+     Double_t totalNe_err[nBin]={0.0};
      for(int ii=0;ii<nrun;ii++){
          run_number=runList[ii];
          TRI_VAR LT=GetLT(run_number);
@@ -130,13 +101,13 @@ void CalcRawYield(){
          T->SetBranchAddress("LeftBCMev.isrenewed",&isrenewed);
 
          Double_t Radcor=1.0;
-	 Int_t NNe[35]={0};
+	 Int_t NNe[nBin]={0};
          Int_t nentries=electron->GetN();
          for(int jj=0;jj<nentries;jj++){
 	     T->GetEntry(electron->GetEntry(jj));
              for(int kk=0;kk<nBin;kk++){
 		 Double_t dxbj=axbj-xbj[kk];
-                 if(dxbj<0.01 && dxbj>=0){
+                 if(dxbj<0.02 && dxbj>=0){
 		    totalNe[kk]+=1.0/livetime;
 		    NNe[kk]++;
                     RawNe[kk]++;
@@ -159,10 +130,10 @@ void CalcRawYield(){
      }
 
 
-    Double_t rawYield[35]={0.0};
-    Double_t rawYield_err[35]={0.0};
-    Double_t avgQ2[35]={0.0};
-    Double_t avgXbj[35]={0.0};
+    Double_t rawYield[nBin]={0.0};
+    Double_t rawYield_err[nBin]={0.0};
+    Double_t avgQ2[nBin]={0.0};
+    Double_t avgXbj[nBin]={0.0};
     for(int ii=0;ii<nBin;ii++){
         totalNe_err[ii]=sqrt(totalNe_err[ii]);
         //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
