@@ -3,6 +3,7 @@
 #include "TSQLResult.h"
 #include "TSQLRow.h"
 #include "GetTrees.h"
+#include "GetRunList.h"
 #include "SetCut.h"
 #include "SetCons.h"
 #include "CheckCurrent.h"
@@ -69,42 +70,25 @@ int Update(int run_number=0,TString target="NULL",int kin=0){
 }
 
 void Update_sql(){
-     TString filename;
-     cout<<"Input file name: "<<endl;
-     cin>>filename;
-     filename="/w/halla-scifs17exp/triton/Runlist/"+filename;
-     //filename="/w/halla-scifs17exp/triton/hanjie/MARATHON/analysis/Yield/Runlist/"+filename;
-
-     ifstream infile;
-     infile.open(filename);
-     if(!infile.is_open()){cout<<"!!! run list file not found "<<endl;return 0;}
-
-     TString tmp;
      TString target;
-     int kin=0;
-     if(tmp.ReadToken(infile))target=tmp;
-     else{
-          cout<<"No target type!!!"<<endl;
-          exit(0);
-     }
-     
-     if(tmp.ReadToken(infile))kin=atoi(tmp);
-     else{
-          cout<<"No kinematic!!!"<<endl;
-          exit(0);
-     }
+     int kin;
+     cout<<"Target:  ";
+     cin>>target;
+     cout<<"Kin:     ";
+     cin>>kin;
 
-     int run_number,success=0;
-     Ssiz_t from=0;
-     TString content;
-     if(tmp.ReadLine(infile)){
-        while(tmp.Tokenize(content,from,","))
+     vector<Int_t> runList;
+     int run_number=0,nrun=0;
+     nrun=GetRunList(runList,kin,target);
+     cout<<nrun<<" runs are added "<<endl;
+     if(nrun==0)exit(0);
+
+     int success=0;
+     for(int ii=0;ii<runList.size();ii++) 
          {
-              run_number = atoi(content);
-              success=Update(run_number,target,kin);
+             run_number = runList[ii];
+             success=Update(run_number,target,kin);
          } 
-    } 
 
-       infile.close();
 
 }
