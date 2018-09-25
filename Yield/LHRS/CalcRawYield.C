@@ -1,0 +1,180 @@
+#include "GetTrees.h"
+#include "SetCut.h"
+#include "SetCons.h"
+#include "CalcLum.h"
+#include "SearchXS.h"
+#include <TMath.h>
+
+TRI_VAR GetLT(int run_number)
+{
+     TString table="LHRStest";
+     TSQLServer* Server = TSQLServer::Connect("mysql://halladb/triton-work","triton-user","3He3Hdata");
+
+     TString  query=Form("select * from %s where run_number=%d;",table.Data(),run_number);
+     TSQLResult* result=Server->Query(query.Data());
+     TSQLRow *row;
+     int nrows = result->GetRowCount();
+     TRI_VAR LT;
+     if (nrows==0) {
+        cout<<"run "<<run_number<<" is NOT in "<<table<<endl; 
+        Server->Close();
+        LT.value=0;
+        LT.err=0;   
+        return LT;
+     }
+
+     query=Form("select livetime,LT_err from %s where run_number=%d;",table.Data(),run_number);
+     result=Server->Query(query.Data());
+     row=result->Next();
+     Double_t livetime=atof(row->GetField(0));
+     Double_t livetime_err=atof(row->GetField(1));
+
+     LT.value=livetime;
+     LT.err=livetime_err;
+
+     Server->Close(); 
+     return LT;      
+}
+
+void CalcRawYield(){
+     TString filename;
+     cout<<"Input file name: "<<endl;
+     cin>>filename;
+     filename="/w/halla-scifs17exp/triton/Runlist/"+filename;
+//     filename="/w/halla-scifs17exp/triton/hanjie/MARATHON/analysis/Yield/Runlist/"+filename;
+
+     Double_t LUM=CalcLum(filename); //total luminosity get for this kinematics;
+     cout<<"Get total Luminosity:  "<<LUM<<endl;
+
+     ifstream infile;
+     infile.open(filename);
+     if(!infile.is_open()){cout<<"!!! run list file not found "<<endl;return 0;}
+
+     
+     TString tmp;
+     TString target;
+     int kin=0;
+     if(tmp.ReadToken(infile))target=tmp;
+     else{
+          cout<<"No target type!!!"<<endl;
+          exit(0);
+     }
+
+     if(tmp.ReadToken(infile))kin=atoi(tmp);
+     else{
+          cout<<"No kinematic!!!"<<endl;
+          exit(0);
+     }
+
+    ofstream myfile;
+    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target.Data(),kin));
+    //myfile.open(Form("RawYield/test/%s_kin%d.txt",target.Data(),kin));
+    myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
+
+     vector<Int_t> runList;
+     int run_number,nrun=0;
+     Ssiz_t from=0;
+     TString content;
+     if(tmp.ReadLine(infile)){
+        while(tmp.Tokenize(content,from,","))
+         {
+              run_number = atoi(content);
+              if(run_number>0){runList.push_back(run_number);nrun++;}
+         }
+     }
+ 
+     infile.close();
+
+     Double_t xbj[nBin];
+     for(int ii=0;ii<nBin;ii++){
+         xbj[ii]=0.16+ii*0.02;
+         //xbj[ii]=0.25+ii*0.01;
+     }
+
+     TString TreeName="T";
+     TChain* T;
+     Double_t totalNe[nBin]={0.0};
+     Double_t RawNe[nBin]={0.0};
+     Double_t totalQ2[nBin]={0.0};
+     Double_t totalXbj[nBin]={0.0};
+     Double_t totalNe_err[nBin]={0.0};
+     for(int ii=0;ii<nrun;ii++){
+         run_number=runList[ii];
+         TRI_VAR LT=GetLT(run_number);
+         Double_t livetime=LT.value; 
+         Double_t livetime_err=LT.err; 
+         cout<<"Get LT:  "<<livetime<<"  "<<livetime_err<<endl;
+         T=GetTree(run_number,kin,TreeName);
+         T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK);
+         TEventList *electron;
+         gDirectory->GetObject("electron",electron);
+         T->SetEventList(electron);
+
+         T->SetBranchStatus("*",0);
+         T->SetBranchStatus("L.gold.p",1);
+         T->SetBranchStatus("EKLx.angle",1);
+         T->SetBranchStatus("EKLx.x_bj",1);
+         T->SetBranchStatus("EKLx.Q2",1);
+         T->SetBranchStatus("LeftBCMev.isrenewed",1);
+
+         Double_t aEprime=0.0,aTheta=0.0,axbj=0.0,aQ2=0.0;
+         Double_t isrenewed=0;
+         T->SetBranchAddress("L.gold.p",&aEprime);
+         T->SetBranchAddress("EKLx.angle",&aTheta);
+         T->SetBranchAddress("EKLx.x_bj",&axbj);
+         T->SetBranchAddress("EKLx.Q2",&aQ2);
+         T->SetBranchAddress("LeftBCMev.isrenewed",&isrenewed);
+
+         Double_t Radcor=1.0;
+	 Int_t NNe[nBin]={0};
+         Int_t nentries=electron->GetN();
+         for(int jj=0;jj<nentries;jj++){
+	     T->GetEntry(electron->GetEntry(jj));
+             for(int kk=0;kk<nBin;kk++){
+		 Double_t dxbj=axbj-xbj[kk];
+                 if(dxbj<0.02 && dxbj>=0){
+		    totalNe[kk]+=1.0/livetime;
+		    NNe[kk]++;
+                    RawNe[kk]++;
+		    totalQ2[kk]+=aQ2;
+		    totalXbj[kk]+=axbj;
+		    break;
+                 }
+	     }
+         } 
+
+         for(int jj=0;jj<nBin;jj++){
+           Double_t tmp_err=0.0;
+           if(NNe[jj]!=0){
+              tmp_err=sqrt(1.0/NNe[jj]+(livetime_err/livetime)*(livetime_err/livetime))*NNe[jj]/livetime;
+           }
+	   totalNe_err[jj]+=tmp_err*tmp_err;
+         }
+         delete T;
+         cout<<"Get electron coutns"<<endl;
+     }
+
+
+    Double_t rawYield[nBin]={0.0};
+    Double_t rawYield_err[nBin]={0.0};
+    Double_t avgQ2[nBin]={0.0};
+    Double_t avgXbj[nBin]={0.0};
+    for(int ii=0;ii<nBin;ii++){
+        totalNe_err[ii]=sqrt(totalNe_err[ii]);
+        //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
+	rawYield[ii]=totalNe[ii]/LUM;
+	rawYield_err[ii]=totalNe_err[ii]/LUM;
+        double tmp_x=0.17+ii*0.02;
+        if(RawNe[ii]!=0){
+           avgQ2[ii]=totalQ2[ii]/RawNe[ii];
+	   avgXbj[ii]=totalXbj[ii]/RawNe[ii];
+        }
+	if(avgXbj[ii]==0)continue;
+        else{
+           myfile<<ii<<", "<<avgXbj[ii]<<", "<<avgQ2[ii]<<", "<<rawYield[ii]<<", "<<rawYield_err[ii]<<endl;
+        }
+    }
+
+   myfile.close();
+
+}
