@@ -100,40 +100,22 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
      return;
 }
 
-Double_t CalcLum(TString filename){
-         ifstream infile;
-         infile.open(filename);
-         if(!infile.is_open()){cout<<"!!! run list file not found "<<endl;return 0;}
-
-     TString tmp;
-     TString target;
-     int kin=0;
-     if(tmp.ReadToken(infile))target=tmp;
-     else{
-          cout<<"No target type!!!"<<endl;
-          exit(0);
-     }
-
-     if(tmp.ReadToken(infile))kin=atoi(tmp);
-     else{
-          cout<<"No kinematic!!!"<<endl;
-          exit(0);
-     }
+Double_t CalcLum(int kin, TString target){
+     int nrun=0;
+     vector<Int_t> runList;
+     nrun=GetRunList(runList,kin,target);
+     if(nrun==0)exit(0);
 
      int run_number,success=0;
      Ssiz_t from=0;
      TString content;
      Double_t NNtarg=0.0,Ncharge=0.0;
      Double_t LUM=0.0;
-     if(tmp.ReadLine(infile)){
-        while(tmp.Tokenize(content,from,","))
-         {
-              run_number = atoi(content);
-              RunLum(run_number,kin,Ncharge,NNtarg);
-              LUM+=Ncharge*NNtarg/CMtoNB;
-         }
+     for(int ii=0;ii<runList.size();ii++){
+         run_number = runList[ii];
+         RunLum(run_number,kin,Ncharge,NNtarg);
+         LUM+=Ncharge*NNtarg/CMtoNB;
     }
-       infile.close();
     
     return LUM;
 
