@@ -2,7 +2,7 @@
 Processing Allkin_CalcRawYield.C...
 Get total Luminosity for target H1   kin 0 : 5.66827e+07
 18 runs are added 
-
+0.159, 0.1785, 0.198, 0.2175, 
 Get LT:  0.961368  0.003632
 Get electron coutns
 Get LT:  0.961057  0.003671
@@ -41,14 +41,14 @@ Get LT:  0.944074  0.002501
 Get electron coutns
 Get total Luminosity for target H1   kin 1 : 1.48223e+07
 2 runs are added 
-
+0.176, 0.1965, 0.217, 0.2375, 
 Get LT:  0.952094  0.002471
 Get electron coutns
 Get LT:  0.95341  0.001992
 Get electron coutns
 Get total Luminosity for target H1   kin 2 : 2.64868e+07
 4 runs are added 
-
+0.21, 0.2325, 0.255, 0.2775, 
 Get LT:  0.973176  0.002823
 Get electron coutns
 Get LT:  0.973475  0.002983
@@ -59,7 +59,7 @@ Get LT:  0.972401  0.003355
 Get electron coutns
 Get total Luminosity for target H1   kin 3 : 2.54274e+07
 4 runs are added 
-
+0.247, 0.2662, 0.2854, 0.3046, 0.3238, 
 Get LT:  0.984114  0.00384
 Get electron coutns
 Get LT:  0.983698  0.003484
@@ -70,7 +70,7 @@ Get LT:  0.984301  0.004564
 Get electron coutns
 Get total Luminosity for target H1   kin 4 : 5.80825e+07
 7 runs are added 
-
+0.283, 0.3034, 0.3238, 0.3442, 0.3646, 
 Get LT:  0.986983  0.003835
 Get electron coutns
 Get LT:  0.986791  0.003943
@@ -87,7 +87,7 @@ Get LT:  0.988851  0.010686
 Get electron coutns
 Get total Luminosity for target D2   kin 0 : 3.09915e+07
 9 runs are added 
-
+0.159, 0.1785, 0.198, 0.2175, 
 Get LT:  0.917108  0.002127
 Get electron coutns
 Get LT:  0.915224  0.002244
@@ -108,14 +108,14 @@ Get LT:  0.936724  0.002678
 Get electron coutns
 Get total Luminosity for target D2   kin 1 : 1.41826e+07
 2 runs are added 
-
+0.176, 0.1965, 0.217, 0.2375, 
 Get LT:  0.949129  0.002451
 Get electron coutns
 Get LT:  0.948202  0.00204
 Get electron coutns
 Get total Luminosity for target D2   kin 2 : 2.49502e+07
 4 runs are added 
-
+0.21, 0.2325, 0.255, 0.2775, 
 Get LT:  0.969946  0.003082
 Get electron coutns
 Get LT:  0.968556  0.002726
@@ -126,7 +126,7 @@ Get LT:  0.968712  0.003399
 Get electron coutns
 Get total Luminosity for target D2   kin 3 : 4.13265e+07
 8 runs are added 
-
+0.247, 0.2662, 0.2854, 0.3046, 0.3238, 
 Get LT:  0.981594  0.003596
 Get electron coutns
 Get LT:  0.981792  0.003591
@@ -145,7 +145,7 @@ Get LT:  0.990109  0.003485
 Get electron coutns
 Get total Luminosity for target D2   kin 4 : 3.9112e+07
 4 runs are added 
-
+0.283, 0.3034, 0.3238, 0.3442, 0.3646, 
 Get LT:  0.985645  0.003829
 Get electron coutns
 Get LT:  0.985928  0.003736
@@ -156,14 +156,14 @@ Get LT:  0.986015  0.00382
 Get electron coutns
 Get total Luminosity for target D2   kin 5 : 1.8744e+07
 2 runs are added 
-
+0.318, 0.3398, 0.3616, 0.3834, 0.4052, 
 Get LT:  0.9918  0.004695
 Get electron coutns
 Get LT:  0.991644  0.004774
 Get electron coutns
 Get total Luminosity for target D2   kin 7 : 6.19767e+07
 6 runs are added 
-
+0.391, 0.411, 0.431, 0.451, 0.471, 0.491, 
 Get LT:  0.996064  0.006745
 Get electron coutns
 Get LT:  0.996457  0.006576
@@ -178,7 +178,7 @@ Get LT:  0.995786  0.005539
 Get electron coutns
 Get total Luminosity for target D2   kin 9 : 1.21341e+08
 12 runs are added 
-
+0.462, 0.4835, 0.505, 0.5265, 0.548, 0.5695, 
 Get LT:  0.997448  0.009528
 Get electron coutns
 Get LT:  0.998226  0.009914
@@ -205,7 +205,7 @@ Get LT:  0.99767  0.009106
 Get electron coutns
 Get total Luminosity for target D2   kin 11 : 2.17367e+08
 21 runs are added 
-
+0.535, 0.552125, 0.56925, 0.586375, 0.6035, 0.620625, 0.63775, 0.654875, 
 Get LT:  0.997806  0.011513
 Get electron coutns
 Get LT:  0.99747  0.01969
@@ -250,7 +250,7 @@ Get LT:  0.998111  0.009253
 Get electron coutns
 Get total Luminosity for target D2   kin 13 : 4.28539e+08
 32 runs are added 
-
+0.606, 0.627, 0.648, 0.669, 0.69, 0.711, 0.732, 
 Get LT:  0.997942  0.011151
 Get electron coutns
 Get LT:  0.998301  0.011204
@@ -317,7 +317,7 @@ Get LT:  0.997904  0.028913
 Get electron coutns
 Get total Luminosity for target D2   kin 15 : 1.07071e+09
 77 runs are added 
-
+0.678, 0.703, 0.728, 0.753, 0.778, 0.803, 
 Get LT:  0.998206  0.011732
 Get electron coutns
 Get LT:  0.998639  0.011655
@@ -474,7 +474,7 @@ Get LT:  0.998725  0.012611
 Get electron coutns
 Get total Luminosity for target He3   kin 0 : 2.51745e+07
 27 runs are added 
-
+0.159, 0.1785, 0.198, 0.2175, 
 Get LT:  0.943841  0.003307
 Get electron coutns
 Get LT:  0.94448  0.002896
@@ -531,7 +531,7 @@ Get LT:  0.95738  0.003124
 Get electron coutns
 Get total Luminosity for target He3   kin 1 : 1.02119e+07
 6 runs are added 
-
+0.176, 0.1965, 0.217, 0.2375, 
 Get LT:  0.964246  0.002426
 Get electron coutns
 Get LT:  0.964094  0.002679
@@ -546,7 +546,7 @@ Get LT:  0.964617  0.002866
 Get electron coutns
 Get total Luminosity for target He3   kin 2 : 1.56726e+07
 10 runs are added 
-
+0.21, 0.2325, 0.255, 0.2775, 
 Get LT:  0.979061  0.002996
 Get electron coutns
 Get LT:  0.978836  0.004001
@@ -569,7 +569,7 @@ Get LT:  0.979104  0.003781
 Get electron coutns
 Get total Luminosity for target He3   kin 3 : 1.49158e+07
 7 runs are added 
-
+0.247, 0.2662, 0.2854, 0.3046, 0.3238, 
 Get LT:  0.988001  0.005918
 Get electron coutns
 Get LT:  0.987753  0.003886
@@ -586,7 +586,7 @@ Get LT:  0.98797  0.004448
 Get electron coutns
 Get total Luminosity for target He3   kin 4 : 2.04238e+07
 9 runs are added 
-
+0.283, 0.3034, 0.3238, 0.3442, 0.3646, 
 Get LT:  0.99027  0.004566
 Get electron coutns
 Get LT:  0.990447  0.004603
@@ -607,7 +607,7 @@ Get LT:  0.990269  0.003829
 Get electron coutns
 Get total Luminosity for target He3   kin 5 : 1.82251e+07
 5 runs are added 
-
+0.318, 0.3398, 0.3616, 0.3834, 0.4052, 
 Get LT:  0.994469  0.004037
 Get electron coutns
 Get LT:  0.993478  0.00583
@@ -620,7 +620,7 @@ Get LT:  0.993899  0.004388
 Get electron coutns
 Get total Luminosity for target He3   kin 7 : 3.88785e+07
 17 runs are added 
-
+0.391, 0.411, 0.431, 0.451, 0.471, 0.491, 
 Get LT:  0.996673  0.007249
 Get electron coutns
 Get LT:  0.996715  0.007709
@@ -657,7 +657,7 @@ Get LT:  0.997381  0.009101
 Get electron coutns
 Get total Luminosity for target He3   kin 9 : 7.50378e+07
 31 runs are added 
-
+0.462, 0.4835, 0.505, 0.5265, 0.548, 0.5695, 
 Get LT:  0.997897  0.013219
 Get electron coutns
 Get LT:  0.997464  0.011101
@@ -722,7 +722,7 @@ Get LT:  0.998601  0.008931
 Get electron coutns
 Get total Luminosity for target He3   kin 11 : 1.29016e+08
 51 runs are added 
-
+0.535, 0.552125, 0.56925, 0.586375, 0.6035, 0.620625, 0.63775, 0.654875, 
 Get LT:  0.997745  0.01463
 Get electron coutns
 Get LT:  0.998301  0.022007
@@ -827,7 +827,7 @@ Get LT:  0.998426  0.008975
 Get electron coutns
 Get total Luminosity for target He3   kin 13 : 2.6297e+08
 71 runs are added 
-
+0.606, 0.627, 0.648, 0.669, 0.69, 0.711, 0.732, 
 Get LT:  0.998115  0.018489
 Get electron coutns
 Get LT:  0.998017  0.016805
@@ -972,7 +972,7 @@ Get LT:  0.998294  0.015064
 Get electron coutns
 Get total Luminosity for target He3   kin 15 : 6.85985e+08
 173 runs are added 
-
+0.678, 0.703, 0.728, 0.753, 0.778, 0.803, 
 Get LT:  0.997554  0.02327
 Get electron coutns
 Get LT:  0.999499  0.014154
@@ -1321,7 +1321,7 @@ Get LT:  0.999015  0.019833
 Get electron coutns
 Get total Luminosity for target H3   kin 0 : 1.99381e+07
 18 runs are added 
-
+0.159, 0.1785, 0.198, 0.2175, 
 Get LT:  0.920848  0.003375
 Get electron coutns
 Get LT:  0.916964  0.002407
@@ -1360,7 +1360,7 @@ Get LT:  0.937883  0.002792
 Get electron coutns
 Get total Luminosity for target H3   kin 1 : 1.19375e+07
 4 runs are added 
-
+0.176, 0.1965, 0.217, 0.2375, 
 Get LT:  0.946605  0.002081
 Get electron coutns
 Get LT:  0.945877  0.002056
@@ -1371,7 +1371,7 @@ Get LT:  0.94708  0.001945
 Get electron coutns
 Get total Luminosity for target H3   kin 2 : 1.77282e+07
 9 runs are added 
-
+0.21, 0.2325, 0.255, 0.2775, 
 Get LT:  0.969211  0.004061
 Get electron coutns
 Get LT:  0.968992  0.00273
@@ -1392,7 +1392,7 @@ Get LT:  0.968131  0.003142
 Get electron coutns
 Get total Luminosity for target H3   kin 3 : 2.26698e+07
 14 runs are added 
-
+0.247, 0.2662, 0.2854, 0.3046, 0.3238, 
 Get LT:  0.981117  0.003566
 Get electron coutns
 Get LT:  0.981343  0.003869
@@ -1423,7 +1423,7 @@ Get LT:  0.981631  0.011525
 Get electron coutns
 Get total Luminosity for target H3   kin 4 : 2.02536e+07
 6 runs are added 
-
+0.283, 0.3034, 0.3238, 0.3442, 0.3646, 
 Get LT:  0.985534  0.004032
 Get electron coutns
 Get LT:  0.985713  0.003918
@@ -1438,7 +1438,7 @@ Get LT:  0.986084  0.004201
 Get electron coutns
 Get total Luminosity for target H3   kin 5 : 1.93358e+07
 5 runs are added 
-
+0.318, 0.3398, 0.3616, 0.3834, 0.4052, 
 Get LT:  0.992038  0.003541
 Get electron coutns
 Get LT:  0.99149  0.004975
@@ -1451,7 +1451,7 @@ Get LT:  0.991574  0.004572
 Get electron coutns
 Get total Luminosity for target H3   kin 7 : 4.3444e+07
 14 runs are added 
-
+0.391, 0.411, 0.431, 0.451, 0.471, 0.491, 
 Get LT:  0.996092  0.006312
 Get electron coutns
 Get LT:  0.995894  0.006849
@@ -1482,7 +1482,7 @@ Get LT:  0.995413  0.00732
 Get electron coutns
 Get total Luminosity for target H3   kin 9 : 8.29027e+07
 23 runs are added 
-
+0.462, 0.4835, 0.505, 0.5265, 0.548, 0.5695, 
 Get LT:  0.998107  0.008689
 Get electron coutns
 Get LT:  0.99681  0.00908
@@ -1531,7 +1531,7 @@ Get LT:  0.997457  0.013452
 Get electron coutns
 Get total Luminosity for target H3   kin 11 : 1.45246e+08
 42 runs are added 
-
+0.535, 0.552125, 0.56925, 0.586375, 0.6035, 0.620625, 0.63775, 0.654875, 
 Get LT:  0.997607  0.015443
 Get electron coutns
 Get LT:  0.997999  0.010834
@@ -1618,7 +1618,7 @@ Get LT:  0.998303  0.008229
 Get electron coutns
 Get total Luminosity for target H3   kin 13 : 3.016e+08
 62 runs are added 
-
+0.606, 0.627, 0.648, 0.669, 0.69, 0.711, 0.732, 
 Get LT:  0.998052  0.011194
 Get electron coutns
 Get LT:  0.997877  0.011877
@@ -1745,7 +1745,7 @@ Get LT:  0.997566  0.014215
 Get electron coutns
 Get total Luminosity for target H3   kin 15 : 8.0088e+08
 146 runs are added 
-
+0.678, 0.703, 0.728, 0.753, 0.778, 0.803, 
 Get LT:  0.998242  0.011615
 Get electron coutns
 Get LT:  0.998087  0.011469

@@ -1,5 +1,5 @@
 #define MAXBIN 35
-#define dBin 0.01
+#define dBin 0.02
 TString Yieldpath="/w/halla-scifs17exp/triton/hanjie/MARATHON/analysis/Yield/LHRS/RawYield/vz009_new_25per/";
 int ReadYield(TString filename,int kin,Double_t x[][MAXBIN],Double_t xavg[][MAXBIN],Double_t Q2[][MAXBIN],Double_t Yield[][MAXBIN],Double_t Y_err[][MAXBIN]){
     ifstream file;
