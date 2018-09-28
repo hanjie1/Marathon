@@ -13,8 +13,8 @@ void plot_H1_yield()
      }}
 
    TString Yfile;
-   Int_t KIN=1;
-   while(KIN<2){
+   Int_t KIN=0;
+   while(KIN<16){
        Yfile=Form("H1_kin%d.txt",KIN);
        ReadYield(Yfile,KIN,H1_x,H1_xavg,H1_Q2,H1_Yield,H1_Yerr); 
        if(KIN<5)KIN+=1;
@@ -23,7 +23,7 @@ void plot_H1_yield()
 
   TGraphErrors *gH1Raw[11];
   TGraph *gH1xbj[11];
-  for(int ii=1;ii<2;ii++){
+  for(int ii=0;ii<11;ii++){
       gH1xbj[ii]=new TGraph();
       gH1Raw[ii]=new TGraphErrors();
       int nn=0;
@@ -41,7 +41,7 @@ void plot_H1_yield()
 
   TCanvas *c1=new TCanvas("c1");
   TMultiGraph *mg1=new TMultiGraph();
-  for(int ii=1;ii<2;ii++){
+  for(int ii=0;ii<10;ii++){
       gH1Raw[ii]->SetMarkerStyle(8);
       if(ii==9)gH1Raw[ii]->SetMarkerColor(30);
       else gH1Raw[ii]->SetMarkerColor(ii+1);
@@ -52,7 +52,7 @@ void plot_H1_yield()
 
   auto leg1=new TLegend(0.7,0.6,0.85,0.85);
   int nn=1;
-  for(int ii=1;ii<2;ii++){
+  for(int ii=0;ii<11;ii++){
       if(ii<=5)leg1->AddEntry(gH1Raw[ii],Form("H1 kin%d",ii),"P");
       else {leg1->AddEntry(gH1Raw[ii],Form("H1 kin%d",ii+nn),"P");
             nn++;
@@ -73,7 +73,7 @@ void plot_H1_yield()
 
   auto leg2=new TLegend(0.7,0.6,0.85,0.85);
   nn=1;
-  for(int ii=1;ii<2;ii++){
+  for(int ii=0;ii<11;ii++){
       if(ii<=5)leg2->AddEntry(gH1xbj[ii],Form("H1 kin%d",ii),"P");
       else {leg2->AddEntry(gH1xbj[ii],Form("H1 kin%d",ii+nn),"P");
             nn++;
