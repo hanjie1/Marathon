@@ -1,26 +1,26 @@
-TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1/";
+TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1_calibration/";
 //TString rootpath="/lustre/expphy/volatile/halla/triton/Marathon_Rootfiles/pass1_calibration/";
 TString listpath="/w/halla-scifs17exp/triton/Runlist/";
 
 TChain *GetTree(int run_number,int kin,TString TreeName){
 
         TChain *T=new TChain(TreeName.Data());
-        //TString File=rootpath+Form("kin%d/tritium_%d.root",kin,run_number);
-        TString File=rootpath+Form("tritium_%d.root",run_number);
+        TString File=rootpath+Form("kin%d/tritium_%d.root",kin,run_number);
+        //TString File=rootpath+Form("tritium_%d.root",run_number);
         TString lastfile;
         if(!gSystem->AccessPathName(File)){
            if(TreeName!="EndLeft")T->Add(File);
 	   lastfile=File;     
 
            int index=1;
-	   //File=rootpath+Form("kin%d/tritium_%d_%d.root",kin,run_number,index);
-	   File=rootpath+Form("tritium_%d_%d.root",run_number,index);
+	   File=rootpath+Form("kin%d/tritium_%d_%d.root",kin,run_number,index);
+	   //File=rootpath+Form("tritium_%d_%d.root",run_number,index);
            while(!gSystem->AccessPathName(File)){
 		  if(TreeName!="EndLeft")T->Add(File);
                   lastfile=File;
                   index++;
-		  //File=rootpath+Form("kin%d/tritium_%d_%d.root",kin,run_number,index);
-		  File=rootpath+Form("tritium_%d_%d.root",run_number,index);
+		  File=rootpath+Form("kin%d/tritium_%d_%d.root",kin,run_number,index);
+		  //File=rootpath+Form("tritium_%d_%d.root",run_number,index);
            }
         }
         else {cout<<run_number<<" rootfile can't be found"<<endl; return 0;}
