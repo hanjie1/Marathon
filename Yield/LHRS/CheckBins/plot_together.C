@@ -1,6 +1,6 @@
 void plot_together()
 {
-     TFile *f1=new TFile("Xbj_new.root");
+     TFile *f1=new TFile("Phys_all.root");
      TString target[4]={"H1","D2","He3","H3"};
      int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
@@ -10,11 +10,11 @@ void plot_together()
      TH1F *hH3[11];
      for(int ii=0;ii<11;ii++){
          if(ii<5){
-            hH1[ii]=(TH1F *)f1->Get(Form("%s_kin%d","H1",kin[ii]));
+            hH1[ii]=(TH1F *)f1->Get(Form("%s_kin%d_Nu","H1",kin[ii]));
          }
-         hD2[ii]=(TH1F *)f1->Get(Form("%s_kin%d","D2",kin[ii]));
-         hHe3[ii]=(TH1F *)f1->Get(Form("%s_kin%d","He3",kin[ii]));
-         hH3[ii]=(TH1F *)f1->Get(Form("%s_kin%d","H3",kin[ii]));
+         hD2[ii]=(TH1F *)f1->Get(Form("%s_kin%d_Nu","D2",kin[ii]));
+         hHe3[ii]=(TH1F *)f1->Get(Form("%s_kin%d_Nu","He3",kin[ii]));
+         hH3[ii]=(TH1F *)f1->Get(Form("%s_kin%d_Nu","H3",kin[ii]));
      }
 
    //  int color[5]={1,2,3,4,6,7,8,9,11};
@@ -26,7 +26,7 @@ void plot_together()
      THStack *hs[11];
      for(int ii=0;ii<11;ii++){
 	TString hname = Form("kin%d",kin[ii]);
-        hs[ii]=new THStack(hname.Data(),"xbj distribution");
+        hs[ii]=new THStack(hname.Data(),"Nu distribution");
         if(ii<5){
            hs[ii]->Add(hH1[ii]);
            hH1[ii]->SetLineColor(1);
@@ -65,9 +65,9 @@ void plot_together()
      }
 
      for(int ii=0;ii<11;ii++){
-	 if(ii==0)c1[ii]->Print("All_xbj.pdf[");
-	 c1[ii]->Print("All_xbj.pdf");
-	 if(ii==10)c1[ii]->Print("All_xbj.pdf]");
+	 if(ii==0)c1[ii]->Print("All_Nu.pdf[");
+	 c1[ii]->Print("All_Nu.pdf");
+	 if(ii==10)c1[ii]->Print("All_Nu.pdf]");
      }
 
 

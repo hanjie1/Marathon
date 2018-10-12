@@ -1,16 +1,16 @@
 #include <TMath.h>
 
-const double bH3_A=0.00021;//0.0001293;
-const double bH3_B=-0.00893;//-0.007399;
+const double bH3_A=0.00021;
+const double bH3_B=-0.00893;
 
-const double bHe3_A=0.00006;//0.00008686;
-const double bHe3_B=-0.00392;//-0.004759;
+const double bHe3_A=0.00006;
+const double bHe3_B=-0.00392;
 
-const double bD2_A=0.00017;//0.0001147;
-const double bD2_B=-0.00813;//-0.006651;
+const double bD2_A=0.00017;
+const double bD2_B=-0.00813;
 
-const double bH1_A=0.00022;//0.0001527; 
-const double bH1_B=-0.00982;//-0.008529;
+const double bH1_A=0.00022;
+const double bH1_B=-0.009822;
 
 const Double_t Qe=TMath::Qe();
 const Double_t Na=TMath::Na();
@@ -40,36 +40,35 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
      row=result->Next();
      double aCharge=atof(row->GetField(0));
      int ncurrent=atoi(row->GetField(1));
-     //double I1=atof(row->GetField(2));
+     double I1=atof(row->GetField(2));
      double target_thickness=atof(row->GetField(3));
      TString target=row->GetField(4);
 
  
      Server->Close(); 
       
-     Charge=aCharge/(Qe*1e6);
-
      TString TreeName="T";
      TChain* T=GetTree(run_number,kin,TreeName);
 
-     Double_t gain=0.0003361;
-     Double_t offset=0.0217;
-
-     Double_t dnewr;
+     Charge=aCharge/(Qe*1e6);
+     
      T->SetBranchStatus("*",0);
-     T->SetBranchStatus("evLeftdnew",1);
+     T->SetBranchStatus("LeftBCMev.BeamUp_time_v1495",1);
+     T->SetBranchStatus("LeftBCMev.current_dnew",1);
 
-     T->SetBranchAddress("evLeftdnew_r",&dnewr);
- 
+     Double_t current_dnew;
+     Double_t beamUp[5];
+     T->SetBranchAddress("LeftBCMev.BeamUp_time_v1495",beamUp);
+     T->SetBranchAddress("LeftBCMev.current_dnew",&current_dnew);
+     
      Int_t nentries=T->GetEntries();
      Double_t totalI=0;
      Int_t nI=0;
      for(int ii=0;ii<nentries;ii++)
       {
 	 T->GetEntry(ii);
-         Double_t tmpI = gain*dnewr+offset;
-         if(tmpI>4 && tmpI<30){
-            totalI+=tmpI;
+         if(current_dnew>4){
+            totalI+=current_dnew;
             nI++;
          }
       }
@@ -96,26 +95,44 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
         massA=3.0;
      }
      Ntarg=target_thickness*boiling_corr*Na/massA;
-cout<<"current:  "<<avgI<<endl;
+
      return;
 }
 
-Double_t CalcLum(int kin, TString target){
-     int nrun=0;
-     vector<Int_t> runList;
-     nrun=GetRunList(runList,kin,target);
-     if(nrun==0)exit(0);
+Double_t CalcLum(TString filename){
+         ifstream infile;
+         infile.open(filename);
+         if(!infile.is_open()){cout<<"!!! run list file not found "<<endl;return 0;}
+
+     TString tmp;
+     TString target;
+     int kin=0;
+     if(tmp.ReadToken(infile))target=tmp;
+     else{
+          cout<<"No target type!!!"<<endl;
+          exit(0);
+     }
+
+     if(tmp.ReadToken(infile))kin=atoi(tmp);
+     else{
+          cout<<"No kinematic!!!"<<endl;
+          exit(0);
+     }
 
      int run_number,success=0;
      Ssiz_t from=0;
      TString content;
      Double_t NNtarg=0.0,Ncharge=0.0;
      Double_t LUM=0.0;
-     for(int ii=0;ii<runList.size();ii++){
-         run_number = runList[ii];
-         RunLum(run_number,kin,Ncharge,NNtarg);
-         LUM+=Ncharge*NNtarg/CMtoNB;
+     if(tmp.ReadLine(infile)){
+        while(tmp.Tokenize(content,from,","))
+         {
+              run_number = atoi(content);
+              RunLum(run_number,kin,Ncharge,NNtarg);
+              LUM+=Ncharge*NNtarg/CMtoNB;
+         }
     }
+       infile.close();
     
     return LUM;
 

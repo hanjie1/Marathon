@@ -4,8 +4,8 @@
   Double_t ph_min=-0.03;
   Double_t dp_max=0.040;
   Double_t dp_min=-0.040;
-  Double_t vz_max=0.07;
-  Double_t vz_min=-0.07;
+  Double_t vz_max=0.10;
+  Double_t vz_min=-0.09;
 
   TCut beta = "L.tr.beta>0";
   TCut Ep = "(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>0.75";
