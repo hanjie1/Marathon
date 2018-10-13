@@ -41,14 +41,14 @@ void Allkin_CalcRawYield(){
    TString target[4]={"H1","D2","He3","H3"};
    int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
-   for(int nn=0;nn<1;nn++){   
-    for(int mm=1;mm<2;mm++){
+   for(int nn=0;nn<4;nn++){   
+    for(int mm=0;mm<11;mm++){
      if(nn==0&&mm>4)break;
      Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
     ofstream myfile;
-    myfile.open(Form("RawYield/test002_vz007/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+    myfile.open(Form("RawYield/vz009_bin001_25per/%s_kin%d.txt",target[nn].Data(),kin[mm]));
     myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<Int_t> runList;
@@ -57,13 +57,36 @@ void Allkin_CalcRawYield(){
      cout<<nrun<<" runs are added "<<endl;
      if(nrun==0)exit(0);
 
+     Double_t bin_max=0;
+     Double_t bin_min=0;
+     int nkin=0;
+     if(kin[mm]<6)nkin=kin[mm];
+     if(kin[mm]==7)nkin=kin[mm]-1;
+     if(kin[mm]==9)nkin=kin[mm]-2;
+     if(kin[mm]==11)nkin=kin[mm]-3;
+     if(kin[mm]==13)nkin=kin[mm]-4;
+     if(kin[mm]==15)nkin=kin[mm]-5;
+     if(target[nn]=="H1"){
+         bin_min=H1_xmin[nkin];
+         bin_max=H1_xmax[nkin];
+     }
+     if(target[nn]=="D2"){
+         bin_min=D2_xmin[nkin];
+         bin_max=D2_xmax[nkin];
+     }
+     if(target[nn]=="He3"){
+         bin_min=He_xmin[nkin];
+         bin_max=He_xmax[nkin];
+     }
+     if(target[nn]=="H3"){
+         bin_min=H3_xmin[nkin];
+         bin_max=H3_xmax[nkin];
+     }
+     int nBin=(bin_max-bin_min)/dBin;
      Double_t xbj[35];
-//     Double_t dBin=(xmax[mm]-xmin[mm])/(nBin[mm]*1.0);
-     Double_t dBin=0.02;
-     nBin[mm]=35;
-     for(int ii=0;ii<nBin[mm];ii++){
-        // xbj[ii]=xmin[mm]+ii*dBin;
-         xbj[ii]=0.14+ii*dBin;
+     for(int ii=0;ii<nBin;ii++){
+         xbj[ii]=bin_min+ii*dBin;
+         //xbj[ii]=0.25+ii*0.01;
      }
      cout<<endl;
 
@@ -106,9 +129,9 @@ void Allkin_CalcRawYield(){
          Int_t nentries=electron->GetN();
          for(int jj=0;jj<nentries;jj++){
 	     T->GetEntry(electron->GetEntry(jj));
-             for(int kk=0;kk<nBin[mm];kk++){
+             for(int kk=0;kk<nBin;kk++){
 		 Double_t dxbj=axbj-xbj[kk];
-                 if(dxbj<dBin && dxbj>=0){
+                 if(dxbj<0.01 && dxbj>=0){
 		    totalNe[kk]+=1.0/livetime;
 		    NNe[kk]++;
                     RawNe[kk]++;
@@ -119,7 +142,7 @@ void Allkin_CalcRawYield(){
 	     }
          } 
 
-         for(int jj=0;jj<nBin[mm];jj++){
+         for(int jj=0;jj<nBin;jj++){
            Double_t tmp_err=0.0;
            if(NNe[jj]!=0){
               tmp_err=sqrt(1.0/NNe[jj]+(livetime_err/livetime)*(livetime_err/livetime))*NNe[jj]/livetime;
@@ -135,7 +158,7 @@ void Allkin_CalcRawYield(){
     Double_t rawYield_err[35]={0.0};
     Double_t avgQ2[35]={0.0};
     Double_t avgXbj[35]={0.0};
-    for(int ii=0;ii<nBin[mm];ii++){
+    for(int ii=0;ii<nBin;ii++){
         totalNe_err[ii]=sqrt(totalNe_err[ii]);
         //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
 	rawYield[ii]=totalNe[ii]/LUM;
@@ -146,7 +169,7 @@ void Allkin_CalcRawYield(){
         }
 	if(avgXbj[ii]==0)continue;
         else{
-           myfile<<ii<<", "<<xbj[ii]<<", "<<avgXbj[ii]<<", "<<avgQ2[ii]<<", "<<rawYield[ii]<<", "<<rawYield_err[ii]<<endl;
+           myfile<<xbj[ii]<<", "<<avgXbj[ii]<<", "<<avgQ2[ii]<<", "<<rawYield[ii]<<", "<<rawYield_err[ii]<<endl;
         }
     }
 

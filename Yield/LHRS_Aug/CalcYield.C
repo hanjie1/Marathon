@@ -2,12 +2,13 @@
 #include "SetCut.h"
 #include "SetCons.h"
 #include "CalcLum.h"
+#include "CalcLT.h"
 #include "SearchXS.h"
 #include <TMath.h>
 
-TRI_VAR GetLT(int run_number)
+TRI_VAR GetLT(int run_number,int kin)
 {
-     TString table="LHRStest";
+/*     TString table="LHRStest";
      TSQLServer* Server = TSQLServer::Connect("mysql://halladb/triton-work","triton-user","3He3Hdata");
 
      TString  query=Form("select * from %s where run_number=%d;",table.Data(),run_number);
@@ -28,11 +29,14 @@ TRI_VAR GetLT(int run_number)
      row=result->Next();
      Double_t livetime=atof(row->GetField(0));
      Double_t livetime_err=atof(row->GetField(1));
+*/
+     TRI_VAR LT;
+    TRI_VAR livetime=CalcLT(run_number,kin,1);
 
-     LT.value=livetime;
-     LT.err=livetime_err;
+     LT.value=livetime.value;
+     LT.err=livetime.err;
 
-     Server->Close(); 
+    // Server->Close(); 
      return LT;      
 }
 
@@ -67,7 +71,7 @@ void CalcYield(){
      }
 
     ofstream myfile;
-    myfile.open(Form("RC_Yield/vz007/%s_kin%d.txt",target.Data(),kin));
+    myfile.open(Form("RawYield/%s_kin%d.txt",target.Data(),kin));
     myfile<<"xbj  Yield"<<endl;
 
      vector<Int_t> runList;
@@ -125,7 +129,7 @@ void CalcYield(){
      Double_t totalNe_err[17]={0.0};
      for(int ii=0;ii<nrun;ii++){
          run_number=runList[ii];
-         TRI_VAR LT=GetLT(run_number);
+         TRI_VAR LT=GetLT(run_number,kin);
          Double_t livetime=LT.value; 
          Double_t livetime_err=LT.err; 
          cout<<"Get LT:  "<<livetime<<"  "<<livetime_err<<endl;
@@ -156,7 +160,7 @@ void CalcYield(){
          for(int jj=0;jj<nentries;jj++){
 	     T->GetEntry(electron->GetEntry(jj));
          //    cout<<aTheta<<endl;
-	     Radcor=SearchXS(kin,aEprime,aTheta,theta,Eprime,xs_born,xs_rad);
+	 //    Radcor=SearchXS(kin,aEprime,aTheta,theta,Eprime,xs_born,xs_rad);
              if(Radcor==0.0){
                 cout<<"This event can't find Radcor"<<endl;
                 Radcor=1.0;

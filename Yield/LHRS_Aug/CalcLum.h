@@ -1,4 +1,5 @@
 #include <TMath.h>
+#include "CalcCharge.h"
 
 const double bH3_A=0.00021;
 const double bH3_B=-0.00893;
@@ -15,13 +16,17 @@ const double bH1_B=-0.009822;
 const Double_t Qe=TMath::Qe();
 const Double_t Na=TMath::Na();
 
+const Double_t gain=0.0003264;
+const Double_t offset=0.1055;
+
+
 const Double_t CMtoNB=1.0e33; 
 
-void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
+void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg,TString target)
 {
      Charge=0;
      Ntarg=0;
-     TString table="LHRStest";
+/*     TString table="LHRStest";
  
      TSQLServer* Server = TSQLServer::Connect("mysql://halladb/triton-work","triton-user","3He3Hdata");
 
@@ -46,29 +51,39 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
 
  
      Server->Close(); 
+*/
       
      TString TreeName="T";
      TChain* T=GetTree(run_number,kin,TreeName);
+     Double_t aCharge=CalcCharge(run_number,kin);
+     Double_t target_thickness;
+     if(target=="D2")target_thickness=0.1422;
+     if(target=="H1")target_thickness=0.0708;
+
 
      Charge=aCharge/(Qe*1e6);
      
      T->SetBranchStatus("*",0);
+     T->SetBranchStatus("evLeftdnew_r",1);
      T->SetBranchStatus("LeftBCMev.BeamUp_time_v1495",1);
      T->SetBranchStatus("LeftBCMev.current_dnew",1);
 
-     Double_t current_dnew;
+     Double_t current_dnew,dnew_r;
      Double_t beamUp[5];
+     T->SetBranchAddress("evLeftdnew_r",&dnew_r);
      T->SetBranchAddress("LeftBCMev.BeamUp_time_v1495",beamUp);
      T->SetBranchAddress("LeftBCMev.current_dnew",&current_dnew);
      
      Int_t nentries=T->GetEntries();
      Double_t totalI=0;
      Int_t nI=0;
+     Double_t current;
      for(int ii=0;ii<nentries;ii++)
       {
 	 T->GetEntry(ii);
          if(current_dnew>4){
-            totalI+=current_dnew;
+            current=gain*dnew_r+offset;
+            totalI+=current;
             nI++;
          }
       }
@@ -95,7 +110,7 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
         massA=3.0;
      }
      Ntarg=target_thickness*boiling_corr*Na/massA;
-
+cout<<run_number<<"  "<<avgI<<"  "<<boiling_corr<<"  "<<aCharge<<endl;
      return;
 }
 
@@ -128,7 +143,7 @@ Double_t CalcLum(TString filename){
         while(tmp.Tokenize(content,from,","))
          {
               run_number = atoi(content);
-              RunLum(run_number,kin,Ncharge,NNtarg);
+              RunLum(run_number,kin,Ncharge,NNtarg,target);
               LUM+=Ncharge*NNtarg/CMtoNB;
          }
     }

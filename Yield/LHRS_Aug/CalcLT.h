@@ -44,7 +44,7 @@ TRI_VAR CalcLT(int run_number,int kin,int beamcut=0)
         for(int ii=0;ii<nentries;ii++){
 	    T->GetEntry(ii);
 	    if(isrenewed){
-               if(current_dnew>0){
+               if(current_dnew>4){
                   Nscaler=Nscaler+evT2-lastcount;
                   Nmeas=Nmeas+entryT2;
                }

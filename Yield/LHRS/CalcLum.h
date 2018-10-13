@@ -1,16 +1,16 @@
 #include <TMath.h>
 
-const double bH3_A=0.00021;//0.0001293;
-const double bH3_B=-0.00893;//-0.007399;
+const double bH3_A=0.0001293;
+const double bH3_B=-0.007399;
 
-const double bHe3_A=0.00006;//0.00008686;
-const double bHe3_B=-0.00392;//-0.004759;
+const double bHe3_A=0.00008686;
+const double bHe3_B=-0.004759;
 
-const double bD2_A=0.00017;//0.0001147;
-const double bD2_B=-0.00813;//-0.006651;
+const double bD2_A=0.0001147;
+const double bD2_B=-0.006651;
 
-const double bH1_A=0.00022;//0.0001527; 
-const double bH1_B=-0.00982;//-0.008529;
+const double bH1_A=0.0001527; 
+const double bH1_B=-0.008529;
 
 const Double_t Qe=TMath::Qe();
 const Double_t Na=TMath::Na();
@@ -68,7 +68,7 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
       {
 	 T->GetEntry(ii);
          Double_t tmpI = gain*dnewr+offset;
-         if(tmpI>4 && tmpI<30){
+         if(tmpI>0 && tmpI<30){
             totalI+=tmpI;
             nI++;
          }
@@ -96,7 +96,7 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
         massA=3.0;
      }
      Ntarg=target_thickness*boiling_corr*Na/massA;
-cout<<"current:  "<<avgI<<endl;
+//cout<<"current:  "<<avgI<<endl;
      return;
 }
 
