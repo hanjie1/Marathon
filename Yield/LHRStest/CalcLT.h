@@ -46,6 +46,8 @@ TRI_VAR CalcLT(int run_number,int kin,int beamcut=0)
 
         Double_t gain=0.0003361;
         Double_t offset=0.0217;
+//      Double_t gain=0.0003264;
+//      Double_t offset=0.1055;
 
 	Double_t lastcount=0;
         Double_t entryT2=0;

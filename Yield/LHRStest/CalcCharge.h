@@ -8,6 +8,8 @@ Double_t CalcCharge(int run_number,int kin)
 
      Double_t gain=0.0003361;
      Double_t offset=0.0217;
+//      Double_t gain=0.0003264;
+//      Double_t offset=0.1055;
 
      Double_t dnewr,dnewc,Lclock,isrenewed;
      Double_t beamUp[5];
