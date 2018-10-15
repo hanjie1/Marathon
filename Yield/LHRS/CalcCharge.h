@@ -40,7 +40,7 @@ Double_t CalcCharge(int run_number,int kin)
         T->GetEntry(ii);
         current = gain*dnewr+offset;
         if(isrenewed){
-            if(current>0 && current<30){
+            if(current>offset && current<30){
 	       charge = charge+current*(Lclock-last_clock)/103700.0;
              } 
 	    last_clock=Lclock;
@@ -52,7 +52,7 @@ Double_t CalcCharge(int run_number,int kin)
      if(last_clock!=Lclock_max && noend==0){
         Double_t tmp_t=(Lclock_max-last_clock)/103700.0;
         current = (dnew_max-dnewc)/tmp_t*gain+offset;
-        if(current>0 && current<30){
+        if(current>offset && current<30){
              charge = charge+current*tmp_t;
              cout<<"charge:  "<<charge<<"  "<<current<<"  "<<tmp_t<<endl;
         }

@@ -56,7 +56,7 @@ int Update(int run_number=0,TString target="NULL",int kin=0){
 
   if(update){
 //      query=Form("update %s set target='%s',kinematic=%d,livetime=%lf,charge=%lf,target_thickness=%lf,current=%d where run_number=%d",table.Data(),target.Data(),kin,livetime,charge,target_thickness,ncurrent,run_number);
-      query=Form("update %s set charge=%lf,current=%d where run_number=%d",table.Data(),charge,ncurrent,run_number);
+      query=Form("update %s set charge=%lf,livetime=%f,LT_err=%f where run_number=%d",table.Data(),charge,livetime.value,livetime.err,run_number);
       result=Server->Query(query.Data());
       if(!result){
          cout<<"run "<<run_number<<" can't update sql"<<endl;

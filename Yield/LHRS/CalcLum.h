@@ -68,7 +68,7 @@ void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
       {
 	 T->GetEntry(ii);
          Double_t tmpI = gain*dnewr+offset;
-         if(tmpI>0 && tmpI<30){
+         if(tmpI>offset && tmpI<30){
             totalI+=tmpI;
             nI++;
          }
