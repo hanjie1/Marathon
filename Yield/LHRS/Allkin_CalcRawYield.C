@@ -48,7 +48,7 @@ void Allkin_CalcRawYield(){
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
     ofstream myfile;
-    myfile.open(Form("RawYield/vz009_new_25per/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target[nn].Data(),kin[mm]));
     myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<Int_t> runList;
@@ -57,21 +57,23 @@ void Allkin_CalcRawYield(){
      cout<<nrun<<" runs are added "<<endl;
      if(nrun==0)exit(0);
 
-     Double_t xbj[35];
-     Double_t dBin=(xmax[mm]-xmin[mm])/(nBin[mm]*1.0);
-     for(int ii=0;ii<nBin[mm];ii++){
+     Double_t xbj[36];
+    // Double_t dBin=(xmax[mm]-xmin[mm])/(nBin[mm]*1.0);
+     Int_t nBin=36;
+     Double_t dBin=0.02;
+     for(int ii=0;ii<nBin;ii++){
         // xbj[ii]=xmin[mm]+ii*dBin;
-         xbj[ii]=0.14+ii*0.02;
+         xbj[ii]=0.14+ii*dBin;
      }
      cout<<endl;
 
      TString TreeName="T";
      TChain* T;
-     Double_t totalNe[35]={0.0};
-     Double_t RawNe[35]={0.0};
-     Double_t totalQ2[35]={0.0};
-     Double_t totalXbj[35]={0.0};
-     Double_t totalNe_err[35]={0.0};
+     Double_t totalNe[36]={0.0};
+     Double_t RawNe[36]={0.0};
+     Double_t totalQ2[36]={0.0};
+     Double_t totalXbj[36]={0.0};
+     Double_t totalNe_err[36]={0.0};
      for(int ii=0;ii<nrun;ii++){
          run_number=runList[ii];
          TRI_VAR LT=GetLT(run_number);
@@ -100,11 +102,11 @@ void Allkin_CalcRawYield(){
          T->SetBranchAddress("LeftBCMev.isrenewed",&isrenewed);
 
          Double_t Radcor=1.0;
-	 Int_t NNe[35]={0};
+	 Int_t NNe[36]={0};
          Int_t nentries=electron->GetN();
          for(int jj=0;jj<nentries;jj++){
 	     T->GetEntry(electron->GetEntry(jj));
-             for(int kk=0;kk<nBin[mm];kk++){
+             for(int kk=0;kk<nBin;kk++){
 		 Double_t dxbj=axbj-xbj[kk];
                  if(dxbj<dBin && dxbj>=0){
 		    totalNe[kk]+=1.0/livetime;
@@ -117,7 +119,7 @@ void Allkin_CalcRawYield(){
 	     }
          } 
 
-         for(int jj=0;jj<nBin[mm];jj++){
+         for(int jj=0;jj<nBin;jj++){
            Double_t tmp_err=0.0;
            if(NNe[jj]!=0){
               tmp_err=sqrt(1.0/NNe[jj]+(livetime_err/livetime)*(livetime_err/livetime))*NNe[jj]/livetime;
@@ -129,11 +131,11 @@ void Allkin_CalcRawYield(){
      }
 
 
-    Double_t rawYield[35]={0.0};
-    Double_t rawYield_err[35]={0.0};
-    Double_t avgQ2[35]={0.0};
-    Double_t avgXbj[35]={0.0};
-    for(int ii=0;ii<nBin[mm];ii++){
+    Double_t rawYield[36]={0.0};
+    Double_t rawYield_err[36]={0.0};
+    Double_t avgQ2[36]={0.0};
+    Double_t avgXbj[36]={0.0};
+    for(int ii=0;ii<nBin;ii++){
         totalNe_err[ii]=sqrt(totalNe_err[ii]);
         //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
 	rawYield[ii]=totalNe[ii]/LUM;
