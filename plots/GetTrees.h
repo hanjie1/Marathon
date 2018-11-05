@@ -1,4 +1,5 @@
-TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1_calibration/";
+//TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1_calibration/";
+TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1/";
 //TString rootpath="/lustre/expphy/volatile/halla/triton/Marathon_Rootfiles/pass1_calibration/";
 TString listpath="/w/halla-scifs17exp/triton/Runlist/";
 

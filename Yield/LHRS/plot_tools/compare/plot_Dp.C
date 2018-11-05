@@ -56,10 +56,14 @@ void plot_Dp()
   }
   cout<<endl;
 
+  ofstream myfile;
+  myfile.open("DP_ratio.txt");
+  myfile<<"-------- old bin ------------"<<endl;
   TGraphErrors *gDpRaw[5];
   for(int ii=0;ii<5;ii++){
       gDpRaw[ii]=new TGraphErrors();
       int nn=0;
+      myfile<<"kin "<<ii<<endl;
       for(int jj=0;jj<MAXBIN;jj++){
           if(D2_x[ii][jj]==0||H1_x[ii][jj]==0)continue;
           Dp_ratio[ii][jj]=D2_Yield[ii][jj]/H1_Yield[ii][jj];
@@ -67,13 +71,19 @@ void plot_Dp()
           if(Dp_err[ii][jj]>0.1)continue;
           gDpRaw[ii]->SetPoint(nn,D2_xavg[ii][jj],Dp_ratio[ii][jj]);
           gDpRaw[ii]->SetPointError(nn,0.0,Dp_err[ii][jj]);
+          myfile<<D2_x[ii][jj]+0.01<<"  "<<D2_xavg[ii][jj]<<"  "<<Dp_ratio[ii][jj]<<"  "<<Dp_err[ii][jj]<<endl;
           nn++;
       }
   }
+  myfile.close();
     
+  ofstream myfile1;
+  myfile1.open("DP_ratio_new.txt");
+  myfile1<<"-------- new bin ------------"<<endl;
   TGraphErrors *gDpRaw1[5];
   for(int ii=0;ii<5;ii++){
       gDpRaw1[ii]=new TGraphErrors();
+      myfile1<<"kin "<<ii<<endl;
       int nn=0;
       for(int jj=0;jj<10;jj++){
           if(newx[ii][jj]==0)continue;
@@ -81,10 +91,11 @@ void plot_Dp()
 	  Dp_err1[ii][jj]=Dp_ratio1[ii][jj]*sqrt(pow(D2_Yerr1[ii][jj]/D2_Yield1[ii][jj],2)+pow(H1_Yerr1[ii][jj]/H1_Yield1[ii][jj],2));
           gDpRaw1[ii]->SetPoint(nn,newx[ii][jj],Dp_ratio1[ii][jj]);
           gDpRaw1[ii]->SetPointError(nn,0.0,Dp_err1[ii][jj]);
+          myfile1<<newx[ii][jj]<<"  "<<D2_xavg1[ii][jj]<<"  "<<Dp_ratio1[ii][jj]<<"  "<<Dp_err1[ii][jj]<<endl;
           nn++;
       }
   }
-    
+  myfile1.close();
   int color[5]={1,2,4,6,46};
   TCanvas *c1=new TCanvas("c1");
   TMultiGraph *mg1=new TMultiGraph();
@@ -105,7 +116,7 @@ void plot_Dp()
       leg1->AddEntry(gDpRaw1[ii],Form("new D/p kin%d",ii),"P");
   }
   leg1->Draw();
-/*
+
   TCanvas *c2=new TCanvas("c2");
   TMultiGraph *mg2=new TMultiGraph();
   gDpRaw[0]->SetMarkerStyle(8);
@@ -153,6 +164,6 @@ void plot_Dp()
   leg4->AddEntry(gDpRaw[2],"D/p kin2","P");
   leg4->AddEntry(gDpRaw1[2],"new D/p kin2","P");
   leg4->Draw();
-*/
+
 
 }

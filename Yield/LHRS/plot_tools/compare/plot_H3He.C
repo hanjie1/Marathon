@@ -29,7 +29,7 @@ void plot_H3He()
 
    TString Yfile;
    Int_t KIN=0;
-   while(KIN<11){
+   while(KIN<16){
        Yfile=Form("vz009/He3_kin%d.txt",KIN);
        ReadYield(Yfile,KIN,He3_x,He3_xavg,He3_Q2,He3_Yield,He3_Yerr); 
        Yfile=Form("vz009/H3_kin%d.txt",KIN);
@@ -38,7 +38,8 @@ void plot_H3He()
        ReadYield(Yfile,KIN,He3_x1,He3_xavg1,He3_Q21,He3_Yield1,He3_Yerr1); 
        Yfile=Form("vz009_new_25per/H3_kin%d.txt",KIN);
        ReadYield(Yfile,KIN,H3_x1,H3_xavg1,H3_Q21,H3_Yield1,H3_Yerr1); 
-       KIN+=1;
+       if(KIN<5)KIN+=1;
+       else KIN+=2;
    }
 
   for(int ii=0;ii<11;ii++){
@@ -56,10 +57,15 @@ void plot_H3He()
   }
   cout<<endl;
 
+  ofstream myfile;
+  myfile.open("H3He_ratio.txt");
+  myfile<<"-------- old bin ------------"<<endl;
+
   TGraphErrors *gH3HeRaw[11];
   for(int ii=0;ii<11;ii++){
       gH3HeRaw[ii]=new TGraphErrors();
       int nn=0;
+      myfile<<"kin "<<ii<<endl;
       for(int jj=0;jj<MAXBIN;jj++){
           if(H3_x[ii][jj]==0||He3_x[ii][jj]==0)continue;
           H3He_ratio[ii][jj]=H3_Yield[ii][jj]/He3_Yield[ii][jj];
@@ -67,13 +73,19 @@ void plot_H3He()
           if(H3He_err[ii][jj]>0.1)continue;
           gH3HeRaw[ii]->SetPoint(nn,H3_xavg[ii][jj],H3He_ratio[ii][jj]);
           gH3HeRaw[ii]->SetPointError(nn,0.0,H3He_err[ii][jj]);
+          myfile<<H3_x[ii][jj]+0.01<<"  "<<H3_xavg[ii][jj]<<"  "<<H3He_ratio[ii][jj]<<"  "<<H3He_err[ii][jj]<<endl;
           nn++;
       }
   }
-    
+  myfile.close();    
+
+  ofstream myfile1;
+  myfile1.open("H3He_ratio_new.txt");
+  myfile1<<"-------- new bin ------------"<<endl;
   TGraphErrors *gH3HeRaw1[11];
   for(int ii=0;ii<11;ii++){
       gH3HeRaw1[ii]=new TGraphErrors();
+      myfile1<<"kin "<<ii<<endl;
       int nn=0;
       for(int jj=0;jj<10;jj++){
           if(newx[ii][jj]==0)continue;
@@ -81,11 +93,15 @@ void plot_H3He()
 	  H3He_err1[ii][jj]=H3He_ratio1[ii][jj]*sqrt(pow(H3_Yerr1[ii][jj]/H3_Yield1[ii][jj],2)+pow(He3_Yerr1[ii][jj]/He3_Yield1[ii][jj],2));
           gH3HeRaw1[ii]->SetPoint(nn,newx[ii][jj],H3He_ratio1[ii][jj]);
           gH3HeRaw1[ii]->SetPointError(nn,0.0,H3He_err1[ii][jj]);
+          myfile1<<newx[ii][jj]<<"  "<<H3_xavg1[ii][jj]<<"  "<<H3He_ratio1[ii][jj]<<"  "<<H3He_err1[ii][jj]<<endl;
           nn++;
       }
   }
-    
-  int color[11]={1,2,3,4,6,7,8,9,28,39,46};
+  myfile1.close();    
+
+
+  int color[11]={1,30,3,4,6,7,8,9,2,36,46};
+  int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
   TCanvas *c1=new TCanvas("c1");
   TMultiGraph *mg1=new TMultiGraph();
   for(int ii=0;ii<11;ii++){
@@ -101,8 +117,8 @@ void plot_H3He()
 
   auto leg1=new TLegend(0.7,0.6,0.811,0.811);
   for(int ii=0;ii<11;ii++){
-      leg1->AddEntry(gH3HeRaw[ii],Form("H3/He3 kin%d",ii),"P");
-      leg1->AddEntry(gH3HeRaw1[ii],Form("new H3/He3 kin%d",ii),"P");
+      leg1->AddEntry(gH3HeRaw[ii],Form("H3/He3 kin%d",kin[ii]),"P");
+      leg1->AddEntry(gH3HeRaw1[ii],Form("new H3/He3 kin%d",kin[ii]),"P");
   }
   leg1->Draw();
 /*

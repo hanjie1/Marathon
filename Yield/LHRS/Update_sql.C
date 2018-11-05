@@ -27,6 +27,7 @@ int Update(int run_number=0,TString target="NULL",int kin=0){
   if(target=="H1")target_thickness=0.0708;
   if(target=="He3")target_thickness=0.0534;
   if(target=="H3")target_thickness=0.077;
+  if(target=="C")target_thickness=0.0883;
   if(target=="NULL"){
      cout<<"no target type"<<endl;
      return 0;
@@ -72,23 +73,33 @@ int Update(int run_number=0,TString target="NULL",int kin=0){
 void Update_sql(){
      TString target;
      int kin;
+     int flag=0;
+     cout<<"Runlist (0) or run number (1): ";
+     cin>>flag;
      cout<<"Target:  ";
      cin>>target;
      cout<<"Kin:     ";
      cin>>kin;
 
-     vector<Int_t> runList;
-     int run_number=0,nrun=0;
-     nrun=GetRunList(runList,kin,target);
-     cout<<nrun<<" runs are added "<<endl;
-     if(nrun==0)exit(0);
+     int run_number=0;
+     if(flag==0){
+        vector<Int_t> runList;
+        int nrun=0;
+        nrun=GetRunList(runList,kin,target);
+        cout<<nrun<<" runs are added "<<endl;
+        if(nrun==0)exit(0);
 
-     int success=0;
-     for(int ii=0;ii<runList.size();ii++) 
-         {
+        int success=0;
+        for(int ii=0;ii<runList.size();ii++) 
+           {
              run_number = runList[ii];
              success=Update(run_number,target,kin);
-         } 
-
+           } 
+     }
+     if(flag==1){
+        cout<<"run number: ";
+	cin>>run_number;
+	Update(run_number,target,kin);	
+     }
 
 }
