@@ -38,8 +38,8 @@ void CheckXbj_all()
 
      //TCanvas *c1=new TCanvas("c1");
      TString hname=Form("%s_kin%d",target[ii].Data(),kin[jj]);
-     TH1F *hxbj=new TH1F(hname.Data(),"xbj for one kin histogram",1000,0,1);
-     T->Draw(Form("EKLx.x_bj>>%s",hname.Data()),ACC+CK+Ep+trigger2+VZ+beta+TRK);
+     TH1F *hQ2=new TH1F(hname.Data(),"Q2 for one kin histogram",1000,0,18);
+     T->Draw(Form("EKLx.Q2>>%s",hname.Data()),ACC+CK+Ep+trigger2+VZ+beta+TRK);
    }
   }
 

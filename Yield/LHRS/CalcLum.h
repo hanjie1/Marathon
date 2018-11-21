@@ -15,7 +15,7 @@ const double bH1_B=-0.008529;
 const Double_t Qe=TMath::Qe();
 const Double_t Na=TMath::Na();
 
-const Double_t CMtoNB=1.0e33; 
+const Double_t CM2toNB=1.0e33; 
 
 void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
 {
@@ -114,7 +114,7 @@ Double_t CalcLum(int kin, TString target){
      for(int ii=0;ii<runList.size();ii++){
          run_number = runList[ii];
          RunLum(run_number,kin,Ncharge,NNtarg);
-         LUM+=Ncharge*NNtarg/CMtoNB;
+         LUM+=Ncharge*NNtarg/CM2toNB;
     }
     
     return LUM;
