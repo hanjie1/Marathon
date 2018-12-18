@@ -1,12 +1,12 @@
 #include "GetRunList.h"
 #include "SetCut.h"
 
-void CheckXbj_all()
+void CheckXQ2_all()
 {
    TString target[4]={"H1","D2","He3","H3"};
    int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
-   TFile *f1=new TFile("Xbj_all_Q2.root","RECREATE");
+   TFile *f1=new TFile("X_Q2_all.root","RECREATE");
    
    for(int ii=1;ii<2;ii++){
     int maxkin;
@@ -38,8 +38,8 @@ void CheckXbj_all()
 
      //TCanvas *c1=new TCanvas("c1");
      TString hname=Form("%s_kin%d",target[ii].Data(),kin[jj]);
-     TH1F *hQ2=new TH1F(hname.Data(),"Q2 for one kin histogram",1000,0,15);
-     T->Draw(Form("EKLx.Q2>>%s",hname.Data()),ACC+CK+Ep+trigger2+VZ+beta+TRK);
+     TH2F *hX_Q2=new TH2F(hname.Data(),"xbj vs. Q2 for one kin histogram",300,0.16,0.27,900,2.3,4);//1000,0,1,1000,0,14);
+     T->Draw(Form("EKLx.Q2:EKLx.x_bj>>%s",hname.Data()),ACC+CK+Ep+trigger2+VZ+beta+TRK,"surf2");
    }
   }
 

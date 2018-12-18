@@ -1,4 +1,4 @@
-TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1/";
+TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass2/";
 //TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1_calibration/";
 //TString rootpath="/lustre/expphy/volatile/halla/triton/hanjie/Marathon/";
 TString listpath="/home/hanjie/work/MARATHON/analysis/Yield/Runlist/";

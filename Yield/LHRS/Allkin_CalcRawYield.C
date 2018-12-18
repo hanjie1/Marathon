@@ -41,14 +41,14 @@ void Allkin_CalcRawYield(){
    TString target[4]={"H1","D2","He3","H3"};
    int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
-   for(int nn=0;nn<4;nn++){   
-    for(int mm=0;mm<11;mm++){
+   for(int nn=1;nn<2;nn++){   
+    for(int mm=1;mm<2;mm++){
      if(nn==0&&mm>4)break;
      Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
     ofstream myfile;
-    myfile.open(Form("RawYield/vz009/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+    myfile.open(Form("RawYield/pass2test/%s_kin%d.txt",target[nn].Data(),kin[mm]));
     myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<Int_t> runList;
