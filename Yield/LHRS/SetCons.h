@@ -3,7 +3,11 @@ struct TRI_VAR{
       Double_t value;
       Double_t err;
 };
- 
+
+const Double_t dnew_gain=0.0003361;
+const Double_t dnew_offset=0.0217;
+const Double_t CM2toNB=1.0e33;
+
 const int nTh=15;
 const int nEp=32;
 const Double_t pi=TMath::Pi();

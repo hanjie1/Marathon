@@ -3,54 +3,24 @@
 #include "SetCut.h"
 #include "SetCons.h"
 #include "CalcLT.h"
+#include "CalcCharge.h"
 #include "CalcLum.h"
 #include "SearchXS.h"
 #include <TMath.h>
-
-TRI_VAR GetLT(int run_number)
-{
-     TString table="LHRStest";
-     TSQLServer* Server = TSQLServer::Connect("mysql://halladb/triton-work","triton-user","3He3Hdata");
-
-     TString  query=Form("select * from %s where run_number=%d;",table.Data(),run_number);
-     TSQLResult* result=Server->Query(query.Data());
-     TSQLRow *row;
-     int nrows = result->GetRowCount();
-     TRI_VAR LT;
-     if (nrows==0) {
-        cout<<"run "<<run_number<<" is NOT in "<<table<<endl; 
-        Server->Close();
-        LT.value=0;
-        LT.err=0;   
-        return LT;
-     }
-
-     query=Form("select livetime,LT_err from %s where run_number=%d;",table.Data(),run_number);
-     result=Server->Query(query.Data());
-     row=result->Next();
-     Double_t livetime=atof(row->GetField(0));
-     Double_t livetime_err=atof(row->GetField(1));
-
-     LT.value=livetime;
-     LT.err=livetime_err;
-
-     Server->Close(); 
-     return LT;      
-}
 
 void Allkin_CalcRawYield(){
    TString target[4]={"H1","D2","He3","H3"};
    int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
-   for(int nn=1;nn<2;nn++){   
-    for(int mm=1;mm<2;mm++){
+   for(int nn=0;nn<4;nn++){   
+    for(int mm=0;mm<11;mm++){
      if(nn==0&&mm>4)break;
      Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
-    ofstream myfile;
-    myfile.open(Form("RawYield/pass2test/%s_kin%d.txt",target[nn].Data(),kin[mm]));
-    myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
+     ofstream myfile;
+     myfile.open(Form("RawYield/bin002/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+     myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<Int_t> runList;
      int run_number=0,nrun=0;
@@ -77,12 +47,12 @@ void Allkin_CalcRawYield(){
      Double_t totalNe_err[36]={0.0};
      for(int ii=0;ii<nrun;ii++){
          run_number=runList[ii];
-         TRI_VAR LT=GetLT(run_number);
+         TRI_VAR LT=CalcLT(run_number,kin[mm],1);
          Double_t livetime=LT.value; 
          Double_t livetime_err=LT.err; 
          cout<<"Get LT:  "<<livetime<<"  "<<livetime_err<<endl;
          T=GetTree(run_number,kin[mm],TreeName);
-         T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK);
+         T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK+W2);
          TEventList *electron;
          gDirectory->GetObject("electron",electron);
          T->SetEventList(electron);
@@ -92,15 +62,12 @@ void Allkin_CalcRawYield(){
          T->SetBranchStatus("EKLx.angle",1);
          T->SetBranchStatus("EKLx.x_bj",1);
          T->SetBranchStatus("EKLx.Q2",1);
-         T->SetBranchStatus("LeftBCMev.isrenewed",1);
 
          Double_t aEprime=0.0,aTheta=0.0,axbj=0.0,aQ2=0.0;
-         Double_t isrenewed=0;
          T->SetBranchAddress("L.gold.p",&aEprime);
          T->SetBranchAddress("EKLx.angle",&aTheta);
          T->SetBranchAddress("EKLx.x_bj",&axbj);
          T->SetBranchAddress("EKLx.Q2",&aQ2);
-         T->SetBranchAddress("LeftBCMev.isrenewed",&isrenewed);
 
          Double_t Radcor=1.0;
 	 Int_t NNe[36]={0};

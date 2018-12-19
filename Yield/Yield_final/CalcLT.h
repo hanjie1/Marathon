@@ -26,14 +26,14 @@ TRI_VAR CalcLT(int run_number,int kin,int beamcut=0)
         T->SetBranchStatus("*",0);
         T->SetBranchStatus("evLeftT2",1);     
         T->SetBranchStatus("DL.evtypebits",1); 
-        T->SetBranchStatus("evLeftdnew",1);
+        T->SetBranchStatus("evLeftdnew_r",1);
         T->SetBranchStatus("LeftBCMev.isrenewed",1);
 
 	Double_t evT2,evtypebits,current_dnew,isrenewed;
         Double_t beamUp[5];
         T->SetBranchAddress("evLeftT2",&evT2);
         T->SetBranchAddress("DL.evtypebits",&evtypebits);
-        T->SetBranchAddress("evLeftdnew",&current_dnew);
+        T->SetBranchAddress("evLeftdnew_r",&current_dnew);
         T->SetBranchAddress("LeftBCMev.isrenewed",&isrenewed);
 
         Double_t maxT2;
@@ -45,11 +45,11 @@ TRI_VAR CalcLT(int run_number,int kin,int beamcut=0)
         Nscaler=0.0;Nmeas=0.0;
         for(int ii=0;ii<nentries;ii++){
 	    T->GetEntry(ii);
-            Int_t trigger=(Int_t)evtypebits;
-            if((trigger>>2)&1)entryT2=entryT2+1;
+            Int_t trigger=(Int_t)evtypebits;                
+	    if((trigger>>2)&1)entryT2=entryT2+1;
 
 	    if(isrenewed){
-	       current_dnew=current_dnew*dnew_gain;
+               current_dnew=current_dnew*dnew_gain;
                if(current_dnew>0){
                   Nscaler=Nscaler+evT2-lastcount;
                   Nmeas=Nmeas+entryT2;

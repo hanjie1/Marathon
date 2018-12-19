@@ -3,16 +3,17 @@
 
 void CheckXQ2_all()
 {
+   gStyle->SetOptStat(1111111);
    TString target[4]={"H1","D2","He3","H3"};
-   int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
+   int kin[3]={0,4,15};
 
    TFile *f1=new TFile("X_Q2_all.root","RECREATE");
    
-   for(int ii=1;ii<2;ii++){
+   for(int ii=0;ii<4;ii++){
     int maxkin;
-    if(ii==0)maxkin=5;
-    else maxkin=11;
-    for(int jj=1;jj<2;jj++){   
+    if(ii==0)maxkin=2;
+    else maxkin=3;
+    for(int jj=0;jj<maxkin;jj++){   
      int nrun=0;
      vector<Int_t> runList;
      nrun=GetRunList(runList,kin[jj],target[ii]);
@@ -38,8 +39,8 @@ void CheckXQ2_all()
 
      //TCanvas *c1=new TCanvas("c1");
      TString hname=Form("%s_kin%d",target[ii].Data(),kin[jj]);
-     TH2F *hX_Q2=new TH2F(hname.Data(),"xbj vs. Q2 for one kin histogram",300,0.16,0.27,900,2.3,4);//1000,0,1,1000,0,14);
-     T->Draw(Form("EKLx.Q2:EKLx.x_bj>>%s",hname.Data()),ACC+CK+Ep+trigger2+VZ+beta+TRK,"surf2");
+     TH2F *hX_Q2=new TH2F(hname.Data(),"Q2 vs. x for one kin histogram",830,0.12,0.95,2400,1.5,13.5);//1000,0,1,1000,0,14);
+     T->Draw(Form("EKLx.Q2:EKLx.x_bj>>%s",hname.Data()),ACC+CK+Ep+trigger2+VZ+beta+TRK,"COLZ");
    }
   }
 

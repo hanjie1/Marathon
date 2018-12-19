@@ -1,21 +1,19 @@
-#include <TMath.h>
+const Double_t bH3_A=0.0001293;
+const Double_t bH3_B=-0.007399;
 
-const double bH3_A=0.0001293;
-const double bH3_B=-0.007399;
+const Double_t bHe3_A=0.00008686;
+const Double_t bHe3_B=-0.004759;
 
-const double bHe3_A=0.00008686;
-const double bHe3_B=-0.004759;
+const Double_t bD2_A=0.0001147;
+const Double_t bD2_B=-0.006651;
 
-const double bD2_A=0.0001147;
-const double bD2_B=-0.006651;
-
-const double bH1_A=0.0001527; 
-const double bH1_B=-0.008529;
+const Double_t bH1_A=0.0001527;
+const Double_t bH1_B=-0.008529;
 
 const Double_t Qe=TMath::Qe();
 const Double_t Na=TMath::Na();
 
-const Double_t CM2toNB=1.0e33; 
+const Double_t CMtoNB=1.0e33;
 
 void RunLum(int run_number,int kin,Double_t& Charge,Double_t& Ntarg)
 {
