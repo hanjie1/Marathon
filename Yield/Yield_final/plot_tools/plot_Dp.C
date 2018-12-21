@@ -34,7 +34,7 @@ void plot_Dp()
           if(D2_x[ii][jj]==0||H1_x[ii][jj]==0)continue;
           Dp_ratio[ii][jj]=D2_Yield[ii][jj]/H1_Yield[ii][jj];
 	  Dp_err[ii][jj]=Dp_ratio[ii][jj]*sqrt(pow(D2_Yerr[ii][jj]/D2_Yield[ii][jj],2)+pow(H1_Yerr[ii][jj]/H1_Yield[ii][jj],2));
-          //if(Dp_err[ii][jj]>0.1)continue;
+          if(Dp_err[ii][jj]>0.1)continue;
           gDpRaw[ii]->SetPoint(nn,D2_x[ii][jj],Dp_ratio[ii][jj]);
           gDpRaw[ii]->SetPointError(nn,0.0,Dp_err[ii][jj]);
           nn++;
