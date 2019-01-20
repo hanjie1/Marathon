@@ -5,9 +5,9 @@ void GenACC()
         TH2F *hD2_kin4;
         TH2F *hD2_kin15;
 
-        hD2_kin0 = (TH2F *)f1->Get("D2_kin0");
-        hD2_kin4 = (TH2F *)f1->Get("D2_kin4");
-        hD2_kin15 = (TH2F *)f1->Get("D2_kin15");
+        hD2_kin0 = (TH2F *)f1->Get("hD2_kin0_new");
+        hD2_kin4 = (TH2F *)f1->Get("hD2_kin4_new");
+        hD2_kin15 = (TH2F *)f1->Get("hD2_kin15_new");
 
 	hD2_kin0->Rebin2D(20,20);
 	hD2_kin4->Rebin2D(20,20);
