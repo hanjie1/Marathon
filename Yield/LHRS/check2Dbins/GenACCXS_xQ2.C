@@ -1,27 +1,29 @@
 #define MAXBIN 100
 #include "SearchXS.h"
 
-void GenACCXS()
+using namespace TMath;
+void GenACCXS_xQ2()
 {
-        TFile *f1=new TFile("nu_th_all.root","UPDATE");
+        TFile *f1=new TFile("X_Q2_all.root","UPDATE");
 //        TFile *f2=new TFile("nu_th_removeXS.root","RECREATE");
         TH2F *hD2_kin0;
         TH2F *hD2_kin4;
         TH2F *hD2_kin15;
 
-        TH2F *hD2_kin0_new=new TH2F("hD2_kin0_new","update histogram with XS removed",2200,14,36,1000,7,8);
-        TH2F *hD2_kin4_new=new TH2F("hD2_kin4_new","update histogram with XS removed",2200,14,36,1000,7,8);
-        TH2F *hD2_kin15_new=new TH2F("hD2_kin15_new","update histogram with XS removed",2200,14,36,1000,7,8);
+        TH2F *hD2_kin0_new=new TH2F("hD2_kin0_new","update histogram with XS removed",830,0.12,0.95,2400,1.5,13.5);
+        TH2F *hD2_kin4_new=new TH2F("hD2_kin4_new","update histogram with XS removed",830,0.12,0.95,2400,1.5,13.5);
+        TH2F *hD2_kin15_new=new TH2F("hD2_kin15_new","update histogram with XS removed",830,0.12,0.95,2400,1.5,13.5);
 
         hD2_kin0 = (TH2F *)f1->Get("D2_kin0");
         hD2_kin4 = (TH2F *)f1->Get("D2_kin4");
         hD2_kin15 = (TH2F *)f1->Get("D2_kin15");
 
-        Int_t nxbin = 2200+2;
-        Int_t nybin = 1000+2;
+        Int_t nxbin = 830+2;
+        Int_t nybin = 2400+2;
         Double_t E0=10.589;
-        Double_t dXBin=0.01;
-        Double_t dYBin=0.001;
+        Double_t Mp=0.93827;
+        Double_t dXBin=0.001;
+        Double_t dYBin=0.005;
 
 
 	ifstream infile1;
@@ -67,12 +69,16 @@ void GenACCXS()
                    continue;
                 }
 	
-                Double_t aTheta=14+(ii-1)*dXBin+dXBin/2.0;
-                Double_t nu=7+(jj-1)*dYBin+dYBin/2.0;
+                Double_t aXbj=0.12+(ii-1)*dXBin+dXBin/2.0;
+                Double_t Q2=1.5+(jj-1)*dYBin+dYBin/2.0;
+		Double_t nu=Q2/(2*Mp*aXbj);
                 Double_t aEp=E0-nu;
+		Double_t aTheta=2*ASin(sqrt(Q2/(4*E0*aEp)));
+		aTheta=aTheta*180/pi;
 		//cout<<aTheta<<"  "<<aEp<<endl;
 		Double_t aXS=SearchXS(aEp,aTheta,Theta,Ep,XS_rad);	
-	
+
+		if(aXS==0)aXS=1;	
 		Double_t new_con=content/aXS;
 		//new_con=(int)(new_con/0.001+0.5)*0.001;
 		//new_con=new_con*100;
@@ -125,12 +131,16 @@ void GenACCXS()
                    continue;
                 }
 	
-                Double_t aTheta=14+(ii-1)*dXBin+dXBin/2.0;
-                Double_t nu=7+(jj-1)*dYBin+dYBin/2.0;
+                Double_t aXbj=0.12+(ii-1)*dXBin+dXBin/2.0;
+                Double_t Q2=1.5+(jj-1)*dYBin+dYBin/2.0;
+		Double_t nu=Q2/(2*Mp*aXbj);
                 Double_t aEp=E0-nu;
+		Double_t aTheta=2*ASin(sqrt(Q2/(4*E0*aEp)));
+		aTheta=aTheta*180/pi;
 		//cout<<aTheta<<"  "<<aEp<<endl;
 		Double_t aXS=SearchXS(aEp,aTheta,Theta,Ep,XS_rad);	
 	
+		if(aXS==0)aXS=1;	
 		Double_t new_con=content/aXS;
 		//new_con=(int)(new_con/0.001+0.5)*0.001;
 		//new_con=new_con*100;
@@ -182,12 +192,16 @@ void GenACCXS()
                    continue;
                 }
 	
-                Double_t aTheta=14+(ii-1)*dXBin+dXBin/2.0;
-                Double_t nu=7+(jj-1)*dYBin+dYBin/2.0;
+                Double_t aXbj=0.12+(ii-1)*dXBin+dXBin/2.0;
+                Double_t Q2=1.5+(jj-1)*dYBin+dYBin/2.0;
+		Double_t nu=Q2/(2*Mp*aXbj);
                 Double_t aEp=E0-nu;
+		Double_t aTheta=2*ASin(sqrt(Q2/(4*E0*aEp)));
+		aTheta=aTheta*180/pi;
 		//cout<<aTheta<<"  "<<aEp<<endl;
 		Double_t aXS=SearchXS(aEp,aTheta,Theta,Ep,XS_rad);	
 	
+		if(aXS==0)aXS=1;	
 		Double_t new_con=content/aXS;
 		//new_con=(int)(new_con/0.001+0.5)*0.001;
 		//new_con=new_con*100;

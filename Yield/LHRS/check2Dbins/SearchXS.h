@@ -36,15 +36,15 @@ Double_t SearchXS(Double_t aEp,Double_t aTheta,Double_t Theta[nTh],Double_t Epri
            Float_t tmp1=0.0,tmp2=0.0;
 
 
-           a1=xs_rad[bbp][bbTh];
-           a2=xs_rad[bbp+1][bbTh];
-           a3=xs_rad[bbp][bbTh+1];
-           a4=xs_rad[bbp+1][bbTh+1];
+           a1=xs_rad[bbTh][bbp];
+           a2=xs_rad[bbTh+1][bbp];
+           a3=xs_rad[bbTh][bbp+1];
+           a4=xs_rad[bbTh+1][bbp+1];
 
-           tmp1=a1+(a2-a1)/(Eprime[bbp+1]-Eprime[bbp])*(aEp-Eprime[bbp]);
-           tmp2=a3+(a4-a3)/(Eprime[bbp+1]-Eprime[bbp])*(aEp-Eprime[bbp]);
+           tmp1=a1+(a2-a1)/(Theta[bbTh+1]-Theta[bbTh])*(aTheta-Theta[bbTh]);
+           tmp2=a3+(a4-a3)/(Theta[bbTh+1]-Theta[bbTh])*(aTheta-Theta[bbTh]);
 
-           crad=tmp1+(tmp2-tmp1)/(Theta[bbTh+1]-Theta[bbTh])*(aTheta-Theta[bbTh]);
+           crad=tmp1+(tmp2-tmp1)/(Eprime[bbp+1]-Eprime[bbp])*(aEp-Eprime[bbp]);
            return crad;
       }
 

@@ -1,6 +1,6 @@
-void GenACC()
+void GenACC_xQ2()
 {
-        TFile *f1=new TFile("nu_th_all.root");
+        TFile *f1=new TFile("X_Q2_all.root");
         TH2F *hD2_kin0;
         TH2F *hD2_kin4;
         TH2F *hD2_kin15;
@@ -9,12 +9,12 @@ void GenACC()
         hD2_kin4 = (TH2F *)f1->Get("hD2_kin4_new");
         hD2_kin15 = (TH2F *)f1->Get("hD2_kin15_new");
 
-	hD2_kin0->Rebin2D(20,20);
-	hD2_kin4->Rebin2D(20,20);
-	hD2_kin15->Rebin2D(20,20);
+	hD2_kin0->Rebin2D(10,10);
+	hD2_kin4->Rebin2D(10,10);
+	hD2_kin15->Rebin2D(10,10);
 
-        Int_t nxbin = 2200/20+2;
-        Int_t nybin = 1000/20+2;
+        Int_t nxbin = 830/10+2;
+        Int_t nybin = 2400/10+2;
 
 	Int_t maxbin = hD2_kin0->GetMaximumBin();
 	Double_t maxcontent = hD2_kin0->GetBinContent(maxbin);
