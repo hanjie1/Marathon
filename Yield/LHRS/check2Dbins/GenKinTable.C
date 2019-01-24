@@ -1,17 +1,17 @@
 void GenKinTable(){
 	TFile *f1=new TFile("nu_th_all.root");
-	TH2F *hD2_kin0;
-	TH2F *hD2_kin4;
-	TH2F *hD2_kin15;
+	TH2F *hH1_kin0;
+	TH2F *hH1_kin4;
+//	TH2F *hH1_kin15;
 
-	hD2_kin0 = (TH2F *)f1->Get("D2_kin0");
-	hD2_kin4 = (TH2F *)f1->Get("D2_kin4");
-	hD2_kin15 = (TH2F *)f1->Get("D2_kin15");
+	hH1_kin0 = (TH2F *)f1->Get("H1_kin0");
+	hH1_kin4 = (TH2F *)f1->Get("H1_kin4");
+//	hH1_kin15 = (TH2F *)f1->Get("H1_kin15");
 
 	int rbin=10;
-        hD2_kin0->Rebin2D(rbin,rbin);
-        hD2_kin4->Rebin2D(rbin,rbin);
-        hD2_kin15->Rebin2D(rbin,rbin);
+        hH1_kin0->Rebin2D(rbin,rbin);
+        hH1_kin4->Rebin2D(rbin,rbin);
+//        hH1_kin15->Rebin2D(rbin,rbin);
 
         Int_t nxbin = 2200/rbin+2;
         Int_t nybin = 1000/rbin+2;
@@ -24,8 +24,8 @@ void GenKinTable(){
 	Double_t Ep_min=100.0,Ep_max=0.0;
 	for(int ii=0;ii<nxbin;ii++){
 	    for(int jj=0;jj<nybin;jj++){
-	        Double_t nbin=hD2_kin0->GetBin(ii,jj);
-		Double_t content=hD2_kin0->GetBinContent(nbin);
+	        Double_t nbin=hH1_kin0->GetBin(ii,jj);
+		Double_t content=hH1_kin0->GetBinContent(nbin);
 		if(content==0)continue;
 	   
 		if(ii==0||jj==0||ii==nxbin-1||jj==nybin-1){
@@ -42,9 +42,9 @@ void GenKinTable(){
 	    }
 	}
 	ofstream outfile1;
-	outfile1.open("Table/D2_kin0.inp");
+	outfile1.open("Table/H1_kin0.inp");
         outfile1<<"Marathon"<<endl;
-        outfile1<<"D2_kin0"<<endl;
+        outfile1<<"H1_kin0"<<endl;
         outfile1<<endl;
         outfile1<<endl;
         outfile1<<endl;
@@ -69,8 +69,8 @@ void GenKinTable(){
 	Ep_min=100.0,Ep_max=0.0;
 	for(int ii=0;ii<nxbin;ii++){
 	    for(int jj=0;jj<nybin;jj++){
-	        Double_t nbin=hD2_kin4->GetBin(ii,jj);
-		Double_t content=hD2_kin4->GetBinContent(nbin);
+	        Double_t nbin=hH1_kin4->GetBin(ii,jj);
+		Double_t content=hH1_kin4->GetBinContent(nbin);
 		if(content==0)continue;
 	   
 		if(ii==0||jj==0||ii==nxbin-1||jj==nybin-1){
@@ -88,9 +88,9 @@ void GenKinTable(){
 	}
 
 	ofstream outfile2;
-	outfile2.open("Table/D2_kin4.inp");
+	outfile2.open("Table/H1_kin4.inp");
         outfile2<<"Marathon"<<endl;
-        outfile2<<"D2_kin4"<<endl;
+        outfile2<<"H1_kin4"<<endl;
         outfile2<<endl;
         outfile2<<endl;
         outfile2<<endl;
@@ -110,13 +110,13 @@ void GenKinTable(){
 	    }
 	}
 	outfile2.close();
-
+/*
 	th_min=100.0,th_max=0.0;
 	Ep_min=100.0,Ep_max=0.0;
 	for(int ii=0;ii<nxbin;ii++){
 	    for(int jj=0;jj<nybin;jj++){
-	        Double_t nbin=hD2_kin15->GetBin(ii,jj);
-		Double_t content=hD2_kin15->GetBinContent(nbin);
+	        Double_t nbin=hH1_kin15->GetBin(ii,jj);
+		Double_t content=hH1_kin15->GetBinContent(nbin);
 		if(content==0)continue;
 	   
 		if(ii==0||jj==0||ii==nxbin-1||jj==nybin-1){
@@ -134,9 +134,9 @@ void GenKinTable(){
 	}
 
 	ofstream outfile3;
-	outfile3.open("Table/D2_kin15.inp");
+	outfile3.open("Table/H1_kin15.inp");
         outfile3<<"Marathon"<<endl;
-        outfile3<<"D2_kin15"<<endl;
+        outfile3<<"H1_kin15"<<endl;
         outfile3<<endl;
         outfile3<<endl;
         outfile3<<endl;
@@ -156,5 +156,5 @@ void GenKinTable(){
 	    }
 	}
 	outfile3.close();
-
+*/
 }

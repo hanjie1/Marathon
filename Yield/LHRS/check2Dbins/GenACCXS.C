@@ -5,17 +5,17 @@ void GenACCXS()
 {
         TFile *f1=new TFile("nu_th_all.root","UPDATE");
 //        TFile *f2=new TFile("nu_th_removeXS.root","RECREATE");
-        TH2F *hD2_kin0;
-        TH2F *hD2_kin4;
-        TH2F *hD2_kin15;
+        TH2F *hH1_kin0;
+        TH2F *hH1_kin4;
+//        TH2F *hH1_kin15;
 
-        TH2F *hD2_kin0_new=new TH2F("hD2_kin0_new","update histogram with XS removed",2200,14,36,1000,7,8);
-        TH2F *hD2_kin4_new=new TH2F("hD2_kin4_new","update histogram with XS removed",2200,14,36,1000,7,8);
-        TH2F *hD2_kin15_new=new TH2F("hD2_kin15_new","update histogram with XS removed",2200,14,36,1000,7,8);
+        TH2F *hH1_kin0_new=new TH2F("hH1_kin0_new","update histogram with XS removed",2200,14,36,1000,7,8);
+        TH2F *hH1_kin4_new=new TH2F("hH1_kin4_new","update histogram with XS removed",2200,14,36,1000,7,8);
+//        TH2F *hH1_kin15_new=new TH2F("hH1_kin15_new","update histogram with XS removed",2200,14,36,1000,7,8);
 
-        hD2_kin0 = (TH2F *)f1->Get("D2_kin0");
-        hD2_kin4 = (TH2F *)f1->Get("D2_kin4");
-        hD2_kin15 = (TH2F *)f1->Get("D2_kin15");
+        hH1_kin0 = (TH2F *)f1->Get("H1_kin0");
+        hH1_kin4 = (TH2F *)f1->Get("H1_kin4");
+//        hH1_kin15 = (TH2F *)f1->Get("H1_kin15");
 
         Int_t nxbin = 2200+2;
         Int_t nybin = 1000+2;
@@ -25,7 +25,7 @@ void GenACCXS()
 
 
 	ifstream infile1;
-	infile1.open("Table/D2_kin0_xs.out");
+	infile1.open("Table/H1_kin0_xs.out");
 
         Ssiz_t from=0;
         TString content,tmp;
@@ -51,14 +51,14 @@ void GenACCXS()
 
 
 
-//	Int_t maxbin = hD2_kin0->GetMaximumBin();
-//	Double_t maxcontent = hD2_kin0->GetBinContent(maxbin);
+//	Int_t maxbin = hH1_kin0->GetMaximumBin();
+//	Double_t maxcontent = hH1_kin0->GetBinContent(maxbin);
 	for(int ii=0;ii<nxbin;ii++){
 	    for(int jj=0;jj<nybin;jj++){
-                Double_t nbin=hD2_kin0->GetBin(ii,jj);
-                Double_t content=hD2_kin0->GetBinContent(nbin);
+                Double_t nbin=hH1_kin0->GetBin(ii,jj);
+                Double_t content=hH1_kin0->GetBinContent(nbin);
                 if(content==0){
-		   hD2_kin0_new->SetBinContent(nbin,0);
+		   hH1_kin0_new->SetBinContent(nbin,0);
                    continue;
 		}
 
@@ -76,13 +76,13 @@ void GenACCXS()
 		Double_t new_con=content/aXS;
 		//new_con=(int)(new_con/0.001+0.5)*0.001;
 		//new_con=new_con*100;
-		hD2_kin0_new->SetBinContent(nbin,new_con);
+		hH1_kin0_new->SetBinContent(nbin,new_con);
 	    }
 	}
 
 
 	ifstream infile2;
-	infile2.open("Table/D2_kin4_xs.out");
+	infile2.open("Table/H1_kin4_xs.out");
 
 	for(int ii=0;ii<nTh;ii++){
 	    Theta[ii]=0.0;
@@ -113,10 +113,10 @@ void GenACCXS()
 
 	for(int ii=0;ii<nxbin;ii++){
 	    for(int jj=0;jj<nybin;jj++){
-                Double_t nbin=hD2_kin4->GetBin(ii,jj);
-                Double_t content=hD2_kin4->GetBinContent(nbin);
+                Double_t nbin=hH1_kin4->GetBin(ii,jj);
+                Double_t content=hH1_kin4->GetBinContent(nbin);
                 if(content==0){
-		   hD2_kin4_new->SetBinContent(nbin,0);
+		   hH1_kin4_new->SetBinContent(nbin,0);
                    continue;
 		}
 
@@ -134,7 +134,7 @@ void GenACCXS()
 		Double_t new_con=content/aXS;
 		//new_con=(int)(new_con/0.001+0.5)*0.001;
 		//new_con=new_con*100;
-		hD2_kin4_new->SetBinContent(nbin,new_con);
+		hH1_kin4_new->SetBinContent(nbin,new_con);
 	    }
 	}
 
@@ -145,9 +145,9 @@ void GenACCXS()
 		XS_rad[ii][jj]=0.0;	
 	    }
 	}
-
+/*
 	ifstream infile3;
-	infile3.open("Table/D2_kin15_xs.out");
+	infile3.open("Table/H1_kin15_xs.out");
 
         from=0;
         xx=0,yy=0;
@@ -170,10 +170,10 @@ void GenACCXS()
 
 	for(int ii=0;ii<nxbin;ii++){
 	    for(int jj=0;jj<nybin;jj++){
-                Double_t nbin=hD2_kin15->GetBin(ii,jj);
-                Double_t content=hD2_kin15->GetBinContent(nbin);
+                Double_t nbin=hH1_kin15->GetBin(ii,jj);
+                Double_t content=hH1_kin15->GetBinContent(nbin);
                 if(content==0){
-		   hD2_kin15_new->SetBinContent(nbin,0);
+		   hH1_kin15_new->SetBinContent(nbin,0);
                    continue;
 		}
 
@@ -191,10 +191,10 @@ void GenACCXS()
 		Double_t new_con=content/aXS;
 		//new_con=(int)(new_con/0.001+0.5)*0.001;
 		//new_con=new_con*100;
-		hD2_kin15_new->SetBinContent(nbin,new_con);
+		hH1_kin15_new->SetBinContent(nbin,new_con);
 	    }
 	}
-
+*/
 	f1->Write();
 
 }
