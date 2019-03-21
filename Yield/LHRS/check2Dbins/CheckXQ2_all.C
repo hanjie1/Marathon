@@ -22,19 +22,19 @@ void CheckXQ2_all()
 
      TString rootpath="/lustre/expphy/cache/halla/triton/prod/marathon/pass1/";
      TChain *T=new TChain("T");
-     for(int ii=0;ii<runList.size();ii++){
-        TString File=rootpath+Form("kin%d/tritium_%d.root",kin[jj],runList[ii]);
+     for(int kk=0;kk<runList.size();kk++){
+        TString File=rootpath+Form("kin%d/tritium_%d.root",kin[jj],runList[kk]);
         if(!gSystem->AccessPathName(File)){
            T->Add(File);
            int index=1;
-           File=rootpath+Form("kin%d/tritium_%d_%d.root",kin[jj],runList[ii],index);
+           File=rootpath+Form("kin%d/tritium_%d_%d.root",kin[jj],runList[kk],index);
            while(!gSystem->AccessPathName(File)){
                   T->Add(File);
                   index++;
-                  File=rootpath+Form("kin%d/tritium_%d_%d.root",kin[jj],runList[ii],index);
+                  File=rootpath+Form("kin%d/tritium_%d_%d.root",kin[jj],runList[kk],index);
            }
         }
-        else {cout<<runList[ii]<<" rootfile can't be found"<<endl;}
+        else {cout<<runList[kk]<<" rootfile can't be found"<<endl;}
      }
 
      //TCanvas *c1=new TCanvas("c1");
