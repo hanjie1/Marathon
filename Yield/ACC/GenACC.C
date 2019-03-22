@@ -54,7 +54,7 @@ void GenACC()
 	}
 
 	int nxbin=800/8+2;
-	int nybin=400/10+2;
+	int nybin=400/8+2;
         for(int ii=0;ii<5;ii++){
 	    hH1[ii]->Rebin2D(8,8);
             Int_t maxbin = hH1[ii]->GetMaximumBin();

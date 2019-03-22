@@ -58,7 +58,7 @@ void GenXSTable()
         Double_t dYBin=0.001*rbin;
 	for(int ii=0;ii<5;ii++){
 	    ofstream outfile;
-	    outfile.open(Form("XS_table/H1_kin%d.inp",kin[ii]));
+	    outfile.open(Form("Kin_table/H1_kin%d.inp",kin[ii]));
 
             Double_t th_min=100.0,th_max=0.0;
             Double_t Ep_min=100.0,Ep_max=0.0;
@@ -74,7 +74,7 @@ void GenXSTable()
                      cout<<"There is underflow or overflow!"<<endl;
                      continue;
                    }
-                   Double_t theta=-4.0+(mm-1)*dXBin+Theta_c[kin[ii]];
+                   Double_t theta=-4.0+(mm-1)*dXBin+Theta_c[ii];
                    Double_t nu=-0.2+(nn-1)*dYBin+Nu_c;
                    Double_t Ep=E0-nu;
                    if(theta<th_min)th_min=theta;
@@ -110,8 +110,8 @@ cout<<"H1 kin"<<kin[ii]<<": "<<th_min<<" "<<th_max<<" "<<Ep_min<<" "<<Ep_max<<en
 
 	for(int ii=0;ii<11;ii++){
 	    ofstream outfile;
-	    if(kin[ii]<7||kin[ii]==15)outfile.open(Form("XS_table/D2_kin%d.inp",kin[ii]));
-	    else outfile.open(Form("XS_table/D2_kin%d_1st.inp",kin[ii]));
+	    if(kin[ii]<7||kin[ii]==15)outfile.open(Form("Kin_table/D2_kin%d.inp",kin[ii]));
+	    else outfile.open(Form("Kin_table/D2_kin%d_1st.inp",kin[ii]));
 
             Double_t th_min=100.0,th_max=0.0;
             Double_t Ep_min=100.0,Ep_max=0.0;
@@ -163,8 +163,8 @@ cout<<"D2 kin"<<kin[ii]<<": "<<th_min<<" "<<th_max<<" "<<Ep_min<<" "<<Ep_max<<en
 
 	for(int ii=0;ii<11;ii++){
 	    ofstream outfile;
-	    if(kin[ii]<7 || kin[ii]==15)outfile.open(Form("XS_table/He3_kin%d.inp",kin[ii]));
-	    else outfile.open(Form("XS_table/He3_kin%d_1st.inp",kin[ii]));
+	    if(kin[ii]<7 || kin[ii]==15)outfile.open(Form("Kin_table/He3_kin%d.inp",kin[ii]));
+	    else outfile.open(Form("Kin_table/He3_kin%d_1st.inp",kin[ii]));
 
             Double_t th_min=100.0,th_max=0.0;
             Double_t Ep_min=100.0,Ep_max=0.0;
@@ -215,8 +215,8 @@ cout<<"D2 kin"<<kin[ii]<<": "<<th_min<<" "<<th_max<<" "<<Ep_min<<" "<<Ep_max<<en
 
 	for(int ii=0;ii<11;ii++){
 	    ofstream outfile;
-	    if(kin[ii]<7||kin[ii]==15)outfile.open(Form("XS_table/H3_kin%d.inp",kin[ii]));
-	    else outfile.open(Form("XS_table/H3_kin%d_1st.inp",kin[ii]));
+	    if(kin[ii]<7||kin[ii]==15)outfile.open(Form("Kin_table/H3_kin%d.inp",kin[ii]));
+	    else outfile.open(Form("Kin_table/H3_kin%d_1st.inp",kin[ii]));
 
             Double_t th_min=100.0,th_max=0.0;
             Double_t Ep_min=100.0,Ep_max=0.0;
@@ -268,7 +268,7 @@ cout<<"D2 kin"<<kin[ii]<<": "<<th_min<<" "<<th_max<<" "<<Ep_min<<" "<<Ep_max<<en
 
 	for(int ii=0;ii<4;ii++){
 	    ofstream outfile;
-	    outfile.open(Form("XS_table/D2_kin%d_2nd.inp",kin[ii+6]));
+	    outfile.open(Form("Kin_table/D2_kin%d_2nd.inp",kin[ii+6]));
 
             Double_t th_min=100.0,th_max=0.0;
             Double_t Ep_min=100.0,Ep_max=0.0;
@@ -318,7 +318,7 @@ cout<<"D2 kin"<<kin[ii]<<": "<<th_min<<" "<<th_max<<" "<<Ep_min<<" "<<Ep_max<<en
 
 	for(int ii=0;ii<4;ii++){
 	    ofstream outfile;
-	    outfile.open(Form("XS_table/He3_kin%d_2nd.inp",kin[ii+6]));
+	    outfile.open(Form("Kin_table/He3_kin%d_2nd.inp",kin[ii+6]));
 
             Double_t th_min=100.0,th_max=0.0;
             Double_t Ep_min=100.0,Ep_max=0.0;
@@ -368,7 +368,7 @@ cout<<"D2 kin"<<kin[ii]<<": "<<th_min<<" "<<th_max<<" "<<Ep_min<<" "<<Ep_max<<en
 
 	for(int ii=0;ii<4;ii++){
 	    ofstream outfile;
-	    outfile.open(Form("XS_table/H3_kin%d_2nd.inp",kin[ii+6]));
+	    outfile.open(Form("Kin_table/H3_kin%d_2nd.inp",kin[ii+6]));
 
             Double_t th_min=100.0,th_max=0.0;
             Double_t Ep_min=100.0,Ep_max=0.0;
