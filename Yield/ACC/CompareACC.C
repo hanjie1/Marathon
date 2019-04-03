@@ -54,7 +54,7 @@ void CompareACC()
             }
         }
 
-	int rbin=20;
+	int rbin=10;
         int nxbin=800/rbin+2;
         int nybin=400/rbin+2;
 
@@ -84,9 +84,14 @@ void CompareACC()
                   Double_t new_con1=content1/maxcontent1;
                   Double_t new_con2=content2/maxcontent2;
                   Double_t ratio=new_con2/new_con1;
+		 
+		  Double_t H1_err=hH1[ii]->GetBinError(nbin1);
+		  Double_t D2_err=hD2[ii]->GetBinError(nbin2);
+ 		  Double_t ratio_err=ratio*sqrt((H1_err/content1)*(H1_err/content1)+(D2_err/content2)*(D2_err/content2));
 
                   ratio=(int)(ratio/0.01+0.5)*0.01;
                   hDp[ii]->SetBinContent(nbin1,ratio);
+                  hDp[ii]->SetBinError(nbin1,ratio_err);
              }
             }
 	}
@@ -122,8 +127,13 @@ void CompareACC()
                   Double_t new_con2=content2/maxcontent2;
                   Double_t ratio=new_con2/new_con1;
 
+		  Double_t D2_err=hD2[ii]->GetBinError(nbin1);
+		  Double_t He_err=hHe[ii]->GetBinError(nbin2);
+ 		  Double_t ratio_err=ratio*sqrt((D2_err/content1)*(D2_err/content1)+(He_err/content2)*(He_err/content2));
+
                   ratio=(int)(ratio/0.01+0.5)*0.01;
                   hHeD[ii]->SetBinContent(nbin1,ratio);
+                  hHeD[ii]->SetBinError(nbin1,ratio_err);
              }
             }
 	}
@@ -155,8 +165,13 @@ void CompareACC()
                   Double_t new_con2=content2/maxcontent2;
                   Double_t ratio=new_con2/new_con1;
 
+		  Double_t D2_err=hD2_2nd[ii]->GetBinError(nbin1);
+		  Double_t He_err=hHe_2nd[ii]->GetBinError(nbin2);
+ 		  Double_t ratio_err=ratio*sqrt((D2_err/content1)*(D2_err/content1)+(He_err/content2)*(He_err/content2));
+
                   ratio=(int)(ratio/0.01+0.5)*0.01;
                   hHeD_2nd[ii]->SetBinContent(nbin1,ratio);
+                  hHeD_2nd[ii]->SetBinError(nbin1,ratio_err);
              }
             }
 	}
@@ -192,8 +207,13 @@ void CompareACC()
                   Double_t new_con2=content2/maxcontent2;
                   Double_t ratio=new_con2/new_con1;
 
+		  Double_t D2_err=hD2[ii]->GetBinError(nbin1);
+		  Double_t H3_err=hH3[ii]->GetBinError(nbin2);
+ 		  Double_t ratio_err=ratio*sqrt((D2_err/content1)*(D2_err/content1)+(H3_err/content2)*(H3_err/content2));
+
                   ratio=(int)(ratio/0.01+0.5)*0.01;
                   hH3D[ii]->SetBinContent(nbin1,ratio);
+                  hH3D[ii]->SetBinError(nbin1,ratio_err);
              }
             }
 	}
@@ -224,8 +244,13 @@ void CompareACC()
                   Double_t new_con2=content2/maxcontent2;
                   Double_t ratio=new_con2/new_con1;
 
+		  Double_t D2_err=hD2_2nd[ii]->GetBinError(nbin1);
+		  Double_t H3_err=hH3_2nd[ii]->GetBinError(nbin2);
+ 		  Double_t ratio_err=ratio*sqrt((D2_err/content1)*(D2_err/content1)+(H3_err/content2)*(H3_err/content2));
+
                   ratio=(int)(ratio/0.01+0.5)*0.01;
                   hH3D_2nd[ii]->SetBinContent(nbin1,ratio);
+                  hH3D_2nd[ii]->SetBinError(nbin1,ratio_err);
              }
             }
 	}
@@ -259,8 +284,13 @@ void CompareACC()
                   Double_t new_con2=content2/maxcontent2;
                   Double_t ratio=new_con2/new_con1;
 
+		  Double_t He_err=hHe[ii]->GetBinError(nbin1);
+		  Double_t H3_err=hH3[ii]->GetBinError(nbin2);
+ 		  Double_t ratio_err=ratio*sqrt((He_err/content1)*(He_err/content1)+(H3_err/content2)*(H3_err/content2));
+
                   ratio=(int)(ratio/0.01+0.5)*0.01;
                   hH3He[ii]->SetBinContent(nbin1,ratio);
+                  hH3He[ii]->SetBinError(nbin1,ratio_err);
              }
             }
 	}
@@ -290,8 +320,13 @@ void CompareACC()
                   Double_t new_con2=content2/maxcontent2;
                   Double_t ratio=new_con2/new_con1;
 
+		  Double_t He_err=hHe_2nd[ii]->GetBinError(nbin1);
+		  Double_t H3_err=hH3_2nd[ii]->GetBinError(nbin2);
+ 		  Double_t ratio_err=ratio*sqrt((He_err/content1)*(He_err/content1)+(H3_err/content2)*(H3_err/content2));
+
                   ratio=(int)(ratio/0.01+0.5)*0.01;
                   hH3He_2nd[ii]->SetBinContent(nbin1,ratio);
+                  hH3He_2nd[ii]->SetBinError(nbin1,ratio_err);
              }
             }
 	}

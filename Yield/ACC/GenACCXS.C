@@ -111,7 +111,6 @@ void GenACCXS()
 	    }
 	}
 
-	int rbin=8;
 	int nxbin=800+2;
 	int nybin=400+2;
         Double_t E0=10.589;
@@ -140,8 +139,10 @@ void GenACCXS()
 
                    Double_t aXS=SearchXS(aEp,aTheta,Theta,Ep,XS_rad);
 
-                    Double_t new_con=content/aXS;
+                   Double_t new_con=content/aXS;
+		   Double_t new_err=sqrt(content)/aXS;
                    hH1new[ii]->SetBinContent(nbin,new_con);
+                   hH1new[ii]->SetBinError(nbin,new_err);
                }
             }
 	}
@@ -178,6 +179,8 @@ void GenACCXS()
 
                    Double_t new_con=content/aXS;
                    hD2new[ii]->SetBinContent(nbin,new_con);
+		   Double_t new_err=sqrt(content)/aXS;
+                   hD2new[ii]->SetBinError(nbin,new_err);
                }
             }
 	}
@@ -208,6 +211,8 @@ void GenACCXS()
 
                    Double_t new_con=content/aXS;
                    hD2new_2nd[ii]->SetBinContent(nbin,new_con);
+		   Double_t new_err=sqrt(content)/aXS;
+                   hD2new_2nd[ii]->SetBinError(nbin,new_err);
                }
             }
 	}
@@ -243,6 +248,8 @@ void GenACCXS()
 
                    Double_t new_con=content/aXS;
                    hHenew[ii]->SetBinContent(nbin,new_con);
+		   Double_t new_err=sqrt(content)/aXS;
+                   hHenew[ii]->SetBinError(nbin,new_err);
                }
             }
 	}
@@ -273,6 +280,8 @@ void GenACCXS()
 
                    Double_t new_con=content/aXS;
                    hHenew_2nd[ii]->SetBinContent(nbin,new_con);
+		   Double_t new_err=sqrt(content)/aXS;
+                   hHenew_2nd[ii]->SetBinError(nbin,new_err);
                }
             }
 	}
@@ -308,6 +317,8 @@ void GenACCXS()
 
                    Double_t new_con=content/aXS;
                    hH3new[ii]->SetBinContent(nbin,new_con);
+		   Double_t new_err=sqrt(content)/aXS;
+                   hH3new[ii]->SetBinError(nbin,new_err);
                }
             }
 	}
@@ -338,6 +349,8 @@ void GenACCXS()
 
                    Double_t new_con=content/aXS;
                    hH3new_2nd[ii]->SetBinContent(nbin,new_con);
+		   Double_t new_err=sqrt(content)/aXS;
+                   hH3new_2nd[ii]->SetBinError(nbin,new_err);
                }
             }
 	}
