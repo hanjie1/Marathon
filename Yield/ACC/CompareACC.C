@@ -54,7 +54,7 @@ void CompareACC()
             }
         }
 
-	int rbin=10;
+	int rbin=8;
         int nxbin=800/rbin+2;
         int nybin=400/rbin+2;
 
