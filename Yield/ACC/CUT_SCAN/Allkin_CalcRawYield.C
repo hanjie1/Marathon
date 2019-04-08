@@ -28,7 +28,7 @@ void Allkin_CalcRawYield(){
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
      ofstream myfile;
-     myfile.open(Form("RawYield/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+     myfile.open(Form("RawYield/Nocut/%s_kin%d.txt",target[nn].Data(),kin[mm]));
      myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<vector<Int_t> > runList;
@@ -80,7 +80,7 @@ void Allkin_CalcRawYield(){
          Double_t livetime_err=LT.err; 
          cout<<"Get LT:  "<<livetime<<"  "<<livetime_err<<endl;
          T=GetTree(run_number,kin[mm],TreeName);
-         T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK+W2+ACC_phy);
+         T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK+W2);
          TEventList *electron;
          gDirectory->GetObject("electron",electron);
          T->SetEventList(electron);
