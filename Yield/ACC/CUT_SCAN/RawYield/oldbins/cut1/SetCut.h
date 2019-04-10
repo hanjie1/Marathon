@@ -1,0 +1,28 @@
+  Double_t th_max=0.06;
+  Double_t th_min=-0.06;
+  Double_t ph_max=0.03;
+  Double_t ph_min=-0.03;
+  Double_t dp_max=0.040;
+  Double_t dp_min=-0.040;
+  Double_t vz_max[11]={0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.105,0.105};
+  Double_t vz_min[11]={-0.08,-0.08,-0.08,-0.08,-0.08,-0.09,-0.09,-0.095,-0.095,-0.10,-0.10};
+
+  TCut beta = "L.tr.beta>0";
+  TCut Ep = "(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>0.7";
+  TCut ACC = Form("L.tr.tg_th>%f && L.tr.tg_th<%f && L.tr.tg_ph>%f && L.tr.tg_ph<%f && L.tr.tg_dp>%f && L.tr.tg_dp<%f",th_min,th_max,ph_min,ph_max,dp_min,dp_max);
+  TCut CK = "L.cer.asum_c>1500";
+  TCut trigger2 = "(DL.evtypebits>>2)&1";
+  TCut trigger1 = "(DL.evtypebits>>1)&1";
+  TCut TRK = "L.tr.n==1";
+  TCut W2 = "EKLxe.W2>3.0";
+
+         TCut ACC_phy;
+         if(kin[mm]<6 || kin[mm]==15)
+           ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.6",Theta_c[KKin]);
+         else{
+           if(tmp_runp==1)
+              ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.6",Theta_c[KKin]);
+           else
+              ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.6",Theta_c1[KKin-6]);
+         }
+

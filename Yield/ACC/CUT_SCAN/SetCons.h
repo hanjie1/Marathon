@@ -34,3 +34,8 @@ const Double_t He3_pho=0.0533752;
 
 const int nTh=15;
 const int nEp=32;
+
+const Double_t xmin[4]={0.168,0.273,0.449,0.665};
+const Double_t xmax[4]={0.283,0.418,0.641,0.849};
+const int nBin[4]={4,5,6,6};
+

@@ -8,9 +8,6 @@
 #include "SearchXS.h"
 #include <TMath.h>
 
-#define nBin 26
-#define dBin 0.03
-
 using namespace std;
 
 void Allkin_CalcRawYield(){
@@ -28,7 +25,7 @@ void Allkin_CalcRawYield(){
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
      ofstream myfile;
-     myfile.open(Form("RawYield/Nocut/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+     myfile.open(Form("RawYield/cut2/%s_kin%d.txt",target[nn].Data(),kin[mm]));
      myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<vector<Int_t> > runList;
@@ -36,22 +33,25 @@ void Allkin_CalcRawYield(){
      nrun=GetRunList(runList,kin[mm],target[nn]);
      cout<<nrun<<" runs are added "<<endl;
      if(nrun==0)exit(0);
-
+/*
      Double_t xbj[nBin];
-    // Double_t dBin=(xmax[mm]-xmin[mm])/(nBin[mm]*1.0);
      for(int ii=0;ii<nBin;ii++){
-        // xbj[ii]=xmin[mm]+ii*dBin;
          xbj[ii]=0.15+ii*dBin;
      }
-     cout<<endl;
-
+*/
+     Double_t xbj[9]={0.0};
+     Double_t dBin=(xmax[mm]-xmin[mm])/(1.0*nBin[mm]);
+     for(int ii=0;ii<nBin[mm];ii++){
+	 xbj[ii]=xmin[mm]+ii*dBin;
+     }
+  
      TString TreeName="T";
      TChain* T;
-     Double_t totalNe[nBin]={0.0};
-     Double_t RawNe[nBin]={0.0};
-     Double_t totalQ2[nBin]={0.0};
-     Double_t totalXbj[nBin]={0.0};
-     Double_t totalNe_err[nBin]={0.0};
+     Double_t totalNe[10]={0.0};
+     Double_t RawNe[10]={0.0};
+     Double_t totalQ2[10]={0.0};
+     Double_t totalXbj[10]={0.0};
+     Double_t totalNe_err[10]={0.0};
 
      int KKin=0;  //kinematica series number
      if(kin[mm]<6)KKin=kin[mm];
@@ -67,12 +67,12 @@ void Allkin_CalcRawYield(){
          Int_t tmp_runp=runList[ii][1];
          TCut ACC_phy;
          if(kin[mm]<6 || kin[mm]==15)
-           ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.6",Theta_c[KKin]);
+           ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.52",Theta_c[KKin]);
          else{ 
            if(tmp_runp==1)
-              ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.6",Theta_c[KKin]);
+              ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.52",Theta_c[KKin]);
            else 
-              ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.6",Theta_c1[KKin-6]);
+              ACC_phy=Form("abs(EKLxe.angle*180.0/3.14159-%f)<=1.52",Theta_c1[KKin-6]);
 	 }
 
          TRI_VAR LT=CalcLT(run_number,kin[mm],1);
@@ -80,7 +80,7 @@ void Allkin_CalcRawYield(){
          Double_t livetime_err=LT.err; 
          cout<<"Get LT:  "<<livetime<<"  "<<livetime_err<<endl;
          T=GetTree(run_number,kin[mm],TreeName);
-         T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK+W2);
+         T->Draw(">>electron",trigger2+CK+Ep+beta+ACC+VZ+TRK+W2+ACC_phy);
          TEventList *electron;
          gDirectory->GetObject("electron",electron);
          T->SetEventList(electron);
@@ -98,11 +98,11 @@ void Allkin_CalcRawYield(){
          T->SetBranchAddress("EKLxe.Q2",&aQ2);
 
          Double_t Radcor=1.0;
-	 Int_t NNe[nBin]={0};
+	 Int_t NNe[10]={0};
          Int_t nentries=electron->GetN();
          for(int jj=0;jj<nentries;jj++){
 	     T->GetEntry(electron->GetEntry(jj));
-             for(int kk=0;kk<nBin;kk++){
+             for(int kk=0;kk<nBin[mm];kk++){
 		 Double_t dxbj=axbj-xbj[kk];
                  if(dxbj<dBin && dxbj>=0){
 		    totalNe[kk]+=1.0/livetime;
@@ -115,7 +115,7 @@ void Allkin_CalcRawYield(){
 	     }
          } 
 
-         for(int jj=0;jj<nBin;jj++){
+         for(int jj=0;jj<nBin[mm];jj++){
            Double_t tmp_err=0.0;
            if(NNe[jj]!=0){
              // tmp_err=sqrt(1.0/NNe[jj]+(livetime_err/livetime)*(livetime_err/livetime))*NNe[jj]/livetime;
@@ -128,11 +128,11 @@ void Allkin_CalcRawYield(){
      }
 
 
-    Double_t rawYield[nBin]={0.0};
-    Double_t rawYield_err[nBin]={0.0};
-    Double_t avgQ2[nBin]={0.0};
-    Double_t avgXbj[nBin]={0.0};
-    for(int ii=0;ii<nBin;ii++){
+    Double_t rawYield[10]={0.0};
+    Double_t rawYield_err[10]={0.0};
+    Double_t avgQ2[10]={0.0};
+    Double_t avgXbj[10]={0.0};
+    for(int ii=0;ii<nBin[mm];ii++){
         totalNe_err[ii]=sqrt(totalNe_err[ii]);
         //cout<<"Before LUM: "<<ii<<"  "<<totalNe[ii]<<"  "<<LUM<<endl;
 	rawYield[ii]=totalNe[ii]/LUM;
