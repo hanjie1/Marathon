@@ -32,8 +32,10 @@ const Double_t H1_pho=0.0708;
 const Double_t D2_pho=0.14215;
 const Double_t He3_pho=0.0533752;
 
-const int nTh=15;
-const int nEp=32;
+const int nTh=100;
+const int nEp=50;
+const Double_t deltaTh=0.08;
+const Double_t deltaEp=0.008;
 
 const Double_t xmin[4]={0.168,0.273,0.449,0.665};
 const Double_t xmax[4]={0.283,0.418,0.641,0.849};

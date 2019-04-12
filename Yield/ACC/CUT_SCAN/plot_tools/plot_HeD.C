@@ -48,16 +48,16 @@ void plot_HeD()
    for(int ii=0;ii<4;ii++){
        Yfile=Form("Nocut/He3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,He_x,He_xavg,He_Q2,He_Y,He_YE); 
-       Yfile=Form("cut1/He3_kin%d.txt",kin[ii]);
+       Yfile=Form("cut3/He3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,He_x1,He_xavg1,He_Q21,He_Y1,He_YE1); 
-       Yfile=Form("cut2/He3_kin%d.txt",kin[ii]);
+       Yfile=Form("cut4/He3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,He_x2,He_xavg2,He_Q22,He_Y2,He_YE2); 
 
        Yfile=Form("Nocut/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x,D2_xavg,D2_Q2,D2_Y,D2_YE);
-       Yfile=Form("cut1/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("cut3/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x1,D2_xavg1,D2_Q21,D2_Y1,D2_YE1);
-       Yfile=Form("cut2/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("cut4/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x2,D2_xavg2,D2_Q22,D2_Y2,D2_YE2);
    }
 
@@ -86,7 +86,7 @@ void plot_HeD()
    } 
 
    outfile1<<"------------------------------------"<<endl;
-   outfile1<<"cut1: "<<endl;
+   outfile1<<"cut3: "<<endl;
    int nn1=0;
    for(int ii=0;ii<4;ii++){
        for(int jj=0;jj<MAXBIN;jj++){
@@ -105,7 +105,7 @@ void plot_HeD()
    }
 
    outfile1<<"-----------------------------------"<<endl;
-   outfile1<<"cut2: "<<endl;
+   outfile1<<"cut4: "<<endl;
    int nn2=0;
    for(int ii=0;ii<4;ii++){
        for(int jj=0;jj<MAXBIN;jj++){
@@ -140,8 +140,8 @@ void plot_HeD()
 
    auto leg1=new TLegend(0.7,0.6,0.85,0.85);
    leg1->AddEntry(hratio,"Nocut","P");
-   leg1->AddEntry(hratio1,"cut1","P");
-   leg1->AddEntry(hratio2,"cut2","P");
+   leg1->AddEntry(hratio1,"cut3","P");
+   leg1->AddEntry(hratio2,"cut4","P");
    leg1->Draw();
 
 }
