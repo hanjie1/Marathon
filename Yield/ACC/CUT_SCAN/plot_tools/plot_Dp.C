@@ -49,16 +49,16 @@ void plot_Dp()
    for(int ii=0;ii<2;ii++){
        Yfile=Form("Nocut/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x,D2_xavg,D2_Q2,D2_Y,D2_YE); 
-       Yfile=Form("cut3/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x1,D2_xavg1,D2_Q21,D2_Y1,D2_YE1); 
-       Yfile=Form("cut4/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x2,D2_xavg2,D2_Q22,D2_Y2,D2_YE2);
 
        Yfile=Form("Nocut/H1_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H1_x,H1_xavg,H1_Q2,H1_Y,H1_YE);
-       Yfile=Form("cut3/H1_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/H1_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H1_x1,H1_xavg1,H1_Q21,H1_Y1,H1_YE1);
-       Yfile=Form("cut4/H1_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/H1_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H1_x2,H1_xavg2,H1_Q22,H1_Y2,H1_YE2);
    }
 
@@ -90,7 +90,7 @@ void plot_Dp()
 
    int nn1=0;
    outfile1<<"-----------------------------------"<<endl;
-   outfile1<<"cut3:"<<endl;
+   outfile1<<"newbin:"<<endl;
    for(int ii=0;ii<2;ii++){
        for(int jj=0;jj<MAXBIN;jj++){
 	   if(D2_x1[ii][jj]==0)continue;
@@ -108,7 +108,7 @@ void plot_Dp()
    } 
 
    outfile1<<"-----------------------------------"<<endl;
-   outfile1<<"cut4:"<<endl;
+   outfile1<<"newbin:"<<endl;
    int nn2=0;
    for(int ii=0;ii<2;ii++){
        for(int jj=0;jj<MAXBIN;jj++){
@@ -143,8 +143,8 @@ void plot_Dp()
 
    auto leg1=new TLegend(0.7,0.6,0.85,0.85);
    leg1->AddEntry(hratio,"Nocut","P");
-   leg1->AddEntry(hratio1,"cut3","P");
-   leg1->AddEntry(hratio2,"cut4","P");
+   leg1->AddEntry(hratio1,"newbin","P");
+   leg1->AddEntry(hratio2,"newbin","P");
    leg1->Draw();
 
 }

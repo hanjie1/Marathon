@@ -64,7 +64,7 @@ void Allkin_CalcRawYield(){
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
      ofstream myfile;
-     myfile.open(Form("RawYield/cut4/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+     myfile.open(Form("RawYield/newbin/%s_kin%d.txt",target[nn].Data(),kin[mm]));
      myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<vector<Int_t> > runList;
@@ -79,9 +79,10 @@ void Allkin_CalcRawYield(){
      }
 */
      Double_t xbj[9]={0.0};
-     Double_t dBin=(xmax[mm]-xmin[mm])/(1.0*nBin[mm]);
-     for(int ii=0;ii<nBin[mm];ii++){
-	 xbj[ii]=xmin[mm]+ii*dBin;
+//     Double_t dBin=(xmax[mm]-xmin[mm])/(1.0*nBin[mm]);
+     xbj[0]=xmin[mm];
+     for(int ii=1;ii<nBin[mm];ii++){
+	 xbj[ii]=xbj[ii-1]+dBin[mm][ii-1];
      }
   
      TString TreeName="T";
@@ -154,12 +155,12 @@ void Allkin_CalcRawYield(){
 	     }
 	     Double_t dEp=aNu-Nu_c;
              int pass_ACC=0;
-	     pass_ACC=SearchACC(dTh,dEp,dTheta,ACC_table,ACC_matrix);
-             if(pass_ACC==0)continue;
+//	     pass_ACC=SearchACC(dTh,dEp,dTheta,ACC_table,ACC_matrix);
+//             if(pass_ACC==0)continue;
 
              for(int kk=0;kk<nBin[mm];kk++){
 		 Double_t dxbj=axbj-xbj[kk];
-                 if(dxbj<dBin && dxbj>=0){
+                 if(dxbj<dBin[mm][kk] && dxbj>=0){
 		    totalNe[kk]+=1.0/livetime;
 		    NNe[kk]++;
                     RawNe[kk]++;
