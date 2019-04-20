@@ -46,18 +46,18 @@ void plot_H3D()
    TString Yfile;
    int kin[4]={1,4,9,15};
    for(int ii=0;ii<4;ii++){
-       Yfile=Form("Nocut/H3_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin2/Nocut/H3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H3_x,H3_xavg,H3_Q2,H3_Y,H3_YE); 
-       Yfile=Form("newbin/H3_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin2/cut3/H3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H3_x1,H3_xavg1,H3_Q21,H3_Y1,H3_YE1); 
-       Yfile=Form("newbin/H3_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin2/cut4/H3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H3_x2,H3_xavg2,H3_Q22,H3_Y2,H3_YE2); 
 
-       Yfile=Form("Nocut/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin2/Nocut/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x,D2_xavg,D2_Q2,D2_Y,D2_YE);
-       Yfile=Form("newbin/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin2/cut3/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x1,D2_xavg1,D2_Q21,D2_Y1,D2_YE1);
-       Yfile=Form("newbin/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin2/cut4/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x2,D2_xavg2,D2_Q22,D2_Y2,D2_YE2);
    }
 
@@ -86,7 +86,7 @@ void plot_H3D()
    } 
 
    outfile1<<"------------------------------------"<<endl;
-   outfile1<<"newbin: "<<endl;
+   outfile1<<"cut3: "<<endl;
    int nn1=0;
    for(int ii=0;ii<4;ii++){
        for(int jj=0;jj<MAXBIN;jj++){
@@ -105,7 +105,7 @@ void plot_H3D()
    }
 
    outfile1<<"-----------------------------------"<<endl;
-   outfile1<<"newbin: "<<endl;
+   outfile1<<"cut4: "<<endl;
    int nn2=0;
    for(int ii=0;ii<4;ii++){
        for(int jj=0;jj<MAXBIN;jj++){
@@ -140,8 +140,8 @@ void plot_H3D()
 
    auto leg1=new TLegend(0.7,0.6,0.85,0.85);
    leg1->AddEntry(hratio,"Nocut","P");
-   leg1->AddEntry(hratio1,"newbin","P");
-   leg1->AddEntry(hratio2,"newbin","P");
+   leg1->AddEntry(hratio1,"cut3","P");
+   leg1->AddEntry(hratio2,"cut4","P");
    leg1->Draw();
 
 }

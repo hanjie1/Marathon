@@ -64,7 +64,7 @@ void Allkin_CalcRawYield(){
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
      ofstream myfile;
-     myfile.open(Form("RawYield/newbin/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+     myfile.open(Form("RawYield/newbin2/cut4/%s_kin%d.txt",target[nn].Data(),kin[mm]));
      myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<vector<Int_t> > runList;
@@ -155,8 +155,8 @@ void Allkin_CalcRawYield(){
 	     }
 	     Double_t dEp=aNu-Nu_c;
              int pass_ACC=0;
-//	     pass_ACC=SearchACC(dTh,dEp,dTheta,ACC_table,ACC_matrix);
-//             if(pass_ACC==0)continue;
+	     pass_ACC=SearchACC(dTh,dEp,dTheta,ACC_table,ACC_matrix);
+             if(pass_ACC==0)continue;
 
              for(int kk=0;kk<nBin[mm];kk++){
 		 Double_t dxbj=axbj-xbj[kk];
