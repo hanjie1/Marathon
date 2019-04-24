@@ -10,11 +10,11 @@ const Double_t CM2toNB=1.0e33;
 const Double_t pi=TMath::Pi();
 
 //boiling constants
-const Double_t bH3_A=0.0001293;
-const Double_t bH3_B=-0.007399;
+const Double_t bH3_A=0.0001385;
+const Double_t bH3_B=-0.007494;
 
-const Double_t bHe3_A=0.00008686;
-const Double_t bHe3_B=-0.004759;
+const Double_t bHe3_A=0.00008692;
+const Double_t bHe3_B=-0.004750;
 
 const Double_t bD2_A=0.0001147;
 const Double_t bD2_B=-0.006651;

@@ -12,7 +12,7 @@ void Allkin_CalcRawYield(){
    TString target[4]={"H1","D2","He3","H3"};
    int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
 
-   for(int nn=0;nn<4;nn++){   
+   for(int nn=2;nn<4;nn++){   
     for(int mm=0;mm<11;mm++){
      if(nn==0&&mm>4)break;
      Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;

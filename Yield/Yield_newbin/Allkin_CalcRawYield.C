@@ -17,7 +17,7 @@ void Allkin_CalcRawYield(){
    Double_t Theta_c[11]={16.8075,17.5717,19.1125,20.575,21.9401,23.2065,25.5858,27.7642,29.8087,31.7274,33.5552};
    Double_t Theta_c1[4]={25.5909,27.7744,29.8159,31.7325};//2nd run of kin 7,9,11,13; 2nd and 3rd kin15 are almost the same as 1st run, so use sam
 
-   for(int nn=0;nn<4;nn++){   
+   for(int nn=2;nn<4;nn++){   
     for(int mm=0;mm<11;mm++){
      if(nn==0&&kin[mm]>4)break;
      Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;

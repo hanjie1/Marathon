@@ -144,4 +144,32 @@ void plot_HeD_kin()
    }
    leg2->Draw();
 
+   TCanvas *c3=new TCanvas("c3","c3",1500,1500);
+   TMultiGraph *mg3=new TMultiGraph();
+   for(int ii=0;ii<11;ii++){
+        mg3->Add(hKin[ii]);
+   }
+   mg3->Draw("AP");
+   mg3->SetTitle("He3/D yield ratio;xbj;");
+
+   auto leg3=new TLegend(0.7,0.6,0.85,0.85);
+   for(int ii=0;ii<11;ii++){
+      leg3->AddEntry(hKin[ii],Form("newbin kin%d",kin[ii]),"P");
+   }
+   leg3->Draw();
+
+   TCanvas *c4=new TCanvas("c4","c4",1500,1500);
+   TMultiGraph *mg4=new TMultiGraph();
+   for(int ii=0;ii<11;ii++){
+        mg4->Add(hKin1[ii]);
+   }
+   mg4->Draw("AP");
+   mg4->SetTitle("He3/D yield ratio;xbj;");
+
+   auto leg4=new TLegend(0.7,0.6,0.85,0.85);
+   for(int ii=0;ii<11;ii++){
+      leg4->AddEntry(hKin1[ii],Form("bin003 kin%d",kin[ii]),"P");
+   }
+   leg4->Draw();
+
 }
