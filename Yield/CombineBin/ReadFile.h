@@ -1,6 +1,6 @@
 #define MAXNUM 60
 TString Yieldpath="/w/halla-scifs17exp/triton/hanjie/MARATHON/analysis/Yield/CombineBin/plot_tools/";
-int ReadFile(TString filename,Double_t xavg[MAXNUM],Double_t Yield[MAXNUM],Double_t Y_err[MAXNUM],Double_t RadCor[MAXNUM]){
+int ReadFile(TString filename,Double_t xavg[MAXNUM],Double_t Yield[MAXNUM],Double_t Y_err[MAXNUM],Double_t RadCor[MAXNUM],int kin[MAXNUM]){
     ifstream file;
     TString myfile=Yieldpath+filename;
     file.open(myfile);
@@ -19,6 +19,9 @@ int ReadFile(TString filename,Double_t xavg[MAXNUM],Double_t Yield[MAXNUM],Doubl
           Y_err[nn]=atof(content.Data());
           tmp.Tokenize(content,from,"  ");
           RadCor[nn]=atof(content.Data());
+          tmp.Tokenize(content,from,"  ");
+          kin[nn]=atoi(content.Data());
+
           from=0;
           nn++;
      }

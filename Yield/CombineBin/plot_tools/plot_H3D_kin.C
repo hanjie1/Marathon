@@ -94,7 +94,7 @@ void plot_H3D_kin()
 	   }
 	   else cout<<"Something wrong with RadCor !!"<<endl;
 
-	   outfile<<H3_xavg[ii][jj]<<"  "<<H3D[ii][jj]<<"  "<<H3D_E[ii][jj]<<"  "<<H3D_RadCor[ii][jj]<<endl;
+	   outfile<<H3_xavg[ii][jj]<<"  "<<H3D[ii][jj]<<"  "<<H3D_E[ii][jj]<<"  "<<H3D_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
            nn++;
            nnn++;
        }

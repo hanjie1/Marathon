@@ -7,17 +7,20 @@ void Weight_avg_HeD()
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0};  
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
+    int kin[MAXNUM]={0};
 
     TString filename;
     filename="Ratio_HeD.dat";
-    int totalN = ReadFile(filename,x,Ratio,Rerr,RadCor);
+    int totalN = ReadFile(filename,x,Ratio,Rerr,RadCor,kin);
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
     
     cout<<"Number of points:  "<<totalN<<endl;
+    ofstream outfile1;
+    outfile1.open("CorrRatio_HeD.dat");
     for(int ii=0;ii<totalN;ii++){
 
 	/* Endcup correction */
-	Double_t tmp_ECC=1.0+TMath::Exp(ECCA_HeD*x[ii]+ECCB_HeD);
+	Double_t tmp_ECC=1.0-TMath::Exp(ECCA_HeD*x[ii]+ECCB_HeD);
 	Ratio1[ii]=Ratio[ii]*tmp_ECC;
 	Rerr1[ii]=Rerr[ii]*tmp_ECC;
 
@@ -30,8 +33,10 @@ void Weight_avg_HeD()
 	/* radiative correction */
 	Ratio3[ii]=Ratio2[ii]*RadCor[ii];	
 	Rerr3[ii]=Rerr2[ii]*RadCor[ii];
-    }     
 
+	outfile1<<x[ii]<<"  "<<Ratio3[ii]<<"  "<<Rerr3[ii]<<"  "<<kin[ii]<<endl;
+    }     
+    outfile1.close();
     Double_t binx[26]={0.0};
     for(int ii=0;ii<26;ii++) binx[ii]=0.15+ii*0.03;
 

@@ -7,10 +7,11 @@ void Weight_avg_Dp()
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0};  
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
+    int kin[MAXNUM]={0};
 
     TString filename;
     filename="Ratio_Dp.dat";
-    int totalN = ReadFile(filename,x,Ratio,Rerr,RadCor);
+    int totalN = ReadFile(filename,x,Ratio,Rerr,RadCor,kin);
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
     
     cout<<"Number of points:  "<<totalN<<endl;

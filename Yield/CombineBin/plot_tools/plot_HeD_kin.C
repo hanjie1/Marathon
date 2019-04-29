@@ -94,7 +94,7 @@ void plot_HeD_kin()
 	   }
 	   else cout<<"Something wrong with RadCor !!"<<endl;
 
-	   outfile<<He_xavg[ii][jj]<<"  "<<HeD[ii][jj]<<"  "<<HeD_E[ii][jj]<<"  "<<HeD_RadCor[ii][jj]<<endl;
+	   outfile<<He_xavg[ii][jj]<<"  "<<HeD[ii][jj]<<"  "<<HeD_E[ii][jj]<<"  "<<HeD_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
            nn++;
            nnn++;
        }

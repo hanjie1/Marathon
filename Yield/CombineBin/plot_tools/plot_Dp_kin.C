@@ -94,7 +94,7 @@ void plot_Dp_kin()
 	   }
 	   else cout<<"Something wrong with RadCor !!"<<endl;
 
-	   outfile<<D2_xavg[ii][jj]<<"  "<<Dp[ii][jj]<<"  "<<Dp_E[ii][jj]<<"  "<<Dp_RadCor[ii][jj]<<endl;
+	   outfile<<D2_xavg[ii][jj]<<"  "<<Dp[ii][jj]<<"  "<<Dp_E[ii][jj]<<"  "<<Dp_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
            nn++;
            nnn++;
        }
