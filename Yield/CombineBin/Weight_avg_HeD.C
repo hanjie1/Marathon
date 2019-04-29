@@ -1,7 +1,7 @@
 #include <TMath.h>
 #include "CorrFactor.h"
 #include "ReadFile.h"
-void Weight_avg_Dp()
+void Weight_avg_HeD()
 {
     Double_t x[MAXNUM]={0.0},Ratio[MAXNUM]={0.0},Rerr[MAXNUM]={0.0};
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0};  
@@ -9,7 +9,7 @@ void Weight_avg_Dp()
     Double_t RadCor[MAXNUM]={0.0};
 
     TString filename;
-    filename="Ratio_Dp.dat";
+    filename="Ratio_HeD.dat";
     int totalN = ReadFile(filename,x,Ratio,Rerr,RadCor);
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
     
@@ -17,15 +17,15 @@ void Weight_avg_Dp()
     for(int ii=0;ii<totalN;ii++){
 
 	/* Endcup correction */
-	Double_t tmp_ECC=1.0+TMath::Exp(ECCA_Dp*x[ii]+ECCB_Dp);
+	Double_t tmp_ECC=1.0+TMath::Exp(ECCA_HeD*x[ii]+ECCB_HeD);
 	Ratio1[ii]=Ratio[ii]*tmp_ECC;
 	Rerr1[ii]=Rerr[ii]*tmp_ECC;
 
         /* positron correction */
-	Double_t tmp_pH1=1.0-TMath::Exp(pA_H1*x[ii]+pB_H1);
 	Double_t tmp_pD2=1.0-TMath::Exp(pA_D2*x[ii]+pB_D2);
-	Ratio2[ii]=Ratio1[ii]*(tmp_pD2/tmp_pH1);
-	Rerr2[ii]=Rerr1[ii]*(tmp_pD2/tmp_pH1);
+	Double_t tmp_pHe3=1.0-TMath::Exp(pA_He3*x[ii]+pB_He3);
+	Ratio2[ii]=Ratio1[ii]*(tmp_pHe3/tmp_pD2);
+	Rerr2[ii]=Rerr1[ii]*(tmp_pHe3/tmp_pD2);
 
 	/* radiative correction */
 	Ratio3[ii]=Ratio2[ii]*RadCor[ii];	
@@ -37,10 +37,10 @@ void Weight_avg_Dp()
 
     Double_t x_final[26]={0.0},Ratio_final[26]={0.0},Rerr_final[26]={0.0};
 
-    TGraphErrors *gDp=new TGraphErrors();
+    TGraphErrors *gHeD=new TGraphErrors();
     ofstream outfile;
-    outfile.open("Dp_final.dat");
-    outfile<<"x     Ratio     Ratio_err"<<endl;
+    outfile.open("HeD_final.dat");
+    outfile<<"x     Ratio     Ratio_err      relative_err"<<endl;
     for(int ii=0;ii<26;ii++){
 	int nn=0;
         Double_t tmpY[5]={0.0},tmpYerr[5]={0.0},tmpX[5]={0.0};;
@@ -63,17 +63,17 @@ void Weight_avg_Dp()
 	x_final[ii]=x_weight/var;
 	Ratio_final[ii]=R_weight/var;
 	Rerr_final[ii]=sqrt(1.0/var);
- 	outfile<<x_final[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<endl;
-        gDp->SetPoint(ii,x_final[ii],Ratio_final[ii]);
-        gDp->SetPointError(ii,0,Rerr_final[ii]);
+ 	outfile<<x_final[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
+        gHeD->SetPoint(ii,x_final[ii],Ratio_final[ii]);
+        gHeD->SetPointError(ii,0,Rerr_final[ii]);
     }
 
     outfile.close();
 
     TCanvas *c1=new TCanvas("c1","c1",1500,1500);
-    gDp->SetMarkerStyle(8);
-    gDp->SetMarkerColor(4);
-    gDp->Draw("AP");
-    gDp->SetTitle("D/p;xbj;");
+    gHeD->SetMarkerStyle(8);
+    gHeD->SetMarkerColor(4);
+    gHeD->Draw("AP");
+    gHeD->SetTitle("He3/D2;xbj;");
 
 }
