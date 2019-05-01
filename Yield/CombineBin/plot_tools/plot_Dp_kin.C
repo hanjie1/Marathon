@@ -47,20 +47,20 @@ void plot_Dp_kin()
    TString Yfile;
    int kin[5]={0,1,2,3,4};
    for(int ii=0;ii<5;ii++){
-       Yfile=Form("bin003/RawYield/D2_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/RawYield/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x,D2_xavg,D2_Q2,D2_Y,D2_YE); 
 //       Yfile=Form("D2_kin%d.txt",kin[ii]);
 //       ReadYield(Yfile,ii,D2_x1,D2_xavg1,D2_Q21,D2_Y1,D2_YE1); 
 
-       Yfile=Form("bin003/RawYield/H1_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/RawYield/H1_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H1_x,H1_xavg,H1_Q2,H1_Y,H1_YE);
 //       Yfile=Form("H1_kin%d.txt",kin[ii]);
 //       ReadYield(Yfile,ii,H1_x1,H1_xavg1,H1_Q21,H1_Y1,H1_YE1);
 
-       Yfile=Form("bin003/RadCor/H1_kin%d_xs.out",kin[ii]);
+       Yfile=Form("newbin/RadCor/H1_kin%d_xs.out",kin[ii]);
        ReadRadCor(Yfile,ii,H1_Radx,H1_RadQ2,H1_RadCor);
 
-       Yfile=Form("bin003/RadCor/D2_kin%d_xs.out",kin[ii]);
+       Yfile=Form("newbin/RadCor/D2_kin%d_xs.out",kin[ii]);
        ReadRadCor(Yfile,ii,D2_Radx,D2_RadQ2,D2_RadCor);
    }
 
@@ -70,7 +70,7 @@ void plot_Dp_kin()
    TGraphErrors *hKin1[5];
    
    ofstream outfile;
-   outfile.open("Ratio_Dp.dat"); 
+   outfile.open("newbin/Ratio_Dp.dat"); 
    int nn=0;
    for(int ii=0;ii<5;ii++){
        int nnn=0;
@@ -136,7 +136,7 @@ void plot_Dp_kin()
 
    auto leg1=new TLegend(0.7,0.6,0.85,0.85);
    leg1->AddEntry(hratio,"newbin","P");
-//   leg1->AddEntry(hratio1,"bin003","P");
+//   leg1->AddEntry(hratio1,"newbin","P");
    leg1->Draw();
 
    TCanvas *c2=new TCanvas("c2","c2",1500,1500);
@@ -157,7 +157,7 @@ void plot_Dp_kin()
    leg2->SetNColumns(2);
    for(int ii=0;ii<5;ii++){
       leg2->AddEntry(hKin[ii],Form("newbin kin%d",ii),"P");
-//      leg2->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
+//      leg2->AddEntry(hKin1[ii],Form("newbin kin%d",ii),"P");
    }
    leg2->Draw();
    
@@ -185,7 +185,7 @@ void plot_Dp_kin()
 
    auto leg4=new TLegend(0.7,0.6,0.85,0.85);
    for(int ii=0;ii<5;ii++){
-      leg4->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
+      leg4->AddEntry(hKin1[ii],Form("newbin kin%d",ii),"P");
    }
    leg4->Draw();
 */

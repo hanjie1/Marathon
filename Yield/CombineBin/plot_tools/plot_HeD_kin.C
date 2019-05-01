@@ -4,26 +4,26 @@ using namespace std;
 
 void plot_HeD_kin()
 {
-     Double_t D2_x[11][MAXBIN],D2_Q2[11][MAXBIN],D2_xavg[11][MAXBIN];
-     Double_t He_x[11][MAXBIN],He_Q2[11][MAXBIN],He_xavg[11][MAXBIN];
-     Double_t D2_Y[11][MAXBIN],D2_YE[11][MAXBIN]; 
-     Double_t He_Y[11][MAXBIN],He_YE[11][MAXBIN]; 
-     Double_t HeD[11][MAXBIN],HeD_E[11][MAXBIN]; 
+     Double_t D2_x[12][MAXBIN],D2_Q2[12][MAXBIN],D2_xavg[12][MAXBIN];
+     Double_t He_x[12][MAXBIN],He_Q2[12][MAXBIN],He_xavg[12][MAXBIN];
+     Double_t D2_Y[12][MAXBIN],D2_YE[12][MAXBIN]; 
+     Double_t He_Y[12][MAXBIN],He_YE[12][MAXBIN]; 
+     Double_t HeD[12][MAXBIN],HeD_E[12][MAXBIN]; 
 
-     Double_t D2_x1[11][MAXBIN],D2_Q21[11][MAXBIN],D2_xavg1[11][MAXBIN];
-     Double_t He_x1[11][MAXBIN],He_Q21[11][MAXBIN],He_xavg1[11][MAXBIN];
-     Double_t D2_Y1[11][MAXBIN],D2_YE1[11][MAXBIN]; 
-     Double_t He_Y1[11][MAXBIN],He_YE1[11][MAXBIN]; 
-     Double_t HeD1[11][MAXBIN],HeD_E1[11][MAXBIN]; 
+     Double_t D2_x1[12][MAXBIN],D2_Q21[12][MAXBIN],D2_xavg1[12][MAXBIN];
+     Double_t He_x1[12][MAXBIN],He_Q21[12][MAXBIN],He_xavg1[12][MAXBIN];
+     Double_t D2_Y1[12][MAXBIN],D2_YE1[12][MAXBIN]; 
+     Double_t He_Y1[12][MAXBIN],He_YE1[12][MAXBIN]; 
+     Double_t HeD1[12][MAXBIN],HeD_E1[12][MAXBIN]; 
 
-     Double_t D2_Radx[11][MAXBIN],D2_RadQ2[11][MAXBIN];
-     Double_t He_Radx[11][MAXBIN],He_RadQ2[11][MAXBIN];
-     Double_t D2_RadCor[11][MAXBIN]; 
-     Double_t He_RadCor[11][MAXBIN]; 
-     Double_t HeD_RadCor[11][MAXBIN]; 
+     Double_t D2_Radx[12][MAXBIN],D2_RadQ2[12][MAXBIN];
+     Double_t He_Radx[12][MAXBIN],He_RadQ2[12][MAXBIN];
+     Double_t D2_RadCor[12][MAXBIN]; 
+     Double_t He_RadCor[12][MAXBIN]; 
+     Double_t HeD_RadCor[12][MAXBIN]; 
 
 
-     for(int ii=0;ii<11;ii++){
+     for(int ii=0;ii<12;ii++){
 	 for(int jj=0;jj<MAXBIN;jj++){
              D2_x[ii][jj]=0.0; D2_Q2[ii][jj]=0.0; D2_xavg[ii][jj]=0.0; 
              He_x[ii][jj]=0.0; He_Q2[ii][jj]=0.0; He_xavg[ii][jj]=0.0;
@@ -45,8 +45,8 @@ void plot_HeD_kin()
      }}
 
    TString Yfile;
-   int kin[11]={0,1,2,3,4,5,7,9,11,13,15};
-   for(int ii=0;ii<11;ii++){
+   int kin[12]={0,1,2,3,4,5,7,9,12,13,15,16};
+   for(int ii=0;ii<12;ii++){
        Yfile=Form("bin003/RawYield/He3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,He_x,He_xavg,He_Q2,He_Y,He_YE); 
 //       Yfile=Form("He_kin%d.txt",kin[ii]);
@@ -66,13 +66,13 @@ void plot_HeD_kin()
 
    TGraphErrors *hratio=new TGraphErrors();
    TGraphErrors *hratio1=new TGraphErrors();
-   TGraphErrors *hKin[11];
-   TGraphErrors *hKin1[11];
+   TGraphErrors *hKin[12];
+   TGraphErrors *hKin1[12];
    
    ofstream outfile;
-   outfile.open("Ratio_HeD.dat"); 
+   outfile.open("bin003/Ratio_HeD.dat"); 
    int nn=0;
-   for(int ii=0;ii<11;ii++){
+   for(int ii=0;ii<12;ii++){
        int nnn=0;
        hKin[ii]=new TGraphErrors();
        for(int jj=0;jj<MAXBIN;jj++){
@@ -102,7 +102,7 @@ void plot_HeD_kin()
    outfile.close();
 /*
    int nn1=0;
-   for(int ii=0;ii<11;ii++){
+   for(int ii=0;ii<12;ii++){
        int nnn=0;
        hKin1[ii]=new TGraphErrors();
        for(int jj=0;jj<MAXBIN;jj++){
@@ -141,8 +141,8 @@ void plot_HeD_kin()
 
    TCanvas *c2=new TCanvas("c2","c2",1500,1500);
    TMultiGraph *mg2=new TMultiGraph();
-   int color[11]={1,2,3,4,6,7,8,9,46,30,12};
-   for(int ii=0;ii<11;ii++){
+   int color[12]={1,2,3,4,6,7,8,9,46,30,12,38};
+   for(int ii=0;ii<12;ii++){
 	hKin[ii]->SetMarkerStyle(8);
 	hKin[ii]->SetMarkerColor(color[ii]);
 //	hKin1[ii]->SetMarkerStyle(22);
@@ -155,7 +155,7 @@ void plot_HeD_kin()
 
    auto leg2=new TLegend(0.7,0.6,0.85,0.85);
    leg2->SetNColumns(2);
-   for(int ii=0;ii<11;ii++){
+   for(int ii=0;ii<12;ii++){
       leg2->AddEntry(hKin[ii],Form("newbin kin%d",kin[ii]),"P");
 //      leg2->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
    }
@@ -163,28 +163,28 @@ void plot_HeD_kin()
    
    TCanvas *c3=new TCanvas("c3","c3",1500,1500);
    TMultiGraph *mg3=new TMultiGraph();
-   for(int ii=0;ii<11;ii++){
+   for(int ii=0;ii<12;ii++){
   	mg3->Add(hKin[ii]);
    }
    mg3->Draw("AP");
    mg3->SetTitle("He3/D2 yield ratio;xbj;");
 
    auto leg3=new TLegend(0.7,0.6,0.85,0.85);
-   for(int ii=0;ii<11;ii++){
+   for(int ii=0;ii<12;ii++){
       leg3->AddEntry(hKin[ii],Form("newbin kin%d",kin[ii]),"P");
    }
    leg3->Draw();
 /*
    TCanvas *c4=new TCanvas("c4","c4",1500,1500);
    TMultiGraph *mg4=new TMultiGraph();
-   for(int ii=0;ii<11;ii++){
+   for(int ii=0;ii<12;ii++){
   	mg4->Add(hKin1[ii]);
    }
    mg4->Draw("AP");
    mg4->SetTitle("D/p yield ratio;xbj;");
 
-   auto leg4=new TLegend(0.7,0.6,0.811,0.811);
-   for(int ii=0;ii<11;ii++){
+   auto leg4=new TLegend(0.7,0.6,0.812,0.812);
+   for(int ii=0;ii<12;ii++){
       leg4->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
    }
    leg4->Draw();
