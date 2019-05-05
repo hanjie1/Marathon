@@ -3,15 +3,15 @@
 #include "ReadFile.h"
 void Weight_avg_H3He()
 {
-    Double_t x[MAXNUM]={0.0},Ratio[MAXNUM]={0.0},Rerr[MAXNUM]={0.0};
-    Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0},Ratio4[MAXNUM]={0.0};  
-    Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0};  
+    Double_t x[MAXNUM]={0.0},Q2[MAXNUM]={0.0},Ratio[MAXNUM]={0.0},Rerr[MAXNUM]={0.0};
+    Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0},Ratio4[MAXNUM]={0.0},Ratio5[MAXNUM]={0.0};  
+    Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0},Rerr5[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
-    filename="bin003/Ratio_H3He.dat";
-    int totalN = ReadFile(filename,x,Ratio,Rerr,RadCor,kin);
+    filename="Xbj_sort_H3He.dat";
+    int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,kin);
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
    
     ifstream infile1;
@@ -19,7 +19,7 @@ void Weight_avg_H3He()
     Ssiz_t from=0;
     TString content,tmp;
     int nn=0;
-    Double_t totalQ[11]={0.0},totalQfH[11]={0.0};
+    Double_t totalQ[12]={0.0},totalQfH[12]={0.0};
     while(tmp.ReadLine(infile1)){
 	  if(nn==0){nn++;continue;}
           tmp.Tokenize(content,from,"  ");
@@ -31,6 +31,22 @@ void Weight_avg_H3He()
           nn++;
      }
     infile1.close();
+
+    ifstream infile2;
+    infile2.open("BinCenter/BCfactor_H3He.dat");
+    from=0;
+    int mm=0;
+    Double_t Xbc[MAXNUM]={0.0},BCfactor[MAXNUM]={0.0};
+    while(tmp.ReadLine(infile2)){
+          tmp.Tokenize(content,from," ");
+          Xbc[mm]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          BCfactor[mm]=atof(content.Data());
+          from=0;
+          mm++;
+     }
+    infile2.close();
+
 
     cout<<"Number of points:  "<<totalN<<endl;
     for(int ii=0;ii<totalN;ii++){
@@ -59,53 +75,68 @@ void Weight_avg_H3He()
 	if(kin[ii]==11)KKin=8; 
 	if(kin[ii]==13)KKin=9; 
 	if(kin[ii]==15)KKin=10;
+	if(kin[ii]==16)KKin=11;
 
    	Ratio4[ii]=Ratio3[ii]*totalQ[KKin]/(totalQ[KKin]-totalQfH[KKin])-totalQfH[KKin]/(totalQ[KKin]-totalQfH[KKin]);
 	Rerr4[ii]=(totalQ[KKin]/(totalQ[KKin]-totalQfH[KKin]))*Rerr3[ii];
+
+        if(abs(Xbc[ii]-x[ii])>0.001){cout<<"Something wrong with BC factor!"<<endl;continue;}
+        Ratio5[ii]=Ratio4[ii]/BCfactor[ii];
+        Rerr5[ii]=Rerr4[ii]/BCfactor[ii];
     }     
 
-    Double_t binx[26]={0.0};
-    for(int ii=0;ii<26;ii++) binx[ii]=0.15+ii*0.03;
-
-    Double_t x_final[26]={0.0},Ratio_final[26]={0.0},Rerr_final[26]={0.0};
+    Double_t Ratio_final[19]={0.0},Rerr_final[19]={0.0};
 
     TGraphErrors *gH3He=new TGraphErrors();
     ofstream outfile;
-    outfile.open("../Results/bin003/H3He_final.dat");
-    outfile<<"x     Ratio     Ratio_err      relative_err"<<endl;
-    for(int ii=0;ii<26;ii++){
-	int nn=0;
-        Double_t tmpY[5]={0.0},tmpYerr[5]={0.0},tmpX[5]={0.0};;
-	for(int jj=0;jj<totalN;jj++){
-	    if(x[jj]==0)continue;
-	    if((x[jj]-binx[ii])<0.03&&(x[jj]-binx[ii])>0){
-		tmpY[nn]=Ratio4[jj];
-		tmpYerr[nn]=Rerr4[jj];
-		tmpX[nn]=x[jj];
-		nn++;
-	    }
-	}
-	if(nn==0)continue;
-	Double_t var=0.0,x_weight=0.0,R_weight=0.0;
-        for(int kk=0;kk<nn;kk++){
-            x_weight+=tmpX[kk]/(tmpYerr[kk]*tmpYerr[kk]);
-	    var+=1.0/(tmpYerr[kk]*tmpYerr[kk]);
- 	    R_weight+=tmpY[kk]/(tmpYerr[kk]*tmpYerr[kk]);
-	}       
-	x_final[ii]=x_weight/var;
-	Ratio_final[ii]=R_weight/var;
-	Rerr_final[ii]=sqrt(1.0/var);
- 	outfile<<x_final[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        gH3He->SetPoint(ii,x_final[ii],Ratio_final[ii]);
-        gH3He->SetPointError(ii,0,Rerr_final[ii]);
+    outfile.open("../Results/newbin/H3He_final.dat");
+    outfile<<"x     Ratio     Ratio_err    relative_err"<<endl;
+
+    nn=0;
+    for(int ii=0;ii<19;ii++){
+        int tmpN=nn+nBin[ii];
+        Double_t var=0.0;
+        Double_t tmpR=0.0;
+        for(int jj=nn;jj<tmpN;jj++){
+          if(Ratio5[jj]==0)continue;
+          var=var+1.0/(Rerr5[jj]*Rerr5[jj]);
+          tmpR=tmpR+Ratio5[jj]/(Rerr5[jj]*Rerr5[jj]);
+          nn++;
+        }
+        if(var==0.0)continue;
+        Ratio_final[ii]=tmpR/var;
+        Rerr_final[ii]=1.0/sqrt(var);
     }
 
+    for(int ii=0;ii<19;ii++){
+        if(Ratio_final[ii]==0)continue;
+        gH3He->SetPoint(ii,X_center[ii],Ratio_final[ii]);
+        gH3He->SetPointError(ii,0,Rerr_final[ii]);
+        outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
+    }
     outfile.close();
+
 
     TCanvas *c1=new TCanvas("c1","c1",1500,1500);
     gH3He->SetMarkerStyle(8);
     gH3He->SetMarkerColor(4);
     gH3He->Draw("AP");
     gH3He->SetTitle("H3/He3;xbj;");
+
+    TCanvas *c2=new TCanvas("c2","c2",1500,1500);
+    TGraphErrors *gH3He_kin=new TGraphErrors();
+    nn=0;
+    for(int ii=0;ii<19;ii++){
+        int tmpN=nn+nBin[ii];
+        for(int jj=nn;jj<tmpN;jj++){
+          if(Ratio4[jj]==0)continue;
+          gH3He_kin->SetPoint(jj,X_center[ii],Ratio4[jj]);
+          gH3He_kin->SetPointError(jj,0,Rerr4[jj]);
+          nn++;
+        }
+    }
+    gH3He_kin->SetMarkerStyle(8);
+    gH3He_kin->SetMarkerColor(4);
+    gH3He_kin->Draw("AP");
 
 }

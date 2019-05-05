@@ -28,7 +28,7 @@ void Allkin_CalcRawYield(){
      Double_t xbj[3];
      xbj[0]=xmin;
      for(int ii=1;ii<nBin;ii++){
-         xbj[ii]=xmin+dBin[ii];
+         xbj[ii]=xbj[ii-1]+dBin[ii-1];
      }
 
      TString TreeName="T";

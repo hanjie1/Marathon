@@ -45,22 +45,22 @@ void plot_H3He_kin()
      }}
 
    TString Yfile;
-   int kin[12]={0,1,2,3,4,5,7,9,12,13,15,16};
+   int kin[12]={0,1,2,3,4,5,7,9,11,13,15,16};
    for(int ii=0;ii<12;ii++){
-       Yfile=Form("bin003/RawYield/H3_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/RawYield/H3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,H3_x,H3_xavg,H3_Q2,H3_Y,H3_YE); 
-//       Yfile=Form("H3_kin%d.txt",kin[ii]);
-//       ReadYield(Yfile,ii,H3_x1,H3_xavg1,H3_Q21,H3_Y1,H3_YE1); 
+       Yfile=Form("bin003/RawYield/H3_kin%d.txt",kin[ii]);
+       ReadYield(Yfile,ii,H3_x1,H3_xavg1,H3_Q21,H3_Y1,H3_YE1); 
 
-       Yfile=Form("bin003/RawYield/He3_kin%d.txt",kin[ii]);
+       Yfile=Form("newbin/RawYield/He3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,He_x,He_xavg,He_Q2,He_Y,He_YE);
-//       Yfile=Form("He_kin%d.txt",kin[ii]);
-//       ReadYield(Yfile,ii,He_x1,He_xavg1,He_Q21,He_Y1,He_YE1);
+       Yfile=Form("bin003/RawYield/He3_kin%d.txt",kin[ii]);
+       ReadYield(Yfile,ii,He_x1,He_xavg1,He_Q21,He_Y1,He_YE1);
 
-       Yfile=Form("bin003/RadCor/He3_kin%d_xs.out",kin[ii]);
+       Yfile=Form("newbin/RadCor/He3_kin%d_xs.out",kin[ii]);
        ReadRadCor(Yfile,ii,He_Radx,He_RadQ2,He_RadCor);
 
-       Yfile=Form("bin003/RadCor/H3_kin%d_xs.out",kin[ii]);
+       Yfile=Form("newbin/RadCor/H3_kin%d_xs.out",kin[ii]);
        ReadRadCor(Yfile,ii,H3_Radx,H3_RadQ2,H3_RadCor);
    }
 
@@ -70,7 +70,7 @@ void plot_H3He_kin()
    TGraphErrors *hKin1[12];
    
    ofstream outfile;
-   outfile.open("bin003/Ratio_H3He.dat"); 
+   outfile.open("newbin/Ratio_H3He.dat"); 
    int nn=0;
    for(int ii=0;ii<12;ii++){
        int nnn=0;
@@ -94,13 +94,13 @@ void plot_H3He_kin()
 	   }
 	   else cout<<"Something wrong with RadCor !!"<<endl;
 
-	   outfile<<H3_xavg[ii][jj]<<"  "<<H3He[ii][jj]<<"  "<<H3He_E[ii][jj]<<"  "<<H3He_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
+	   outfile<<H3_xavg[ii][jj]<<"  "<<H3_Q2[ii][jj]<<"  "<<H3He[ii][jj]<<"  "<<H3He_E[ii][jj]<<"  "<<H3He_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
            nn++;
            nnn++;
        }
    } 
    outfile.close();
-/*
+
    int nn1=0;
    for(int ii=0;ii<12;ii++){
        int nnn=0;
@@ -122,21 +122,21 @@ void plot_H3He_kin()
            nnn++;
        }
    } 
-*/
+
    TCanvas *c1=new TCanvas("c1","c1",1500,1500);
    TMultiGraph *mg1=new TMultiGraph();
    hratio->SetMarkerStyle(8);
    hratio->SetMarkerColor(1);
-//   hratio1->SetMarkerStyle(8);
-//   hratio1->SetMarkerColor(2);
+   hratio1->SetMarkerStyle(8);
+   hratio1->SetMarkerColor(2);
    mg1->Add(hratio);
-//   mg1->Add(hratio1);
+   mg1->Add(hratio1);
    mg1->Draw("AP");
    mg1->SetTitle("H3/He3 yield ratio;xbj;");
 
    auto leg1=new TLegend(0.7,0.6,0.85,0.85);
    leg1->AddEntry(hratio,"newbin","P");
-//   leg1->AddEntry(hratio1,"bin003","P");
+   leg1->AddEntry(hratio1,"bin003","P");
    leg1->Draw();
 
    TCanvas *c2=new TCanvas("c2","c2",1500,1500);
@@ -145,10 +145,11 @@ void plot_H3He_kin()
    for(int ii=0;ii<12;ii++){
 	hKin[ii]->SetMarkerStyle(8);
 	hKin[ii]->SetMarkerColor(color[ii]);
-//	hKin1[ii]->SetMarkerStyle(22);
-//	hKin1[ii]->SetMarkerColor(color[ii]);
+	hKin1[ii]->SetMarkerStyle(47);
+	hKin1[ii]->SetMarkerColor(color[ii]);
+	hKin1[ii]->SetMarkerSize(1.5);
   	mg2->Add(hKin[ii]);
-//  	mg2->Add(hKin1[ii]);
+  	mg2->Add(hKin1[ii]);
    }
    mg2->Draw("AP");
    mg2->SetTitle("H3/He3 yield ratio;xbj;");
@@ -157,7 +158,7 @@ void plot_H3He_kin()
    leg2->SetNColumns(2);
    for(int ii=0;ii<12;ii++){
       leg2->AddEntry(hKin[ii],Form("newbin kin%d",kin[ii]),"P");
-//      leg2->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
+      leg2->AddEntry(hKin1[ii],Form("bin003 kin%d",kin[ii]),"P");
    }
    leg2->Draw();
    
@@ -185,7 +186,7 @@ void plot_H3He_kin()
 
    auto leg4=new TLegend(0.7,0.6,0.812,0.812);
    for(int ii=0;ii<12;ii++){
-      leg4->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
+      leg4->AddEntry(hKin1[ii],Form("newbin kin%d",ii),"P");
    }
    leg4->Draw();
 */
