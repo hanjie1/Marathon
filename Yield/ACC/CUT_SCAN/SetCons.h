@@ -37,10 +37,10 @@ const int nEp=50;
 const Double_t deltaTh=0.08;
 const Double_t deltaEp=0.008;
 
-const Double_t xmin[4]={0.168,0.273,0.449,0.665};
-const Double_t xmax[4]={0.283,0.418,0.62,0.849};
-const int nBin[4]={3,4,4,4};
-const Double_t dBin[4][4]={{0.038,0.029,0.048,0},
+const Double_t xmin[4]={0.153,0.273,0.449,0.665};
+const Double_t xmax[4]={0.263,0.418,0.62,0.849};
+const int nBin[4]={4,4,4,4};
+const Double_t dBin[4][4]={{0.0275,0.0275,0.0275,0.0275},//{0.038,0.029,0.048,0},
 			   {0.037,0.030,0.028,0.05},
 			   {0.05,0.034,0.037,0.05},
 			   {0.05,0.044,0.045,0.05}};

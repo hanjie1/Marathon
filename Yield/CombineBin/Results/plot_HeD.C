@@ -30,9 +30,9 @@ void plot_HeD()
    TCanvas *c1=new TCanvas("c1","c1",1500,1500);
    TMultiGraph *mg1=new TMultiGraph();
    hratio1->SetMarkerStyle(8);
-   hratio1->SetMarkerColor(1);
+   hratio1->SetMarkerColor(2);
    hratio2->SetMarkerStyle(8);
-   hratio2->SetMarkerColor(2);
+   hratio2->SetMarkerColor(1);
    mg1->Add(hratio1);
    mg1->Add(hratio2);
    mg1->Draw("AP");

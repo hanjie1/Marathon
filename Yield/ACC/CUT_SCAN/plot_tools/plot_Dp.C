@@ -45,7 +45,7 @@ void plot_Dp()
      }}
 
    TString Yfile;
-   int kin[2]={1,4};
+   int kin[2]={0,4};
    for(int ii=0;ii<2;ii++){
        Yfile=Form("newbin2/Nocut/D2_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,D2_x,D2_xavg,D2_Q2,D2_Y,D2_YE); 

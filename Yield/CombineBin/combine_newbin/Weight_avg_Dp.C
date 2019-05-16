@@ -54,7 +54,7 @@ void Weight_avg_Dp()
 	Rerr4[ii]=Rerr3[ii]/BCfactor[ii];
     }     
 
-    Double_t Ratio_final[19]={0.0},Rerr_final[19]={0.0};
+    Double_t Ratio_final[8]={0.0},Rerr_final[8]={0.0};
 
     TGraphErrors *gDp=new TGraphErrors();
     ofstream outfile;
@@ -62,8 +62,8 @@ void Weight_avg_Dp()
     outfile<<"x     Ratio     Ratio_err    relative_err"<<endl;
     
     int nn=0;
-    for(int ii=0;ii<19;ii++){
-        int tmpN=nn+nBin[ii];
+    for(int ii=0;ii<8;ii++){
+        int tmpN=nn+nBin_Dp[ii];
 	Double_t var=0.0;
 	Double_t tmpR=0.0;
         for(int jj=nn;jj<tmpN;jj++){
@@ -77,11 +77,12 @@ void Weight_avg_Dp()
 	Rerr_final[ii]=1.0/sqrt(var);
     } 
 
-    for(int ii=0;ii<19;ii++){
+   
+    for(int ii=0;ii<8;ii++){
 	if(Ratio_final[ii]==0)continue;
-        gDp->SetPoint(ii,X_center[ii],Ratio_final[ii]);
+        gDp->SetPoint(ii,X_center_Dp[ii],Ratio_final[ii]);
         gDp->SetPointError(ii,0,Rerr_final[ii]);
-        outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
+        outfile<<X_center_Dp[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
     }
 
 
@@ -96,11 +97,11 @@ void Weight_avg_Dp()
     TCanvas *c2=new TCanvas("c2","c2",1500,1500);
     TGraphErrors *gDp_kin=new TGraphErrors();
     nn=0;
-    for(int ii=0;ii<19;ii++){
-        int tmpN=nn+nBin[ii];
+    for(int ii=0;ii<8;ii++){
+        int tmpN=nn+nBin_Dp[ii];
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio4[jj]==0)continue;
-          gDp_kin->SetPoint(jj,X_center[ii],Ratio4[jj]);
+          gDp_kin->SetPoint(jj,X_center_Dp[ii],Ratio4[jj]);
           gDp_kin->SetPointError(jj,0,Rerr4[jj]);
           nn++;
         }

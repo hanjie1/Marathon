@@ -12,7 +12,7 @@ using namespace std;
 
 void Allkin_CalcRawYield(){
    TString target[4]={"H1","D2","He3","H3"};
-   int kin[4]={1,4,9,15};
+   int kin[4]={0,4,9,15};
 
    Double_t Nu_c=7.49;
    Double_t Theta_c[11]={16.8075,17.5717,19.1125,20.575,21.9401,23.2065,25.5858,27.7642,29.8087,31.7274,33.5552};
@@ -20,7 +20,7 @@ void Allkin_CalcRawYield(){
 
 /* load ACC_matrix table */
    ifstream infile;
-   infile.open("ACC_matrix4.dat");
+   infile.open("ACC_matrix3.dat");
    Double_t dTheta[nTh]={-100.0},ACC_table[nTh][nEp]={-100.0};
    int ACC_matrix[nTh][nEp]={0};
    Ssiz_t from=0;
@@ -58,13 +58,13 @@ void Allkin_CalcRawYield(){
    infile.close();
 
    for(int nn=0;nn<4;nn++){   
-    for(int mm=0;mm<4;mm++){
+    for(int mm=0;mm<1;mm++){
      if(nn==0&&kin[mm]>4)break;
      Double_t LUM=CalcLum(kin[mm],target[nn]); //total luminosity get for this kinematics;
      cout<<"Get total Luminosity for target "<<target[nn]<<"  "<<" kin "<<kin[mm]<<" : "<<LUM<<endl;
 
      ofstream myfile;
-     myfile.open(Form("RawYield/newbin2/cut4/%s_kin%d.txt",target[nn].Data(),kin[mm]));
+     myfile.open(Form("RawYield/newbin2/cut3/%s_kin%d.txt",target[nn].Data(),kin[mm]));
      myfile<<"n   xbj   Q2   Yield   Yield_err"<<endl;
 
      vector<vector<Int_t> > runList;

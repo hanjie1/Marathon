@@ -44,7 +44,7 @@ void plot_HeD()
      }}
 
    TString Yfile;
-   int kin[4]={1,4,9,15};
+   int kin[4]={0,4,9,15};
    for(int ii=0;ii<4;ii++){
        Yfile=Form("newbin2/Nocut/He3_kin%d.txt",kin[ii]);
        ReadYield(Yfile,ii,He_x,He_xavg,He_Q2,He_Y,He_YE); 
