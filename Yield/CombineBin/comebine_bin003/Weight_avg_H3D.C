@@ -118,7 +118,7 @@ void Weight_avg_H3D()
 	x_final[ii]=x_weight/var;
 	Ratio_final[ii]=R_weight/var;
 	Rerr_final[ii]=sqrt(1.0/var);
- 	outfile<<x_final[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
+ 	outfile<<x_final[ii]<<"  "<<Ratio_final[ii]*2.0/3.0<<"  "<<Rerr_final[ii]*2.0/3.0<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
         gH3D->SetPoint(ii,x_final[ii],Ratio_final[ii]*2.0/3.0);
         gH3D->SetPointError(ii,0,Rerr_final[ii]);
     }
