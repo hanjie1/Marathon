@@ -7,6 +7,7 @@ void Weight_avg_H3He()
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0},Ratio4[MAXNUM]={0.0};  
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
+    Double_t Pos_err[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -63,44 +64,62 @@ void Weight_avg_H3He()
 
    	Ratio4[ii]=Ratio3[ii]*totalQ[KKin]/(totalQ[KKin]-totalQfH[KKin])-totalQfH[KKin]/(totalQ[KKin]-totalQfH[KKin]);
 	Rerr4[ii]=(totalQ[KKin]/(totalQ[KKin]-totalQfH[KKin]))*Rerr3[ii];
+
+        Double_t pHe3_Var=exp(2.0*(pA_He3*x[ii]+pB_He3))*(pow(x[ii],2)*pHe3_VA+pHe3_VB+2.0*x[ii]*pHe3_COV_AB);
+        Double_t pH3_Var=exp(2.0*(pA_H3*x[ii]+pB_H3))*(pow(x[ii],2)*pH3_VA+pH3_VB+2.0*x[ii]*pH3_COV_AB);
+        Pos_err[ii]=sqrt(pHe3_Var/(tmp_pHe3*tmp_pHe3)+pH3_Var/(tmp_pH3*tmp_pH3))*Ratio4[ii]; //positron absolute error on ratio
     }     
 
     Double_t binx[26]={0.0};
     for(int ii=0;ii<26;ii++) binx[ii]=0.15+ii*0.03;
 
     Double_t x_final[26]={0.0},Ratio_final[26]={0.0},Rerr_final[26]={0.0};
+    Double_t Rerr_pos[26]={0.0};
 
     TGraphErrors *gH3He=new TGraphErrors();
     ofstream outfile;
     outfile.open("../Results/bin003/H3He_final.dat");
     outfile<<"x     Ratio     Ratio_err      relative_err"<<endl;
+
+    ofstream outfile1;
+    outfile1.open("ERROR/H3He_error.dat");
+    outfile1<<"x   positron_err  relative_err"<<endl;
+
+    int mm=0;
     for(int ii=0;ii<26;ii++){
 	int nn=0;
         Double_t tmpY[5]={0.0},tmpYerr[5]={0.0},tmpX[5]={0.0};;
+        Double_t tmpEpos[5]={0.0};
 	for(int jj=0;jj<totalN;jj++){
 	    if(x[jj]==0)continue;
 	    if((x[jj]-binx[ii])<0.03&&(x[jj]-binx[ii])>0){
 		tmpY[nn]=Ratio4[jj];
 		tmpYerr[nn]=Rerr4[jj];
 		tmpX[nn]=x[jj];
+                tmpEpos[nn]=Pos_err[jj];
 		nn++;
 	    }
 	}
 	if(nn==0)continue;
 	Double_t var=0.0,x_weight=0.0,R_weight=0.0;
+        Double_t Epos_weight=0.0;
         for(int kk=0;kk<nn;kk++){
             x_weight+=tmpX[kk]/(tmpYerr[kk]*tmpYerr[kk]);
 	    var+=1.0/(tmpYerr[kk]*tmpYerr[kk]);
  	    R_weight+=tmpY[kk]/(tmpYerr[kk]*tmpYerr[kk]);
+            Epos_weight+=pow(tmpEpos[kk],2)/pow(tmpYerr[kk],4);
 	}       
 	x_final[ii]=x_weight/var;
 	Ratio_final[ii]=R_weight/var;
 	Rerr_final[ii]=sqrt(1.0/var);
+        Rerr_pos[ii]=sqrt(Epos_weight)/var;
+        outfile1<<x_final[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<endl;
  	outfile<<x_final[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        gH3He->SetPoint(ii,x_final[ii],Ratio_final[ii]);
-        gH3He->SetPointError(ii,0,Rerr_final[ii]);
+        gH3He->SetPoint(mm,x_final[ii],Ratio_final[ii]);
+        gH3He->SetPointError(mm,0,Rerr_final[ii]);
+	mm++;
     }
-
+    outfile1.close();
     outfile.close();
 
     TCanvas *c1=new TCanvas("c1","c1",1500,1500);

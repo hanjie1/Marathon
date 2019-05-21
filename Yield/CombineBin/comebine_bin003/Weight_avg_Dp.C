@@ -35,9 +35,7 @@ void Weight_avg_Dp()
 
 	Double_t pH1_Var=exp(2.0*(pA_H1*x[ii]+pB_H1))*(pow(x[ii],2)*pH1_VA+pH1_VB+2.0*x[ii]*pH1_COV_AB); 
 	Double_t pD2_Var=exp(2.0*(pA_D2*x[ii]+pB_D2))*(pow(x[ii],2)*pD2_VA+pD2_VB+2.0*x[ii]*pD2_COV_AB);
-cout<<tmp_pH1<<"  "<<tmp_pD2<<"  "<<pH1_Var<<"  "<<pD2_Var<<endl;
- 	Pos_err[ii]=sqrt(pH1_Var/(tmp_pH1*tmp_pH1)+pD2_Var/(tmp_pD2*tmp_pD2))*Rerr3[ii]; //positron relative error on ratio	
-cout<<Pos_err[ii]<<endl;
+ 	Pos_err[ii]=sqrt(pH1_Var/(tmp_pH1*tmp_pH1)+pD2_Var/(tmp_pD2*tmp_pD2))*Ratio3[ii]; //positron absolute error on ratio	
     }     
 
     Double_t binx[26]={0.0};
@@ -55,6 +53,7 @@ cout<<Pos_err[ii]<<endl;
     outfile1.open("ERROR/Dp_error.dat");
     outfile1<<"x   positron_err"<<endl;
 
+    int mm=0;
     for(int ii=0;ii<26;ii++){
 	int nn=0;
         Double_t tmpY[5]={0.0},tmpYerr[5]={0.0},tmpX[5]={0.0};;
@@ -76,16 +75,17 @@ cout<<Pos_err[ii]<<endl;
             x_weight+=tmpX[kk]/(tmpYerr[kk]*tmpYerr[kk]);
 	    var+=1.0/(tmpYerr[kk]*tmpYerr[kk]);
  	    R_weight+=tmpY[kk]/(tmpYerr[kk]*tmpYerr[kk]);
-	    Epos_weight+=pow(tmpYerr[kk],4)*pow(tmpEpos[kk],2);
+	    Epos_weight+=pow(tmpEpos[kk],2)/pow(tmpYerr[kk],4);
 	}       
 	x_final[ii]=x_weight/var;
 	Ratio_final[ii]=R_weight/var;
 	Rerr_final[ii]=sqrt(1.0/var);
 	Rerr_pos[ii]=sqrt(Epos_weight)/var;
  	outfile<<x_final[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<endl;
- 	outfile1<<x_final[ii]<<"  "<<Rerr_pos[ii]<<endl;
-        gDp->SetPoint(ii,x_final[ii],Ratio_final[ii]);
-        gDp->SetPointError(ii,0,Rerr_final[ii]);
+ 	outfile1<<x_final[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<endl;
+        gDp->SetPoint(mm,x_final[ii],Ratio_final[ii]);
+        gDp->SetPointError(mm,0,Rerr_final[ii]);
+	mm++;
     }
 
     outfile.close();
