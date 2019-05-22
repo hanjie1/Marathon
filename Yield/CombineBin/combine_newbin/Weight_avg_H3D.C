@@ -7,6 +7,7 @@ void Weight_avg_H3D()
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0},Ratio4[MAXNUM]={0.0},Ratio5[MAXNUM]={0.0};  
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0},Rerr5[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
+    Double_t Pos_err[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -105,29 +106,40 @@ void Weight_avg_H3D()
         Ratio5[ii]=Ratio4[ii]/BCfactor[ii];
         Rerr5[ii]=Rerr4[ii]/BCfactor[ii];
 
+        Double_t pH3_Var=exp(2.0*(pA_H3*x[ii]+pB_H3))*(pow(x[ii],2)*pH3_VA+pH3_VB+2.0*x[ii]*pH3_COV_AB);
+        Double_t pD2_Var=exp(2.0*(pA_D2*x[ii]+pB_D2))*(pow(x[ii],2)*pD2_VA+pD2_VB+2.0*x[ii]*pD2_COV_AB);
+        Pos_err[ii]=sqrt(pH3_Var/(tmp_pH3*tmp_pH3)+pD2_Var/(tmp_pD2*tmp_pD2))*Ratio5[ii]; //positron absolute error on ratio
     }     
 
     Double_t Ratio_final[19]={0.0},Rerr_final[19]={0.0};
+    Double_t Rerr_pos[19]={0.0};
 
     TGraphErrors *gH3D=new TGraphErrors();
     ofstream outfile;
     outfile.open("../Results/newbin/H3D_final.dat");
     outfile<<"x     Ratio     Ratio_err    relative_err"<<endl;
 
+    ofstream outfile1;
+    outfile1.open("ERROR/H3D_error.dat");
+    outfile1<<"x   positron_err  relative_err"<<endl;
+
     nn=0;
     for(int ii=0;ii<19;ii++){
         int tmpN=nn+nBin[ii];
         Double_t var=0.0;
         Double_t tmpR=0.0;
+        Double_t Epos_weight=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio5[jj]==0)continue;
           var=var+1.0/(Rerr5[jj]*Rerr5[jj]);
           tmpR=tmpR+Ratio5[jj]/(Rerr5[jj]*Rerr5[jj]);
+          Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr5[jj],4);
           nn++;
         }
         if(var==0.0)continue;
         Ratio_final[ii]=tmpR/var;
         Rerr_final[ii]=1.0/sqrt(var);
+        Rerr_pos[ii]=sqrt(Epos_weight)/var;
     }
 
     for(int ii=0;ii<19;ii++){
@@ -135,8 +147,10 @@ void Weight_avg_H3D()
         gH3D->SetPoint(ii,X_center[ii],Ratio_final[ii]);
         gH3D->SetPointError(ii,0,Rerr_final[ii]);
         outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
+        outfile1<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<endl;
     }
     outfile.close();
+    outfile1.close();
 
     TCanvas *c1=new TCanvas("c1","c1",1500,1500);
     gH3D->SetMarkerStyle(8);
