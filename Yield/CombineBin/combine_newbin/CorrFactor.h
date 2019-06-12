@@ -39,6 +39,20 @@ const Double_t ECCB_H3He=-3.97644112;
 const Double_t ECCA_Dp=-3.90944653;
 const Double_t ECCB_Dp=-3.40802943;
 
+/* EndCup correction error */
+const Double_t ECCVA_Dp=0.4116;
+const Double_t ECCVB_Dp=0.02588;
+const Double_t ECC_CovDp=-0.1014;
+
+const Double_t ECCVA_HeD=0.1655;
+const Double_t ECCVB_HeD=0.013428;
+const Double_t ECC_CovHeD=-0.04509;
+
+const Double_t ECCVA_H3He=0.4762;
+const Double_t ECCVB_H3He=0.03016;
+const Double_t ECC_CovH3He=-0.1169;
+
+
 /* Bin center */
 const Double_t X_center[19]={0.171209,0.19,0.22,0.25,0.29,0.33,0.36,0.385,0.43,0.48,0.51,0.55,0.59,0.63,0.67,0.7,0.74,0.78,0.82};
 const int nBin[19]={1,2,3,4,4,4,2,2,3,2,2,2,2,2,2,2,3,2,2};

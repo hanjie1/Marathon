@@ -8,6 +8,7 @@ void Weight_avg_HeD()
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
+    Double_t ECC_err[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -57,14 +58,19 @@ void Weight_avg_HeD()
         Ratio4[ii]=Ratio3[ii]/BCfactor[ii];
         Rerr4[ii]=Rerr3[ii]/BCfactor[ii];
 
+	/* positron absolute error */
         Double_t pHe3_Var=exp(2.0*(pA_He3*x[ii]+pB_He3))*(pow(x[ii],2)*pHe3_VA+pHe3_VB+2.0*x[ii]*pHe3_COV_AB);
         Double_t pD2_Var=exp(2.0*(pA_D2*x[ii]+pB_D2))*(pow(x[ii],2)*pD2_VA+pD2_VB+2.0*x[ii]*pD2_COV_AB);
         Pos_err[ii]=sqrt(pHe3_Var/(tmp_pHe3*tmp_pHe3)+pD2_Var/(tmp_pD2*tmp_pD2))*Ratio4[ii]; //positron absolute error on ratio
+
+	/* End cap absolute error */
+        ECC_err[ii]=exp(ECCA_HeD*x[ii]+ECCB_HeD)*sqrt(x[ii]*x[ii]*ECCVA_HeD+ECCVB_HeD+2.0*ECC_CovHeD*x[ii]);
+
     }     
     outfile1.close();
 
     Double_t Ratio_final[19]={0.0},Rerr_final[19]={0.0};
-    Double_t Rerr_pos[19]={0.0};
+    Double_t Rerr_pos[19]={0.0},Rerr_ECC[19]={0.0};
 
     TGraphErrors *gHeD=new TGraphErrors();
     ofstream outfile;
@@ -73,25 +79,27 @@ void Weight_avg_HeD()
 
     ofstream outfile2;
     outfile2.open("ERROR/HeD_error.dat");
-    outfile2<<"x   positron_err  relative_err"<<endl;
+    outfile2<<"x   e+_err    e+_rel_err     ECC_err     ECC_rel_err"<<endl;
 
     int nn=0;
     for(int ii=0;ii<19;ii++){
         int tmpN=nn+nBin[ii];
         Double_t var=0.0;
         Double_t tmpR=0.0;
-        Double_t Epos_weight=0.0;
+        Double_t Epos_weight=0.0,E_ECCweight=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio4[jj]==0)continue;
           var=var+1.0/(Rerr4[jj]*Rerr4[jj]);
           tmpR=tmpR+Ratio4[jj]/(Rerr4[jj]*Rerr4[jj]);
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr4[jj],4);
+          E_ECCweight+=pow(ECC_err[jj],2)/pow(Rerr4[jj],4);
           nn++;
         }
         if(var==0.0)continue;
         Ratio_final[ii]=tmpR/var;
         Rerr_final[ii]=1.0/sqrt(var);
         Rerr_pos[ii]=sqrt(Epos_weight)/var;
+        Rerr_ECC[ii]=sqrt(E_ECCweight)/var;
     }
 
     for(int ii=0;ii<19;ii++){
@@ -99,7 +107,9 @@ void Weight_avg_HeD()
         gHeD->SetPoint(ii,X_center[ii],Ratio_final[ii]);
         gHeD->SetPointError(ii,0,Rerr_final[ii]);
         outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        outfile2<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<endl;
+        outfile2<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<"  "
+                <<Rerr_ECC[ii]<<"  "<<Rerr_ECC[ii]/Ratio_final[ii]<<endl;
+
     }
     outfile.close();
     outfile2.close();

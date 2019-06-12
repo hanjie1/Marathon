@@ -8,6 +8,7 @@ void Weight_avg_Dp()
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
+    Double_t ECC_err[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -54,13 +55,17 @@ void Weight_avg_Dp()
 	Ratio4[ii]=Ratio3[ii]/BCfactor[ii];
 	Rerr4[ii]=Rerr3[ii]/BCfactor[ii];
 
+	/* positron absolute error */
         Double_t pH1_Var=exp(2.0*(pA_H1*x[ii]+pB_H1))*(pow(x[ii],2)*pH1_VA+pH1_VB+2.0*x[ii]*pH1_COV_AB);
         Double_t pD2_Var=exp(2.0*(pA_D2*x[ii]+pB_D2))*(pow(x[ii],2)*pD2_VA+pD2_VB+2.0*x[ii]*pD2_COV_AB);
         Pos_err[ii]=sqrt(pH1_Var/(tmp_pH1*tmp_pH1)+pD2_Var/(tmp_pD2*tmp_pD2))*Ratio4[ii]; //positron absolute error on ratio
+
+	/* End cap absolute error */
+        ECC_err[ii]=exp(ECCA_Dp*x[ii]+ECCB_Dp)*sqrt(x[ii]*x[ii]*ECCVA_Dp+ECCVB_Dp+2.0*ECC_CovDp*x[ii]);
     }     
 
     Double_t Ratio_final[8]={0.0},Rerr_final[8]={0.0};
-    Double_t Rerr_pos[8]={0.0};
+    Double_t Rerr_pos[8]={0.0},Rerr_ECC[8]={0.0};
 
     TGraphErrors *gDp=new TGraphErrors();
     ofstream outfile;
@@ -69,25 +74,27 @@ void Weight_avg_Dp()
    
     ofstream outfile1;
     outfile1.open("ERROR/Dp_error.dat");
-    outfile1<<"x   positron_err   relative_err"<<endl;
+    outfile1<<"x   e+_err    e+_rel_err     ECC_err     ECC_rel_err"<<endl;
  
     int nn=0;
     for(int ii=0;ii<8;ii++){
         int tmpN=nn+nBin_Dp[ii];
 	Double_t var=0.0;
 	Double_t tmpR=0.0;
-        Double_t Epos_weight=0.0;
+        Double_t Epos_weight=0.0,E_ECCweight=0.0;
         for(int jj=nn;jj<tmpN;jj++){
 	  if(Ratio4[jj]==0)continue;
 	  var=var+1.0/(Rerr4[jj]*Rerr4[jj]);
 	  tmpR=tmpR+Ratio4[jj]/(Rerr4[jj]*Rerr4[jj]);
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr4[jj],4);
+          E_ECCweight+=pow(ECC_err[jj],2)/pow(Rerr4[jj],4);
 	  nn++;
         }
 	if(var==0.0)continue;
 	Ratio_final[ii]=tmpR/var;
 	Rerr_final[ii]=1.0/sqrt(var);
 	Rerr_pos[ii]=sqrt(Epos_weight)/var;
+	Rerr_ECC[ii]=sqrt(E_ECCweight)/var;
     } 
 
    
@@ -96,7 +103,9 @@ void Weight_avg_Dp()
         gDp->SetPoint(ii,X_center_Dp[ii],Ratio_final[ii]);
         gDp->SetPointError(ii,0,Rerr_final[ii]);
         outfile<<X_center_Dp[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        outfile1<<X_center_Dp[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<endl;
+        outfile1<<X_center_Dp[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<"  "
+                <<Rerr_ECC[ii]<<"  "<<Rerr_ECC[ii]/Ratio_final[ii]<<endl;
+
     }
 
     outfile1.close();

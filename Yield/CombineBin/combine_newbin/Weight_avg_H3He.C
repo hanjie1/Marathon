@@ -8,6 +8,7 @@ void Weight_avg_H3He()
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0},Rerr5[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
+    Double_t ECC_err[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -84,13 +85,17 @@ void Weight_avg_H3He()
         Ratio5[ii]=Ratio4[ii]/BCfactor[ii];
         Rerr5[ii]=Rerr4[ii]/BCfactor[ii];
 
+	/* positron absolute error */
         Double_t pHe3_Var=exp(2.0*(pA_He3*x[ii]+pB_He3))*(pow(x[ii],2)*pHe3_VA+pHe3_VB+2.0*x[ii]*pHe3_COV_AB);
         Double_t pH3_Var=exp(2.0*(pA_H3*x[ii]+pB_H3))*(pow(x[ii],2)*pH3_VA+pH3_VB+2.0*x[ii]*pH3_COV_AB);
         Pos_err[ii]=sqrt(pHe3_Var/(tmp_pHe3*tmp_pHe3)+pH3_Var/(tmp_pH3*tmp_pH3))*Ratio5[ii]; //positron absolute error on ratio
+
+	/* End cap absolute error */
+        ECC_err[ii]=exp(ECCA_H3He*x[ii]+ECCB_H3He)*sqrt(x[ii]*x[ii]*ECCVA_H3He+ECCVB_H3He+2.0*ECC_CovH3He*x[ii]);	
     }     
 
     Double_t Ratio_final[19]={0.0},Rerr_final[19]={0.0};
-    Double_t Rerr_pos[19]={0.0};
+    Double_t Rerr_pos[19]={0.0},Rerr_ECC[19]={0.0};
 
     TGraphErrors *gH3He=new TGraphErrors();
     ofstream outfile;
@@ -99,25 +104,27 @@ void Weight_avg_H3He()
 
     ofstream outfile1;
     outfile1.open("ERROR/H3He_error.dat");
-    outfile1<<"x   positron_err  relative_err"<<endl;
+    outfile1<<"x   e+_err    e+_rel_err     ECC_err     ECC_rel_err"<<endl;
 
     nn=0;
     for(int ii=0;ii<19;ii++){
         int tmpN=nn+nBin[ii];
         Double_t var=0.0;
         Double_t tmpR=0.0;
-        Double_t Epos_weight=0.0;
+        Double_t Epos_weight=0.0,E_ECCweight=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio5[jj]==0)continue;
           var=var+1.0/(Rerr5[jj]*Rerr5[jj]);
           tmpR=tmpR+Ratio5[jj]/(Rerr5[jj]*Rerr5[jj]);
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr5[jj],4);
+          E_ECCweight+=pow(ECC_err[jj],2)/pow(Rerr5[jj],4);
           nn++;
         }
         if(var==0.0)continue;
         Ratio_final[ii]=tmpR/var;
         Rerr_final[ii]=1.0/sqrt(var);
         Rerr_pos[ii]=sqrt(Epos_weight)/var;
+        Rerr_ECC[ii]=sqrt(E_ECCweight)/var;
     }
 
     for(int ii=0;ii<19;ii++){
@@ -125,7 +132,9 @@ void Weight_avg_H3He()
         gH3He->SetPoint(ii,X_center[ii],Ratio_final[ii]);
         gH3He->SetPointError(ii,0,Rerr_final[ii]);
         outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        outfile1<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<endl;
+        outfile1<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<"  "
+                <<Rerr_ECC[ii]<<"  "<<Rerr_ECC[ii]/Ratio_final[ii]<<endl;
+
     }
     outfile.close();
     outfile1.close();
