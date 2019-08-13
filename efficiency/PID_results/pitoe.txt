@@ -1,0 +1,2 @@
+kin    H1_pet    H1_pec    D2_pet    D2_pec    He_pet    He_pec    H3_pet    H3_pec
+15  0  0  0.131306  0.0015529  0  0  0  0
