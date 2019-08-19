@@ -16,9 +16,15 @@ void piontoe(int nrun[], int size, int kin, Double_t &Ep_pet, Double_t &Ep_pec){
 	TH1F *hCK_e=new TH1F("hCK_e","electron CK distribution",500,0,15000);
 	TH1F *hCK_pi=new TH1F("hCK_pi","pion CK distribution",500,0,15000);
 
+	TH1F *hEp_total=new TH1F("hEp_total","total E/p distribution",100,0,1.4);
 	TH1F *hEp_e=new TH1F("hEp_e","electron E/p distribution",100,0,1.4);
+	TH1F *hEp_reale=new TH1F("hEp_reale","electron E/p distribution",100,0,1.4);
 	TH1F *hEp_pi=new TH1F("hEp_pi","pion E/p distribution",100,0,1.4);
 	TH1F *hEp_pi_final=new TH1F("hEp_pi_final","pion E/p distribution",100,0,1.4);
+
+	TH1F *hEp_total_cut=new TH1F("hEp_total_cut","total E/p distribution",100,0,1.4);
+	TH1F *hEp_e_cut=new TH1F("hEp_e_cut","electron E/p distribution",100,0,1.4);
+
 
 	Ep_pet=0.0;
 	Ep_pec=0.0;
@@ -26,13 +32,14 @@ void piontoe(int nrun[], int size, int kin, Double_t &Ep_pet, Double_t &Ep_pec){
 	if(kin<16){
            TCut VZ=Form("L.tr.vz<%f && L.tr.vz>%f",vz_max[KKin],vz_min[KKin]);
 	   TCut E_pi="(L.prl1.e+L.prl2.e)/(L.gold.p*1000)<0.2";
-	   TCut CK_e="L.cer.asum_c>3500 && L.cer.asum_c<7000";
+	   //TCut CK_e="L.cer.asum_c>3500 && L.cer.asum_c<7000";
+	   TCut CK_e="L.cer.asum_c>1500";
 	   TCut CK_pi="L.cer.asum_c<200";
            TCut PS_e="L.prl1.e>(-16.0/15.0*L.prl2.e+1600.0)";
-
+/*
 
 	   TCanvas *c1=new TCanvas("c1");
-           T->Draw("L.cer.asum_c>>hCK_e",TRK+ACC+trigger1+VZ+beta+Ep+PS_e);
+           T->Draw("L.cer.asum_c>>hCK_e",TRK+ACC+trigger2+VZ+beta+Ep+PS_e);
            T->Draw("L.cer.asum_c>>hCK_pi",TRK+ACC+trigger1+VZ+beta+E_pi,"same");
 	   hCK_pi->SetLineColor(2);
 
@@ -56,38 +63,69 @@ void piontoe(int nrun[], int size, int kin, Double_t &Ep_pet, Double_t &Ep_pec){
 
 	   c1->Update();
 	   gPad->SetLogy();
-	   c1->Print("PID_results/CK_kin15.png");	
-
-//	   int nbin1=0,nbin2=0,max_bin=0;
+	   c1->Print(Form("PID_results/CK_kin%d.png",kin));	
+*/
+	   int nbin1=0,nbin2=0,max_bin=0;
 	   TCanvas *c2=new TCanvas("c2");
-           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_pi",TRK+ACC+trigger1+VZ+beta+CK_pi);
-           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_e",TRK+ACC+trigger1+VZ+beta+CK_e,"same");
-           //T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_pi",TRK+ACC+trigger1+VZ+beta+CK_pi,"same");
-           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_pi_final",TRK+ACC+trigger1+VZ+beta+CK_pi+Ep,"same");
-	   hEp_pi->SetLineColor(2);
+           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_total",TRK+ACC+trigger1+VZ+beta);
+           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_total_cut",TRK+ACC+trigger1+VZ+beta+CK_e,"same");
 
-	   nbin1=hEp_e->FindBin(0.8);
-	   nbin2=hEp_e->FindBin(1.2);
-	   Double_t Ep_epass=hEp_e->Integral(nbin1,nbin2);
-	   Double_t Ep_pipass=hEp_pi->Integral(nbin1,nbin2);
+	   TCanvas *c3=new TCanvas("c3");
+           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_e",TRK+ACC+trigger2+VZ+beta+CK_e);
+           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_e_cut",TRK+ACC+trigger2+VZ+beta+CK_e+Ep,"same");
+
+	   TCanvas *c4=new TCanvas("c4");
+           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_pi",TRK+ACC+trigger1+VZ+beta+CK_pi);
+
+	   TCanvas *c5=new TCanvas("c5");
+           T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp_pi_final",TRK+ACC+trigger1+VZ+beta+CK_pi+Ep);
+
+	   nbin1=hEp_e->FindBin(0.7);
+	   nbin2=hEp_e->FindBin(1.4);
+	   Double_t Ep_epass=hEp_e_cut->Integral();
+	   Double_t Ep_pipass=hEp_pi_final->Integral();
+	   Double_t Ep_tpass=hEp_total_cut->Integral();
+
+	   hEp_total->GetXaxis()->SetRangeUser(0.0,0.4);
+           max_bin = hEp_total->GetMaximumBin();
+	   hEp_total->GetXaxis()->SetRangeUser(0,1.4);
+           Double_t nEp_total = hEp_total->GetBinContent(max_bin);
 
 	   hEp_e->GetXaxis()->SetRangeUser(0.0,0.4);
            max_bin = hEp_e->GetMaximumBin();
-	   hEp_e->GetXaxis()->SetRangeUser(0,1.5);
+	   hEp_e->GetXaxis()->SetRangeUser(0,1.4);
            Double_t nEp_e = hEp_e->GetBinContent(max_bin);
 
 	   hEp_pi->GetXaxis()->SetRangeUser(0.0,0.4);
            max_bin = hEp_pi->GetMaximumBin();
-	   hEp_pi->GetXaxis()->SetRangeUser(0.0,1.5);
+	   hEp_pi->GetXaxis()->SetRangeUser(0.0,1.4);
            Double_t nEp_pi = hEp_pi->GetBinContent(max_bin);
 
 	   Double_t scale2=nEp_pi/nEp_e;
-	//   hEp_e->Scale(scale2);
+	  // hEp_pi->Scale(1.0/scale2);
+	 //  hEp_e->Add(hEp_pi,-1.0);
 
+	   Double_t ntotal=hEp_total->Integral();
+	   Double_t npi=hEp_pi->Integral();
+	   npi=npi/nEp_pi*nEp_total;
+	   Double_t nreale=ntotal-npi;
+	   Double_t ne=hEp_e->Integral();
+cout<<ntotal<<"  "<<npi<<"  "<<ne<<"  "<<nEp_pi<<"  "<<nEp_total<<endl; 
 	   Double_t Ep_totalpi=hEp_pi->Integral();
 	   Double_t Ep_totale=hEp_e->Integral();
 	   Ep_pet=Ep_totalpi/(scale2*Ep_totale);
 	   Ep_pec=Ep_pipass/(Ep_epass*scale2);
+cout<<(ne-nreale)/ne<<"  "<<(Ep_epass-(Ep_tpass-Ep_pipass/nEp_pi*nEp_total))/Ep_epass<<"  "<<Ep_pet<<"  "<<Ep_pec<<endl;
+
+           hEp_pi->Scale(nEp_total/nEp_pi);
+	   //hEp_total->Add(hEp_pi,-1.0);
+	   
+	   TCanvas *c6=new TCanvas("c6");
+   	   hEp_reale=(TH1F *)hEp_total->Clone();
+	   hEp_reale->Draw();
+	   hEp_e->Draw("same");
+
+	   //hEp_e->Add(hEp_reale,-1.0); 
 
 	   c2->Update();
 	   gPad->SetLogy();
@@ -153,7 +191,7 @@ void Pion_contamination()
      ofstream outfile;
      outfile.open("PID_results/pitoe.txt");
      outfile<<"kin    H1_pet    H1_pec    D2_pet    D2_pec    He_pet    He_pec    H3_pet    H3_pec"<<endl;
-     for(int ii=10;ii<11;ii++){
+     for(int ii=0;ii<1;ii++){
 	 int nrun[1]={0};
 	 Double_t pet=0.0,pec=0.0;
 /*	 if(ii<5){
@@ -162,14 +200,14 @@ void Pion_contamination()
 	    H1_pet[ii]=pet;
 	    H1_pec[ii]=pec;
 	 }
-	 if(ii<7){
+*/	 if(ii<7){
 	    nrun[0]=D2_nrun[ii];
 	    piontoe(nrun,1,kin[ii],pet,pec);
 	 }
 	 if(kin[ii]==9)piontoe(D2_kin9,nkin9,kin[ii],pet,pec);
 	 if(kin[ii]==11)piontoe(D2_kin11,nkin11,kin[ii],pet,pec);
 	 if(kin[ii]==13)piontoe(D2_kin13,nkin13,kin[ii],pet,pec);
-*/	 if(kin[ii]==15)piontoe(D2_kin15,nkin15,kin[ii],pet,pec);
+	 if(kin[ii]==15)piontoe(D2_kin15,nkin15,kin[ii],pet,pec);
 	 if(kin[ii]==16)piontoe(D2_kin16,nkin16,kin[ii],pet,pec);
 	 D2_pet[ii]=pet;
 	 D2_pec[ii]=pec;

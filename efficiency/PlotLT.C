@@ -204,10 +204,10 @@ void PlotLT(){
 	mg->GetYaxis()->SetTitle("C_{DT}");
 
         auto leg1=new TLegend(0.7,0.6,0.85,0.85);
- 	leg1->AddEntry(gH1,"H1","P");
-        leg1->AddEntry(gD2,"D2","P");
-        leg1->AddEntry(gHe,"He3","P");
-        leg1->AddEntry(gH3,"H3","P");
+ 	leg1->AddEntry(gH1,"{}^{1}H","P");
+        leg1->AddEntry(gD2,"{}^{2}H","P");
+        leg1->AddEntry(gHe,"{}^{3}He","P");
+        leg1->AddEntry(gH3,"{}^{3}H","P");
         leg1->Draw();
 
 	c1->Print("DT.pdf");
