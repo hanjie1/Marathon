@@ -1,5 +1,5 @@
 #define MAXNUM 60
-TString Yieldpath="";
+TString Yieldpath="/w/halla-scifs17exp/triton/hanjie/MARATHON/analysis/Yield/CombineBin/";
 int ReadFile(TString filename,Double_t xavg[MAXNUM],Double_t Q2[MAXNUM],Double_t Yield[MAXNUM],Double_t Y_err[MAXNUM],Double_t RadCor[MAXNUM],int kin[MAXNUM]){
     ifstream file;
     TString myfile=filename;

@@ -5,7 +5,7 @@ void SortX(){
     int kin[MAXNUM]={0};
 
     TString filename;
-    filename="newbin/Ratio_Dp.dat";
+    filename="plot_tools/newbin/Ratio_H3He.dat";
     int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,kin);
     cout<<totalN<<endl;
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
@@ -48,7 +48,7 @@ void SortX(){
     }
 
     ofstream outfile;
-    outfile.open("Xbj_sort_Dp.dat");
+    outfile.open("Xbj_sort_H3He.dat");
     for(int ii=0;ii<totalN;ii++){
 	outfile<<x[ii]<<"  "<<Q2[ii]<<"  "<<Ratio[ii]<<"  "<<Rerr[ii]<<"  "<<RadCor[ii]<<"  "<<kin[ii]<<endl;
     }
