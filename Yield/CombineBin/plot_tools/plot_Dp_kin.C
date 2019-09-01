@@ -169,11 +169,11 @@ void plot_Dp_kin()
   	mg3->Add(hKin[ii]);
    }
    mg3->Draw("AP");
-   mg3->SetTitle("D/p yield ratio;xbj;");
+   mg3->SetTitle("D/p yield ratio;Bjorken x;");
 
    auto leg3=new TLegend(0.7,0.6,0.85,0.85);
    for(int ii=0;ii<5;ii++){
-      leg3->AddEntry(hKin[ii],Form("newbin kin%d",ii),"P");
+      leg3->AddEntry(hKin[ii],Form("kin%d",ii),"P");
    }
    leg3->Draw();
 /*
