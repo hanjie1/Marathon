@@ -22,6 +22,12 @@ void plot_H3D_kin()
      Double_t H3_RadCor[12][MAXBIN]; 
      Double_t H3D_RadCor[12][MAXBIN]; 
 
+     Double_t H3_CouX1[12][MAXBIN],H3_CouX2[12][MAXBIN];
+     Double_t D2_CouX1[12][MAXBIN],D2_CouX2[12][MAXBIN];
+     Double_t H3_born[12][MAXBIN],H3_bornEff[12][MAXBIN];
+     Double_t D2_born[12][MAXBIN],D2_bornEff[12][MAXBIN];
+     Double_t H3D_CouCor[12][MAXBIN];
+
 
      for(int ii=0;ii<12;ii++){
 	 for(int jj=0;jj<MAXBIN;jj++){
@@ -42,6 +48,12 @@ void plot_H3D_kin()
              D2_RadCor[ii][jj]=0.0; 
      	     H3_RadCor[ii][jj]=0.0; 
              H3D_RadCor[ii][jj]=0.0;  
+
+             H3_CouX1[ii][jj]=0.0; H3_CouX2[ii][jj]=0.0;
+             D2_CouX1[ii][jj]=0.0; D2_CouX2[ii][jj]=0.0;
+             H3_born[ii][jj]=0.0; H3_bornEff[ii][jj]=0.0;
+             D2_born[ii][jj]=0.0; D2_bornEff[ii][jj]=0.0;
+             H3D_CouCor[ii][jj]=0.0;
      }}
 
    TString Yfile;
@@ -62,6 +74,17 @@ void plot_H3D_kin()
 
        Yfile=Form("newbin/RadCor/H3_kin%d_xs.out",kin[ii]);
        ReadRadCor(Yfile,ii,H3_Radx,H3_RadQ2,H3_RadCor);
+
+       Yfile=Form("newbin/RadCor/H3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,H3_CouX1,H3_born);
+       Yfile=Form("newbin/Coulomb_Q2eff/H3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,H3_CouX2,H3_bornEff);
+
+       Yfile=Form("newbin/RadCor/D2_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,D2_CouX1,D2_born);
+       Yfile=Form("newbin/Coulomb_Q2eff/D2_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,D2_CouX2,D2_bornEff);
+
    }
 
    TGraphErrors *hratio=new TGraphErrors();
@@ -71,6 +94,10 @@ void plot_H3D_kin()
    
    ofstream outfile;
    outfile.open("newbin/Ratio_H3D.dat"); 
+   ofstream outfile1;
+   outfile1.open("newbin/Ratio_H3D_statE.dat");
+   ofstream outfile2;
+   outfile2.open("newbin/Ratio_H3D_Coulomb.dat");
    int nn=0;
    for(int ii=0;ii<12;ii++){
        int nnn=0;
@@ -94,12 +121,29 @@ void plot_H3D_kin()
 	   }
 	   else cout<<"Something wrong with RadCor !!"<<endl;
 
-	   outfile<<H3_xavg[ii][jj]<<"  "<<H3_Q2[ii][jj]<<"  "<<H3D[ii][jj]<<"  "<<H3D_E[ii][jj]<<"  "<<H3D_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
+           Double_t tmpH3_Ccor=0.0,tmpD2_Ccor=0.0;
+           if((abs(D2_CouX1[ii][jj]-D2_CouX2[ii][jj])<0.0001) && (abs(H3_CouX1[ii][jj]-H3_CouX2[ii][jj])<0.0001)){
+               tmpH3_Ccor=H3_born[ii][jj]/H3_bornEff[ii][jj];
+               tmpD2_Ccor=D2_born[ii][jj]/D2_bornEff[ii][jj];
+              if(abs(D2_CouX1[ii][jj]-H3_CouX2[ii][jj])<0.001){
+                  H3D_CouCor[ii][jj]=tmpH3_Ccor/tmpD2_Ccor;
+              }
+              else cout<<"Something wrong with Coulomb 1 !!"<<endl;
+              cout<<D2_CouX1[ii][jj]<<"  "<<H3_CouX2[ii][jj]<<endl;
+           }
+           else cout<<"Something wrong with Coulomb 2 !!"<<endl;
+
+	   outfile<<H3_xavg[ii][jj]<<"  "<<H3_Q2[ii][jj]<<"  "<<H3D[ii][jj]<<"  "<<H3D_E[ii][jj]<<"  "<<H3D_RadCor[ii][jj]<<"  "<<H3D_CouCor[ii][jj]<<"  "<<kin[ii]<<endl;
+           outfile1<<H3_xavg[ii][jj]<<"  "<<H3_Q2[ii][jj]<<"  "<<H3D[ii][jj]<<"  "<<H3D_E[ii][jj]/H3D[ii][jj]<<"  "<<kin[ii]<<endl;
+           outfile2<<H3_xavg[ii][jj]<<"  "<<tmpH3_Ccor<<"  "<<tmpD2_Ccor<<"  "<<kin[ii]<<endl;
+
            nn++;
            nnn++;
        }
    } 
    outfile.close();
+   outfile1.close();
+   outfile2.close();
 
    int nn1=0;
    for(int ii=0;ii<12;ii++){
@@ -146,7 +190,7 @@ void plot_H3D_kin()
 	hKin[ii]->SetMarkerStyle(8);
 	hKin[ii]->SetMarkerColor(color[ii]);
 	hKin1[ii]->SetMarkerStyle(47);
-        hKin1[ii]->SetMarkerColor(color[ii]);
+	hKin1[ii]->SetMarkerColor(color[ii]);
 	hKin1[ii]->SetMarkerSize(1.5);
   	mg2->Add(hKin[ii]);
   	mg2->Add(hKin1[ii]);
@@ -186,7 +230,7 @@ void plot_H3D_kin()
 
    auto leg4=new TLegend(0.7,0.6,0.812,0.812);
    for(int ii=0;ii<12;ii++){
-      leg4->AddEntry(hKin1[ii],Form("newbin kin%d",ii),"P");
+      leg4->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
    }
    leg4->Draw();
 */

@@ -10,6 +10,7 @@
   TCut beta = "L.tr.beta>0";
   TCut beta_R = "R.tr.beta>0";
   TCut Ep = "(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>0.7";
+  TCut Ep_R = "(R.ps.e+R.sh.e)/(1000*R.gold.p)>0.7";
   TCut ACC = Form("L.tr.tg_th>%f && L.tr.tg_th<%f && L.tr.tg_ph>%f && L.tr.tg_ph<%f && L.tr.tg_dp>%f && L.tr.tg_dp<%f",th_min,th_max,ph_min,ph_max,dp_min,dp_max);
 //  TCut CK = "L.cer.asum_c>1500";
 //  TCut CK_R = "R.cer.asum_c>2000";
@@ -25,3 +26,4 @@
 
   TCut ACC_R = Form("R.tr.tg_th>%f && R.tr.tg_th<%f && R.tr.tg_ph>%f && R.tr.tg_ph<%f && R.tr.tg_dp>%f && R.tr.tg_dp<%f",th_min,th_max,ph_min,ph_max,dp_min,dp_max);
   TCut VZ_R = "R.tr.vz>-0.105 && R.tr.vz<0.11";
+  TCut W2_R = "EKRxe.W2>3.0";

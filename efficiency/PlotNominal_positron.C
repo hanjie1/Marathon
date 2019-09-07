@@ -22,7 +22,7 @@ void PlotNominal_positron()
      TChain *T=new TChain("T");
      T->Add(Form("%s/tritium_2437*",rootpath.Data()));
 
-     TH1F *hEP=new TH1F("hEP","positron E/P distribution",100,0.3,1.3);
+     TH1F *hEP=new TH1F("hEP","positron E/P distribution",100,0.,1.3);
 
      T->Draw("(L.prl1.e+L.prl2.e)/(1000.0*L.gold.p)>>hEP",trigger2+CK+TRK+ACC+beta+VZ);
 

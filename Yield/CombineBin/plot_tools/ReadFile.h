@@ -55,7 +55,36 @@ int ReadRadCor(TString filename,int kin,Double_t x[][MAXBIN],Double_t Q2[][MAXBI
           tmp.Tokenize(content,from," ");
           tmp.Tokenize(content,from," ");
           RadCor[kin][nn-1]=atof(content.Data());
-          cout<<x[kin][nn-1]<<"  "<<Q2[kin][nn-1]<<"  "<<RadCor[kin][nn-1]<<endl;
+          //cout<<x[kin][nn-1]<<"  "<<Q2[kin][nn-1]<<"  "<<RadCor[kin][nn-1]<<endl;
+          from=0;
+          nn++;
+     }
+    file.close();
+    return 1;
+}
+
+int ReadCoulomb(TString filename,int kin,Double_t x[][MAXBIN],Double_t XSBorn[][MAXBIN]){
+    ifstream file;
+    TString myfile=Yieldpath+filename;
+    file.open(myfile);
+    if(!file.is_open())return 0;
+
+    Ssiz_t from=0;
+    TString content,tmp;
+    int nn=0;
+    
+    while(tmp.ReadLine(file)){
+          if(nn==0){nn++;continue;}
+          if(tmp[0]=='#')continue; 
+          tmp.Tokenize(content,from," ");
+          x[kin][nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
+          XSBorn[kin][nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
           from=0;
           nn++;
      }

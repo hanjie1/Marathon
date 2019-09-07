@@ -2,7 +2,7 @@
 void plot_BC()
 {
     ifstream infile;
-    infile.open("BCfactor_Dp.dat");
+    infile.open("H3He_BCfac.dat");
     Ssiz_t from=0;
     TString content,tmp;
     int mm=0;
@@ -10,6 +10,7 @@ void plot_BC()
     while(tmp.ReadLine(infile)){
           tmp.Tokenize(content,from," ");
           Xbc[mm]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
           tmp.Tokenize(content,from," ");
           BCfactor[mm]=atof(content.Data());
           from=0;

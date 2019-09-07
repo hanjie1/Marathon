@@ -7,17 +7,18 @@ void Weight_avg_HeD()
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0},Ratio4[MAXNUM]={0.0};  
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
+    Double_t CoulCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
     Double_t ECC_err[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
-    filename="Xbj_sort_HeD.dat";
-    int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,kin);
+    filename="combine_newbin/Xbj_sort_HeD.dat";
+    int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,CoulCor,kin);
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
    
     ifstream infile1;
-    infile1.open("BinCenter/BCfactor_HeD.dat");
+    infile1.open("BinCenter/HeD_BCfac.dat");
     Ssiz_t from=0;
     TString content,tmp;
     int mm=0;
@@ -25,6 +26,7 @@ void Weight_avg_HeD()
     while(tmp.ReadLine(infile1)){
           tmp.Tokenize(content,from," ");
           Xbc[mm]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
           tmp.Tokenize(content,from," ");
           BCfactor[mm]=atof(content.Data());
           from=0;
@@ -47,16 +49,16 @@ void Weight_avg_HeD()
 	Double_t tmp_pHe3=1.0-TMath::Exp(pA_He3*x[ii]+pB_He3);
 	Ratio2[ii]=Ratio1[ii]*(tmp_pHe3/tmp_pD2);
 	Rerr2[ii]=Rerr1[ii]*(tmp_pHe3/tmp_pD2);
+//cout<<tmp_pHe3/tmp_pD2<<endl;
+	/* radiative correction + Coulom correction*/
+	Ratio3[ii]=Ratio2[ii]*RadCor[ii]*CoulCor[ii];	
+	Rerr3[ii]=Rerr2[ii]*RadCor[ii]*CoulCor[ii];
 
-	/* radiative correction */
-	Ratio3[ii]=Ratio2[ii]*RadCor[ii];	
-	Rerr3[ii]=Rerr2[ii]*RadCor[ii];
-
-	outfile1<<x[ii]<<"  "<<Ratio3[ii]<<"  "<<Rerr3[ii]<<"  "<<kin[ii]<<endl;
+	outfile1<<x[ii]<<"  "<<Ratio2[ii]<<"  "<<Rerr2[ii]<<"  "<<kin[ii]<<endl;
 
         if(abs(Xbc[ii]-x[ii])>0.001){cout<<"Something wrong with BC factor!"<<endl;continue;}
-        Ratio4[ii]=Ratio3[ii]/BCfactor[ii];
-        Rerr4[ii]=Rerr3[ii]/BCfactor[ii];
+        Ratio4[ii]=Ratio3[ii]*BCfactor[ii];
+        Rerr4[ii]=Rerr3[ii]*BCfactor[ii];
 
 	/* positron absolute error */
         Double_t pHe3_Var=exp(2.0*(pA_He3*x[ii]+pB_He3))*(pow(x[ii],2)*pHe3_VA+pHe3_VB+2.0*x[ii]*pHe3_COV_AB);
@@ -119,7 +121,7 @@ void Weight_avg_HeD()
     gHeD->SetMarkerColor(4);
     gHeD->Draw("AP");
     gHeD->SetTitle("He3/D2;xbj;");
-
+/*
     TCanvas *c2=new TCanvas("c2","c2",1500,1500);
     TGraphErrors *gHeD_kin=new TGraphErrors();
     nn=0;
@@ -135,6 +137,46 @@ void Weight_avg_HeD()
     gHeD_kin->SetMarkerStyle(8);
     gHeD_kin->SetMarkerColor(4);
     gHeD_kin->Draw("AP");
+*/
+   int color[12]={1,2,3,4,6,7,8,9,46,30,12,38};
+    TGraphErrors *gHeD_kin[12];
+    for(int ii=0;ii<12;ii++){
+        gHeD_kin[ii]=new TGraphErrors();
+        gHeD_kin[ii]->SetMarkerStyle(8);
+        gHeD_kin[ii]->SetMarkerColor(color[ii]);
+        gHeD_kin[ii]->SetMarkerSize(1.7);
+    }
+
+    int KKin[12]={0,1,2,3,4,5,7,9,11,13,15,16};
+    int num[12]={0};
+    for(int ii=0;ii<MAXNUM;ii++){
+        if(x[ii]==0)continue;
+        for(int kk=0;kk<12;kk++){
+            if(kin[ii]!=KKin[kk])continue;
+            gHeD_kin[kk]->SetPoint(num[kk],x[ii],Ratio3[ii]);
+            gHeD_kin[kk]->SetPointError(num[kk],0,Rerr3[ii]);
+            num[kk]++;
+        }
+    }
+
+   TCanvas *c2=new TCanvas("c2","c2",1500,1200);
+   TMultiGraph *mg1=new TMultiGraph();
+   for(int ii=0;ii<12;ii++)
+        mg1->Add(gHeD_kin[ii]);
+   mg1->Draw("AP");
+   mg1->SetTitle(";Bjorken x;#sigma({}^{3}He)/#sigma({}^{2}H)");
+
+   auto leg1=new TLegend(0.15,0.65,0.35,0.9);
+   leg1->SetNColumns(3);
+   for(int ii=0;ii<12;ii++)
+      leg1->AddEntry(gHeD_kin[ii],Form("kin%d",KKin[ii]),"P");
+
+   leg1->Draw();
+   mg1->GetYaxis()->SetRangeUser(1.5,1.75);
+
+   c2->Print("Plots/HeD_kin.pdf");
+
+
 
 
 }

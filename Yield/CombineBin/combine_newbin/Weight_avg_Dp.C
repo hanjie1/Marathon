@@ -7,17 +7,18 @@ void Weight_avg_Dp()
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0},Ratio4[MAXNUM]={0.0};  
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
+    Double_t CoulCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
     Double_t ECC_err[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
-    filename="Xbj_sort_Dp.dat";
-    int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,kin);
+    filename="combine_newbin/Xbj_sort_Dp.dat";
+    int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,CoulCor,kin);
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
    
     ifstream infile1;
-    infile1.open("BinCenter/BCfactor_Dp.dat");
+    infile1.open("BinCenter/Dp_BCfac.dat");
     Ssiz_t from=0;
     TString content,tmp;
     int mm=0;
@@ -25,6 +26,7 @@ void Weight_avg_Dp()
     while(tmp.ReadLine(infile1)){
           tmp.Tokenize(content,from," ");
           Xbc[mm]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
           tmp.Tokenize(content,from," ");
           BCfactor[mm]=atof(content.Data());
           from=0;
@@ -46,14 +48,14 @@ void Weight_avg_Dp()
 	Double_t tmp_pD2=1.0-TMath::Exp(pA_D2*x[ii]+pB_D2);
 	Ratio2[ii]=Ratio1[ii]*(tmp_pD2/tmp_pH1);
 	Rerr2[ii]=Rerr1[ii]*(tmp_pD2/tmp_pH1);
-
-	/* radiative correction */
-	Ratio3[ii]=Ratio2[ii]*RadCor[ii];	
-	Rerr3[ii]=Rerr2[ii]*RadCor[ii];
+//cout<<tmp_pD2/tmp_pH1<<endl;
+	/* radiative correction + Coulomb correction*/
+	Ratio3[ii]=Ratio2[ii]*RadCor[ii]*CoulCor[ii];	
+	Rerr3[ii]=Rerr2[ii]*RadCor[ii]*CoulCor[ii];
 
 	if(abs(Xbc[ii]-x[ii])>0.001){cout<<"Something wrong with BC factor!"<<endl;continue;}
-	Ratio4[ii]=Ratio3[ii]/BCfactor[ii];
-	Rerr4[ii]=Rerr3[ii]/BCfactor[ii];
+	Ratio4[ii]=Ratio3[ii]*BCfactor[ii];
+	Rerr4[ii]=Rerr3[ii]*BCfactor[ii];
 
 	/* positron absolute error */
         Double_t pH1_Var=exp(2.0*(pA_H1*x[ii]+pB_H1))*(pow(x[ii],2)*pH1_VA+pH1_VB+2.0*x[ii]*pH1_COV_AB);
@@ -116,7 +118,7 @@ void Weight_avg_Dp()
     gDp->SetMarkerColor(4);
     gDp->Draw("AP");
     gDp->SetTitle("D/p;xbj;");
-
+/*
     TCanvas *c2=new TCanvas("c2","c2",1500,1500);
     TGraphErrors *gDp_kin=new TGraphErrors();
     nn=0;
@@ -132,6 +134,42 @@ void Weight_avg_Dp()
     gDp_kin->SetMarkerStyle(8);
     gDp_kin->SetMarkerColor(4);
     gDp_kin->Draw("AP"); 
+*/
+    int color[5]={1,2,8,4,6};    
+    TGraphErrors *gDp_kin[5];
+    for(int ii=0;ii<5;ii++){
+	gDp_kin[ii]=new TGraphErrors();
+   	gDp_kin[ii]->SetMarkerStyle(8);
+   	gDp_kin[ii]->SetMarkerColor(color[ii]);
+   	gDp_kin[ii]->SetMarkerSize(1.7);
+    }
+
+    int num[5]={0}; 
+    for(int ii=0;ii<MAXNUM;ii++){
+	if(x[ii]==0)continue;
+	for(int kk=0;kk<5;kk++){
+	    if(kin[ii]!=kk)continue;
+            gDp_kin[kk]->SetPoint(num[kk],x[ii],Ratio3[ii]);
+            gDp_kin[kk]->SetPointError(num[kk],0,Rerr3[ii]);
+            num[kk]++;	    
+	}
+    }
+
+   TCanvas *c2=new TCanvas("c2","c2",1500,1200);
+   TMultiGraph *mg1=new TMultiGraph();
+   for(int ii=0;ii<5;ii++)
+        mg1->Add(gDp_kin[ii]);
+   mg1->Draw("AP");
+   mg1->SetTitle(";Bjorken x;#sigma({}^{2}H)/#sigma({}^{1}H)");
+
+   auto leg1=new TLegend(0.7,0.6,0.85,0.85);
+   //leg1->SetNColumns(2);
+   for(int ii=0;ii<5;ii++)
+      leg1->AddEntry(gDp_kin[ii],Form("kin%d",ii),"P");
+   
+   leg1->Draw();
+
+   c2->Print("Plots/Dp_kin.pdf");
 
 
 }

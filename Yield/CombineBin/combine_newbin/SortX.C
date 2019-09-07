@@ -1,12 +1,12 @@
 #include "ReadFile.h"
 void SortX(){
     Double_t x[MAXNUM]={0.0},Ratio[MAXNUM]={0.0},Rerr[MAXNUM]={0.0},RadCor[MAXNUM]={0.0};
-    Double_t Q2[MAXNUM]={0.0};
+    Double_t Q2[MAXNUM]={0.0},CoulCor[MAXNUM]={0.0};
     int kin[MAXNUM]={0};
 
     TString filename;
-    filename="plot_tools/newbin/Ratio_H3He.dat";
-    int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,kin);
+    filename="plot_tools/newbin/Ratio_HeD.dat";
+    int totalN = ReadFile(filename,x,Q2,Ratio,Rerr,RadCor,CoulCor,kin);
     cout<<totalN<<endl;
     if(totalN==0){cout<<"No ratio !!"<<endl;exit(0);}
 
@@ -16,7 +16,7 @@ void SortX(){
      int NN=totalN-ii;
      for(int jj=0;jj<NN-1;jj++){
 	if(x[jj]>x[jj+1]){
-	   Double_t tmp_x,tmp_Ratio,tmp_Rerr,tmp_RC,tmp_kin,tmp_Q2;
+	   Double_t tmp_x,tmp_Ratio,tmp_Rerr,tmp_RC,tmp_kin,tmp_Q2,tmp_Coul;
 	   tmp_x=x[jj];
 	   x[jj]=x[jj+1];
 	   x[jj+1]=tmp_x;
@@ -37,6 +37,10 @@ void SortX(){
 	   RadCor[jj]=RadCor[jj+1];
 	   RadCor[jj+1]=tmp_RC;
 
+	   tmp_Coul=CoulCor[jj];
+	   CoulCor[jj]=CoulCor[jj+1];
+	   CoulCor[jj+1]=tmp_Coul;
+
 	   tmp_kin=kin[jj];
 	   kin[jj]=kin[jj+1];
 	   kin[jj+1]=tmp_kin;
@@ -48,9 +52,9 @@ void SortX(){
     }
 
     ofstream outfile;
-    outfile.open("Xbj_sort_H3He.dat");
+    outfile.open("Xbj_sort_HeD.dat");
     for(int ii=0;ii<totalN;ii++){
-	outfile<<x[ii]<<"  "<<Q2[ii]<<"  "<<Ratio[ii]<<"  "<<Rerr[ii]<<"  "<<RadCor[ii]<<"  "<<kin[ii]<<endl;
+	outfile<<x[ii]<<"  "<<Q2[ii]<<"  "<<Ratio[ii]<<"  "<<Rerr[ii]<<"  "<<RadCor[ii]<<"  "<<CoulCor[ii]<<"  "<<kin[ii]<<endl;
     }
     outfile.close();
 

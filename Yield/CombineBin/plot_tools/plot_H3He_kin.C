@@ -4,44 +4,56 @@ using namespace std;
 
 void plot_H3He_kin()
 {
-     Double_t He_x[12][MAXBIN],He_Q2[12][MAXBIN],He_xavg[12][MAXBIN];
+     Double_t He3_x[12][MAXBIN],He3_Q2[12][MAXBIN],He3_xavg[12][MAXBIN];
      Double_t H3_x[12][MAXBIN],H3_Q2[12][MAXBIN],H3_xavg[12][MAXBIN];
-     Double_t He_Y[12][MAXBIN],He_YE[12][MAXBIN]; 
+     Double_t He3_Y[12][MAXBIN],He3_YE[12][MAXBIN]; 
      Double_t H3_Y[12][MAXBIN],H3_YE[12][MAXBIN]; 
      Double_t H3He[12][MAXBIN],H3He_E[12][MAXBIN]; 
 
-     Double_t He_x1[12][MAXBIN],He_Q21[12][MAXBIN],He_xavg1[12][MAXBIN];
+     Double_t He3_x1[12][MAXBIN],He3_Q21[12][MAXBIN],He3_xavg1[12][MAXBIN];
      Double_t H3_x1[12][MAXBIN],H3_Q21[12][MAXBIN],H3_xavg1[12][MAXBIN];
-     Double_t He_Y1[12][MAXBIN],He_YE1[12][MAXBIN]; 
+     Double_t He3_Y1[12][MAXBIN],He3_YE1[12][MAXBIN]; 
      Double_t H3_Y1[12][MAXBIN],H3_YE1[12][MAXBIN]; 
      Double_t H3He1[12][MAXBIN],H3He_E1[12][MAXBIN]; 
 
-     Double_t He_Radx[12][MAXBIN],He_RadQ2[12][MAXBIN];
+     Double_t He3_Radx[12][MAXBIN],He3_RadQ2[12][MAXBIN];
      Double_t H3_Radx[12][MAXBIN],H3_RadQ2[12][MAXBIN];
-     Double_t He_RadCor[12][MAXBIN]; 
+     Double_t He3_RadCor[12][MAXBIN]; 
      Double_t H3_RadCor[12][MAXBIN]; 
      Double_t H3He_RadCor[12][MAXBIN]; 
+
+     Double_t H3_CouX1[12][MAXBIN],H3_CouX2[12][MAXBIN];
+     Double_t He3_CouX1[12][MAXBIN],He3_CouX2[12][MAXBIN];
+     Double_t H3_born[12][MAXBIN],H3_bornEff[12][MAXBIN];
+     Double_t He3_born[12][MAXBIN],He3_bornEff[12][MAXBIN];
+     Double_t H3He_CouCor[12][MAXBIN];
 
 
      for(int ii=0;ii<12;ii++){
 	 for(int jj=0;jj<MAXBIN;jj++){
-             He_x[ii][jj]=0.0; He_Q2[ii][jj]=0.0; He_xavg[ii][jj]=0.0; 
+             He3_x[ii][jj]=0.0; He3_Q2[ii][jj]=0.0; He3_xavg[ii][jj]=0.0; 
              H3_x[ii][jj]=0.0; H3_Q2[ii][jj]=0.0; H3_xavg[ii][jj]=0.0;
-             He_Y[ii][jj]=0.0;  He_YE[ii][jj]=0.0; 
+             He3_Y[ii][jj]=0.0;  He3_YE[ii][jj]=0.0; 
      	     H3_Y[ii][jj]=0.0;  H3_YE[ii][jj]=0.0; 
              H3He[ii][jj]=0.0;   H3He_E[ii][jj]=0.0; 
 
-             He_x1[ii][jj]=0.0; He_Q21[ii][jj]=0.0; He_xavg1[ii][jj]=0.0; 
+             He3_x1[ii][jj]=0.0; He3_Q21[ii][jj]=0.0; He3_xavg1[ii][jj]=0.0; 
              H3_x1[ii][jj]=0.0; H3_Q21[ii][jj]=0.0; H3_xavg1[ii][jj]=0.0;
-             He_Y1[ii][jj]=0.0;  He_YE1[ii][jj]=0.0; 
+             He3_Y1[ii][jj]=0.0;  He3_YE1[ii][jj]=0.0; 
      	     H3_Y1[ii][jj]=0.0;  H3_YE1[ii][jj]=0.0; 
              H3He1[ii][jj]=0.0;   H3He_E1[ii][jj]=0.0; 
 
-             He_Radx[ii][jj]=0.0; He_RadQ2[ii][jj]=0.0; 
+             He3_Radx[ii][jj]=0.0; He3_RadQ2[ii][jj]=0.0; 
              H3_Radx[ii][jj]=0.0; H3_RadQ2[ii][jj]=0.0;
-             He_RadCor[ii][jj]=0.0; 
+             He3_RadCor[ii][jj]=0.0; 
      	     H3_RadCor[ii][jj]=0.0; 
              H3He_RadCor[ii][jj]=0.0;  
+
+             H3_CouX1[ii][jj]=0.0; H3_CouX2[ii][jj]=0.0;
+             He3_CouX1[ii][jj]=0.0; He3_CouX2[ii][jj]=0.0;
+             H3_born[ii][jj]=0.0; H3_bornEff[ii][jj]=0.0;
+             He3_born[ii][jj]=0.0; He3_bornEff[ii][jj]=0.0;
+             H3He_CouCor[ii][jj]=0.0;
      }}
 
    TString Yfile;
@@ -53,15 +65,26 @@ void plot_H3He_kin()
        ReadYield(Yfile,ii,H3_x1,H3_xavg1,H3_Q21,H3_Y1,H3_YE1); 
 
        Yfile=Form("newbin/RawYield/He3_kin%d.txt",kin[ii]);
-       ReadYield(Yfile,ii,He_x,He_xavg,He_Q2,He_Y,He_YE);
+       ReadYield(Yfile,ii,He3_x,He3_xavg,He3_Q2,He3_Y,He3_YE);
        Yfile=Form("bin003/RawYield/He3_kin%d.txt",kin[ii]);
-       ReadYield(Yfile,ii,He_x1,He_xavg1,He_Q21,He_Y1,He_YE1);
+       ReadYield(Yfile,ii,He3_x1,He3_xavg1,He3_Q21,He3_Y1,He3_YE1);
 
        Yfile=Form("newbin/RadCor/He3_kin%d_xs.out",kin[ii]);
-       ReadRadCor(Yfile,ii,He_Radx,He_RadQ2,He_RadCor);
+       ReadRadCor(Yfile,ii,He3_Radx,He3_RadQ2,He3_RadCor);
 
        Yfile=Form("newbin/RadCor/H3_kin%d_xs.out",kin[ii]);
        ReadRadCor(Yfile,ii,H3_Radx,H3_RadQ2,H3_RadCor);
+
+       Yfile=Form("newbin/RadCor/H3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,H3_CouX1,H3_born);
+       Yfile=Form("newbin/Coulomb_Q2eff/H3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,H3_CouX2,H3_bornEff);
+
+       Yfile=Form("newbin/RadCor/He3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,He3_CouX1,He3_born);
+       Yfile=Form("newbin/Coulomb_Q2eff/He3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,He3_CouX2,He3_bornEff);
+
    }
 
    TGraphErrors *hratio=new TGraphErrors();
@@ -71,17 +94,21 @@ void plot_H3He_kin()
    
    ofstream outfile;
    outfile.open("newbin/Ratio_H3He.dat"); 
+   ofstream outfile1;
+   outfile1.open("newbin/Ratio_H3He_statE.dat");
+   ofstream outfile2;
+   outfile2.open("newbin/Ratio_H3He_Coulomb.dat");
    int nn=0;
    for(int ii=0;ii<12;ii++){
        int nnn=0;
        hKin[ii]=new TGraphErrors();
        for(int jj=0;jj<MAXBIN;jj++){
 	   if(H3_x[ii][jj]==0)continue;
-           if(abs(H3_xavg[ii][jj]-He_xavg[ii][jj])>0.001){cout<<"1 Point mismatch !!!"<<endl; continue;}
+           if(abs(H3_xavg[ii][jj]-He3_xavg[ii][jj])>0.001){cout<<"1 Point mismatch !!!"<<endl; continue;}
 
-           if(He_Y[ii][jj]>0){
-             H3He[ii][jj]=H3_Y[ii][jj]/He_Y[ii][jj];
-	     H3He_E[ii][jj]=H3He[ii][jj]*sqrt(pow(H3_YE[ii][jj]/H3_Y[ii][jj],2)+pow(He_YE[ii][jj]/He_Y[ii][jj],2));
+           if(He3_Y[ii][jj]>0){
+             H3He[ii][jj]=H3_Y[ii][jj]/He3_Y[ii][jj];
+	     H3He_E[ii][jj]=H3He[ii][jj]*sqrt(pow(H3_YE[ii][jj]/H3_Y[ii][jj],2)+pow(He3_YE[ii][jj]/He3_Y[ii][jj],2));
 	   }
            hratio->SetPoint(nn,H3_xavg[ii][jj],H3He[ii][jj]);
            hratio->SetPointError(nn,0.0,H3He_E[ii][jj]);
@@ -90,16 +117,33 @@ void plot_H3He_kin()
            hKin[ii]->SetPointError(nnn,0.0,H3He_E[ii][jj]);
 
 	   if(abs(H3_xavg[ii][jj]-H3_Radx[ii][jj])<0.0001){
-	      H3He_RadCor[ii][jj]=He_RadCor[ii][jj]/H3_RadCor[ii][jj];
+	      H3He_RadCor[ii][jj]=He3_RadCor[ii][jj]/H3_RadCor[ii][jj];
 	   }
 	   else cout<<"Something wrong with RadCor !!"<<endl;
 
-	   outfile<<H3_xavg[ii][jj]<<"  "<<H3_Q2[ii][jj]<<"  "<<H3He[ii][jj]<<"  "<<H3He_E[ii][jj]<<"  "<<H3He_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
+           Double_t tmpH3_Ccor=0.0,tmpHe3_Ccor=0.0;
+           if((abs(He3_CouX1[ii][jj]-He3_CouX2[ii][jj])<0.0001) && (abs(H3_CouX1[ii][jj]-H3_CouX2[ii][jj])<0.0001)){
+               tmpH3_Ccor=H3_born[ii][jj]/H3_bornEff[ii][jj];
+               tmpHe3_Ccor=He3_born[ii][jj]/He3_bornEff[ii][jj];
+              if(abs(He3_CouX1[ii][jj]-H3_CouX2[ii][jj])<0.001){
+                  H3He_CouCor[ii][jj]=tmpH3_Ccor/tmpHe3_Ccor;
+              }
+              else cout<<"Something wrong with Coulomb 1 !!"<<endl;
+              cout<<He3_CouX1[ii][jj]<<"  "<<H3_CouX2[ii][jj]<<endl;
+           }
+           else cout<<"Something wrong with Coulomb 2 !!"<<endl;
+
+	   outfile<<H3_xavg[ii][jj]<<"  "<<H3_Q2[ii][jj]<<"  "<<H3He[ii][jj]<<"  "<<H3He_E[ii][jj]<<"  "<<H3He_RadCor[ii][jj]<<"  "<<H3He_CouCor[ii][jj]<<"  "<<kin[ii]<<endl;
+           outfile1<<H3_xavg[ii][jj]<<"  "<<H3_Q2[ii][jj]<<"  "<<H3He[ii][jj]<<"  "<<H3He_E[ii][jj]/H3He[ii][jj]<<"  "<<kin[ii]<<endl;
+           outfile2<<H3_xavg[ii][jj]<<"  "<<tmpH3_Ccor<<"  "<<tmpHe3_Ccor<<"  "<<kin[ii]<<endl;
+
            nn++;
            nnn++;
        }
    } 
    outfile.close();
+   outfile1.close();
+   outfile2.close();
 
    int nn1=0;
    for(int ii=0;ii<12;ii++){
@@ -107,11 +151,11 @@ void plot_H3He_kin()
        hKin1[ii]=new TGraphErrors();
        for(int jj=0;jj<MAXBIN;jj++){
 	   if(H3_x1[ii][jj]==0)continue;
-           if(abs(H3_xavg1[ii][jj]-He_xavg1[ii][jj])>0.001){cout<<"2 Point mismatch !!!"; continue;}
+           if(abs(H3_xavg1[ii][jj]-He3_xavg1[ii][jj])>0.001){cout<<"2 Point mismatch !!!"; continue;}
 
-           if(He_Y1[ii][jj]>0){
-             H3He1[ii][jj]=H3_Y1[ii][jj]/He_Y1[ii][jj];
-	     H3He_E1[ii][jj]=H3He1[ii][jj]*sqrt(pow(H3_YE1[ii][jj]/H3_Y1[ii][jj],2)+pow(He_YE1[ii][jj]/He_Y1[ii][jj],2));
+           if(He3_Y1[ii][jj]>0){
+             H3He1[ii][jj]=H3_Y1[ii][jj]/He3_Y1[ii][jj];
+	     H3He_E1[ii][jj]=H3He1[ii][jj]*sqrt(pow(H3_YE1[ii][jj]/H3_Y1[ii][jj],2)+pow(He3_YE1[ii][jj]/He3_Y1[ii][jj],2));
 	   }
            hratio1->SetPoint(nn1,H3_xavg1[ii][jj],H3He1[ii][jj]);
            hratio1->SetPointError(nn1,0.0,H3He_E1[ii][jj]);
@@ -186,7 +230,7 @@ void plot_H3He_kin()
 
    auto leg4=new TLegend(0.7,0.6,0.812,0.812);
    for(int ii=0;ii<12;ii++){
-      leg4->AddEntry(hKin1[ii],Form("newbin kin%d",ii),"P");
+      leg4->AddEntry(hKin1[ii],Form("bin003 kin%d",ii),"P");
    }
    leg4->Draw();
 */

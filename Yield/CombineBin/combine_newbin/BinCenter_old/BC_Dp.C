@@ -37,6 +37,7 @@ void BC_Dp(){
 	    if(Yi_H1[jj]==0)continue;
 	    Double_t Dp_i=Yi_D2[jj]/Yi_H1[jj];
 	    BC_Corr[jj]=Dp_i/Dp_BC;
+cout<<Yi_D2[jj]/Ybc_D2[ii]<<"  "<<Yi_H1[jj]/Ybc_H1[ii]<<endl;
 	    nn++;
 	 }
      }

@@ -22,6 +22,12 @@ void plot_HeD_kin()
      Double_t He_RadCor[12][MAXBIN]; 
      Double_t HeD_RadCor[12][MAXBIN]; 
 
+     Double_t He_CouX1[12][MAXBIN],He_CouX2[12][MAXBIN];
+     Double_t D2_CouX1[12][MAXBIN],D2_CouX2[12][MAXBIN];
+     Double_t He_born[12][MAXBIN],He_bornEff[12][MAXBIN];
+     Double_t D2_born[12][MAXBIN],D2_bornEff[12][MAXBIN];
+     Double_t HeD_CouCor[12][MAXBIN];
+
 
      for(int ii=0;ii<12;ii++){
 	 for(int jj=0;jj<MAXBIN;jj++){
@@ -42,6 +48,12 @@ void plot_HeD_kin()
              D2_RadCor[ii][jj]=0.0; 
      	     He_RadCor[ii][jj]=0.0; 
              HeD_RadCor[ii][jj]=0.0;  
+
+             He_CouX1[ii][jj]=0.0; He_CouX2[ii][jj]=0.0;
+             D2_CouX1[ii][jj]=0.0; D2_CouX2[ii][jj]=0.0;
+             He_born[ii][jj]=0.0; He_bornEff[ii][jj]=0.0;
+             D2_born[ii][jj]=0.0; D2_bornEff[ii][jj]=0.0;
+             HeD_CouCor[ii][jj]=0.0;
      }}
 
    TString Yfile;
@@ -62,6 +74,17 @@ void plot_HeD_kin()
 
        Yfile=Form("newbin/RadCor/He3_kin%d_xs.out",kin[ii]);
        ReadRadCor(Yfile,ii,He_Radx,He_RadQ2,He_RadCor);
+
+       Yfile=Form("newbin/RadCor/He3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,He_CouX1,He_born);
+       Yfile=Form("newbin/Coulomb_Q2eff/He3_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,He_CouX2,He_bornEff);
+
+       Yfile=Form("newbin/RadCor/D2_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,D2_CouX1,D2_born);
+       Yfile=Form("newbin/Coulomb_Q2eff/D2_kin%d_xs.out",kin[ii]);
+       ReadCoulomb(Yfile,ii,D2_CouX2,D2_bornEff);
+
    }
 
    TGraphErrors *hratio=new TGraphErrors();
@@ -71,6 +94,10 @@ void plot_HeD_kin()
    
    ofstream outfile;
    outfile.open("newbin/Ratio_HeD.dat"); 
+   ofstream outfile1;
+   outfile1.open("newbin/Ratio_HeD_statE.dat");
+   ofstream outfile2;
+   outfile2.open("newbin/Ratio_HeD_Coulomb.dat");
    int nn=0;
    for(int ii=0;ii<12;ii++){
        int nnn=0;
@@ -94,12 +121,29 @@ void plot_HeD_kin()
 	   }
 	   else cout<<"Something wrong with RadCor !!"<<endl;
 
-	   outfile<<He_xavg[ii][jj]<<"  "<<He_Q2[ii][jj]<<"  "<<HeD[ii][jj]<<"  "<<HeD_E[ii][jj]<<"  "<<HeD_RadCor[ii][jj]<<"  "<<kin[ii]<<endl;
+           Double_t tmpHe_Ccor=0.0,tmpD2_Ccor=0.0;
+           if((abs(D2_CouX1[ii][jj]-D2_CouX2[ii][jj])<0.0001) && (abs(He_CouX1[ii][jj]-He_CouX2[ii][jj])<0.0001)){
+               tmpHe_Ccor=He_born[ii][jj]/He_bornEff[ii][jj];
+               tmpD2_Ccor=D2_born[ii][jj]/D2_bornEff[ii][jj];
+              if(abs(D2_CouX1[ii][jj]-He_CouX2[ii][jj])<0.001){
+                  HeD_CouCor[ii][jj]=tmpHe_Ccor/tmpD2_Ccor;
+              }
+              else cout<<"Something wrong with Coulomb 1 !!"<<endl;
+              cout<<D2_CouX1[ii][jj]<<"  "<<He_CouX2[ii][jj]<<endl;
+           }
+           else cout<<"Something wrong with Coulomb 2 !!"<<endl;
+
+	   outfile<<He_xavg[ii][jj]<<"  "<<He_Q2[ii][jj]<<"  "<<HeD[ii][jj]<<"  "<<HeD_E[ii][jj]<<"  "<<HeD_RadCor[ii][jj]<<"  "<<HeD_CouCor[ii][jj]<<"  "<<kin[ii]<<endl;
+           outfile1<<He_xavg[ii][jj]<<"  "<<He_Q2[ii][jj]<<"  "<<HeD[ii][jj]<<"  "<<HeD_E[ii][jj]/HeD[ii][jj]<<"  "<<kin[ii]<<endl;
+           outfile2<<He_xavg[ii][jj]<<"  "<<tmpHe_Ccor<<"  "<<tmpD2_Ccor<<"  "<<kin[ii]<<endl;
+
            nn++;
            nnn++;
        }
    } 
    outfile.close();
+   outfile1.close();
+   outfile2.close();
 
    int nn1=0;
    for(int ii=0;ii<12;ii++){
