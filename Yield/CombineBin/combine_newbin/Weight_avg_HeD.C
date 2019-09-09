@@ -10,6 +10,16 @@ void Weight_avg_HeD()
     Double_t CoulCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
     Double_t ECC_err[MAXNUM]={0.0};
+    Double_t relTar=1.20/100.0; //relative uncertainty from target thickness uncertainty
+    Double_t R_Boil[12]={0.311/100.0,0.312/100.0,0.322/100.0,0.306/100.,0.402/100.,0.47/100.0,0.411/100.,0.397/100.,0.39/100.,0.368/100.,0.36/100.,0.356/100.}; //rel uncertainty from boiling on each kin
+    Double_t relBoil[MAXNUM]={0.0};//rel uncer from boiling
+    Double_t relACC=0.2/100.0; //rel uncertainty from acceptance cut
+    Double_t relECC=0.3/100.0; //rel uncer from End cap correction
+    Double_t relRC=0.25/100.0;  //rel uncer from radiative correction
+    Double_t R_BCC=0.025/100.0;  //x>=0.75 rel uncer from bin centering on individual bin
+    Double_t relBCC[MAXNUM]={0.0}; //rel uncer from bin centering
+    Double_t rel_totSys[MAXNUM]={0.0}; //rel total sys err
+
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -77,50 +87,75 @@ void Weight_avg_HeD()
     TGraphErrors *gHeD=new TGraphErrors();
     ofstream outfile;
     outfile.open("../Results/newbin/HeD_final.dat");
-    outfile<<"x     Ratio     Ratio_err    relative_err"<<endl;
+    outfile<<"x    Q2     Ratio     stat_err    sys_err    rel_stat_err    rel_sys_err    tot    rel_tot"<<endl;
 
     ofstream outfile2;
-    outfile2.open("ERROR/HeD_error.dat");
-    outfile2<<"x   e+_err    e+_rel_err     ECC_err     ECC_rel_err"<<endl;
+    outfile2.open("../Results/newbin/HeD_final_long.dat");
+    outfile2<<"x  Q2   R   stat(rel)   tar_th(rel)   ACC(rel)   boil(rel)   EC(rel)  RC(rel)   BC(rel)   sys(rel) "<<endl;
 
     int nn=0;
     for(int ii=0;ii<19;ii++){
         int tmpN=nn+nBin[ii];
         Double_t var=0.0;
         Double_t tmpR=0.0;
-        Double_t Epos_weight=0.0,E_ECCweight=0.0;
+        Double_t Epos_weight=0.0,E_ECCweight=0.0,E_boil=0.0,E_BCC=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio4[jj]==0)continue;
-          var=var+1.0/(Rerr4[jj]*Rerr4[jj]);
-          tmpR=tmpR+Ratio4[jj]/(Rerr4[jj]*Rerr4[jj]);
+          Double_t wi=1.0/(Rerr4[jj]*Rerr4[jj]);
+          var=var+wi;
+          tmpR=tmpR+Ratio4[jj]*wi;
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr4[jj],4);
           E_ECCweight+=pow(ECC_err[jj],2)/pow(Rerr4[jj],4);
+
+          E_boil+=pow(wi*R_Boil[kin[jj]]*Ratio4[jj],2);
+	  if(x[jj]>=0.75){
+             E_BCC+=pow(wi*R_BCC*Ratio4[jj],2);
+	  }
           nn++;
         }
         if(var==0.0)continue;
         Ratio_final[ii]=tmpR/var;
         Rerr_final[ii]=1.0/sqrt(var);
+        relBoil[ii]=sqrt(E_boil)/var/Ratio_final[ii];
+        relBCC[ii]=sqrt(E_BCC)/var/Ratio_final[ii];
+	
+        rel_totSys[ii]=relTar*relTar+relACC*relACC+relBoil[ii]*relBoil[ii]+relECC*relECC+relRC*relRC+relBCC[ii]*relBCC[ii];
+        rel_totSys[ii]=sqrt(rel_totSys[ii]);
+
         Rerr_pos[ii]=sqrt(Epos_weight)/var;
         Rerr_ECC[ii]=sqrt(E_ECCweight)/var;
     }
 
+    ofstream outfile3;
+    outfile3.open("forThesis.dat");
     for(int ii=0;ii<19;ii++){
         if(Ratio_final[ii]==0)continue;
         gHeD->SetPoint(ii,X_center[ii],Ratio_final[ii]);
-        gHeD->SetPointError(ii,0,Rerr_final[ii]);
-        outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        outfile2<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<"  "
-                <<Rerr_ECC[ii]<<"  "<<Rerr_ECC[ii]/Ratio_final[ii]<<endl;
+        Double_t totalE=sqrt(pow(Rerr_final[ii]/Ratio_final[ii],2)+rel_totSys[ii]*rel_totSys[ii])*Ratio_final[ii];
+        gHeD->SetPointError(ii,0,totalE);
+        outfile<<fixed<<setprecision(4);
+        outfile<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "
+                <<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<endl;
+        outfile2<<setprecision(4);
+        outfile2<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relTar<<"  "<<
+                  relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC[ii]<<"  "<<rel_totSys[ii]<<endl;
+	outfile3<<fixed<<setprecision(2)<<X_center[ii]<<" & "<<setprecision(2)<<Q2[ii]<<" & "<<setprecision(4)<<Ratio_final[ii]<<" & "<<Rerr_final[ii]/Ratio_final[ii]<<" & "<<rel_totSys[ii]<<" \\\\"<<endl;
+	outfile3<<"\\hline"<<endl;
 
     }
     outfile.close();
     outfile2.close();
+    outfile3.close();
 
-    TCanvas *c1=new TCanvas("c1","c1",1500,1500);
+    TCanvas *c1=new TCanvas("c1","c1",1500,1200);
     gHeD->SetMarkerStyle(8);
     gHeD->SetMarkerColor(4);
+    gHeD->SetMarkerSize(2);
     gHeD->Draw("AP");
-    gHeD->SetTitle("He3/D2;xbj;");
+    gHeD->SetTitle(";Bjorken x;#sigma({}^{3}He)/#sigma({}^{2}H)");
+    gHeD->GetYaxis()->SetRangeUser(1.5,1.75);
+    c1->Print("Plots/HeD_final.pdf");
+
 /*
     TCanvas *c2=new TCanvas("c2","c2",1500,1500);
     TGraphErrors *gHeD_kin=new TGraphErrors();

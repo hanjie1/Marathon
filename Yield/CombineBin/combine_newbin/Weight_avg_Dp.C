@@ -8,8 +8,17 @@ void Weight_avg_Dp()
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
     Double_t CoulCor[MAXNUM]={0.0};
+    Double_t ECCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
     Double_t ECC_err[MAXNUM]={0.0};
+    Double_t relTar=0.79/100.0; //relative uncertainty from target thickness uncertainty
+    Double_t R_Boil[5]={0.327/100.0,0.33/100.0,0.335/100.0,0.324/100.,0.406/100.}; //rel uncertainty from boiling on each kin
+    Double_t relBoil[MAXNUM]={0.0};//rel uncer from boiling
+    Double_t relACC=0.2/100.0; //rel uncertainty from acceptance cut
+    Double_t relECC=0.3/100.0; //rel uncer from End cap correction
+    Double_t relRC=0.26/100.0;  //rel uncer from radiative correction
+    Double_t relBCC=0.08/100.0;  //rel uncer from bin centering 
+    Double_t rel_totSys[MAXNUM]={0.0}; //rel total sys err
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -39,9 +48,9 @@ void Weight_avg_Dp()
     for(int ii=0;ii<totalN;ii++){
 
 	/* Endcup correction */
-	Double_t tmp_ECC=1.0+TMath::Exp(ECCA_Dp*x[ii]+ECCB_Dp);
-	Ratio1[ii]=Ratio[ii]*tmp_ECC;
-	Rerr1[ii]=Rerr[ii]*tmp_ECC;
+	ECCor[ii]=1.0+TMath::Exp(ECCA_Dp*x[ii]+ECCB_Dp);
+	Ratio1[ii]=Ratio[ii]*ECCor[ii];
+	Rerr1[ii]=Rerr[ii]*ECCor[ii];
 
         /* positron correction */
 	Double_t tmp_pH1=1.0-TMath::Exp(pA_H1*x[ii]+pB_H1);
@@ -72,52 +81,67 @@ void Weight_avg_Dp()
     TGraphErrors *gDp=new TGraphErrors();
     ofstream outfile;
     outfile.open("../Results/newbin/Dp_final.dat");
-    outfile<<"x     Ratio     Ratio_err    relative_err"<<endl;
+    outfile<<"x    Q2     Ratio     stat_err    sys_err    rel_stat_err    rel_sys_err    tot    rel_tot"<<endl;
    
     ofstream outfile1;
-    outfile1.open("ERROR/Dp_error.dat");
-    outfile1<<"x   e+_err    e+_rel_err     ECC_err     ECC_rel_err"<<endl;
+    outfile1.open("../Results/newbin/Dp_final_long.dat");
+    outfile1<<"x  Q2   R   stat(rel)   tar_th(rel)   ACC(rel)   boil(rel)   EC(rel)  RC(rel)   BC(rel)   sys(rel) "<<endl;
  
     int nn=0;
     for(int ii=0;ii<8;ii++){
         int tmpN=nn+nBin_Dp[ii];
 	Double_t var=0.0;
 	Double_t tmpR=0.0;
-        Double_t Epos_weight=0.0,E_ECCweight=0.0;
+        Double_t Epos_weight=0.0,E_ECCweight=0.0, E_boil=0.0;
         for(int jj=nn;jj<tmpN;jj++){
 	  if(Ratio4[jj]==0)continue;
-	  var=var+1.0/(Rerr4[jj]*Rerr4[jj]);
-	  tmpR=tmpR+Ratio4[jj]/(Rerr4[jj]*Rerr4[jj]);
+	  Double_t wi=1.0/(Rerr4[jj]*Rerr4[jj]);
+	  var=var+wi;
+	  tmpR=tmpR+Ratio4[jj]*wi;
+	//  E_ECCweight+=pow(wi*Ratio4[jj]*0.3/100.0,2);
+	  E_boil+=pow(wi*R_Boil[kin[jj]]*Ratio4[jj],2);
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr4[jj],4);
-          E_ECCweight+=pow(ECC_err[jj],2)/pow(Rerr4[jj],4);
 	  nn++;
         }
 	if(var==0.0)continue;
 	Ratio_final[ii]=tmpR/var;
 	Rerr_final[ii]=1.0/sqrt(var);
+	relBoil[ii]=sqrt(E_boil)/var/Ratio_final[ii];	
 	Rerr_pos[ii]=sqrt(Epos_weight)/var;
-	Rerr_ECC[ii]=sqrt(E_ECCweight)/var;
-    } 
+//	Rerr_ECC[ii]=sqrt(E_ECCweight)/var;
+	rel_totSys[ii]=relTar*relTar+relACC*relACC+relBoil[ii]*relBoil[ii]+relECC*relECC+relRC*relRC+relBCC*relBCC;
+	rel_totSys[ii]=sqrt(rel_totSys[ii]);
+    }
 
-   
+    ofstream outfile3;
+    outfile3.open("forThesis.dat");
     for(int ii=0;ii<8;ii++){
 	if(Ratio_final[ii]==0)continue;
         gDp->SetPoint(ii,X_center_Dp[ii],Ratio_final[ii]);
-        gDp->SetPointError(ii,0,Rerr_final[ii]);
-        outfile<<X_center_Dp[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        outfile1<<X_center_Dp[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<"  "
-                <<Rerr_ECC[ii]<<"  "<<Rerr_ECC[ii]/Ratio_final[ii]<<endl;
+	Double_t totalE=sqrt(pow(Rerr_final[ii]/Ratio_final[ii],2)+rel_totSys[ii]*rel_totSys[ii])*Ratio_final[ii];
+        gDp->SetPointError(ii,0,totalE);
+	outfile<<fixed<<setprecision(4);
+        outfile<<X_center_Dp[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "
+		<<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<endl;
+	outfile1<<setprecision(4);
+        outfile1<<X_center_Dp[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relTar<<"  "<<
+		  relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC<<"  "<<rel_totSys[ii]<<endl;
+        outfile3<<fixed<<setprecision(2)<<X_center_Dp[ii]<<" & "<<setprecision(2)<<Q2[ii]<<" & "<<setprecision(4)<<Ratio_final[ii]<<" & "<<Rerr_final[ii]/Ratio_final[ii]<<" & "<<rel_totSys[ii]<<" \\\\"<<endl;
+        outfile3<<"\\hline"<<endl;
 
     }
 
     outfile1.close();
+    outfile3.close();
     outfile.close();
 
-    TCanvas *c1=new TCanvas("c1","c1",1500,1500);
+    TCanvas *c1=new TCanvas("c1","c1",1500,1200);
     gDp->SetMarkerStyle(8);
     gDp->SetMarkerColor(4);
+    gDp->SetMarkerSize(2);
     gDp->Draw("AP");
-    gDp->SetTitle("D/p;xbj;");
+    gDp->SetTitle(";Bjorken x;#sigma({}^{2}H)/#sigma({}^{1}H)");
+    c1->Print("Plots/Dp_final.pdf");
 /*
     TCanvas *c2=new TCanvas("c2","c2",1500,1500);
     TGraphErrors *gDp_kin=new TGraphErrors();

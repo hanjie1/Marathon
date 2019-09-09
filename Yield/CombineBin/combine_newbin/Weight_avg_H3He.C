@@ -11,6 +11,16 @@ void Weight_avg_H3He()
     Double_t Pos_err[MAXNUM]={0.0};
     Double_t ECC_err[MAXNUM]={0.0};
     Double_t TriDecay_err[MAXNUM]={0.0};
+    Double_t relTar=1.44/100.0; //relative uncertainty from target thickness uncertainty
+    Double_t R_Boil[12]={0.299/100.0,0.283/100.0,0.286/100.0,0.277/100.,0.37/100.,0.418/100.0,0.355/100.,0.361/100.,0.329/100.,0.328/100.,0.321/100.,0.317/100.}; //rel uncertainty from boiling on each kin
+    Double_t relBoil[MAXNUM]={0.0};//rel uncer from boiling
+    Double_t relACC=0.2/100.0; //rel uncertainty from acceptance cut
+    Double_t relECC=0.3/100.0; //rel uncer from End cap correction
+    Double_t relRC=0.35/100.0;  //rel uncer from radiative correction
+    Double_t relBCC=0.0; //rel uncer from bin centering
+    Double_t relH3dec=0.0;  //rel uncer from H3 decay
+    Double_t rel_totSys[MAXNUM]={0.0}; //rel total sys err
+
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -108,22 +118,26 @@ void Weight_avg_H3He()
     TGraphErrors *gH3He=new TGraphErrors();
     ofstream outfile;
     outfile.open("../Results/newbin/H3He_final.dat");
-    outfile<<"x     Ratio     Ratio_err    relative_err"<<endl;
+    outfile<<"x    Q2     Ratio     stat_err    sys_err    rel_stat_err    rel_sys_err    tot    rel_tot"<<endl;
 
-    ofstream outfile1;
-    outfile1.open("ERROR/H3He_error.dat");
-    outfile1<<"x   e+_err    e+_rel_err     ECC_err     ECC_rel_err     H3Decay_rel_err"<<endl;
+    ofstream outfile2;
+    outfile2.open("../Results/newbin/H3He_final_long.dat");
+    outfile2<<"x  Q2   R   stat(rel)   tar_th(rel)   ACC(rel)   boil(rel)   EC(rel)  RC(rel)   BC(rel)   H3dec(rel)    sys(rel) "<<endl;
+
 
     nn=0;
     for(int ii=0;ii<19;ii++){
         int tmpN=nn+nBin[ii];
         Double_t var=0.0;
         Double_t tmpR=0.0;
-        Double_t Epos_weight=0.0,E_ECCweight=0.0, E_H3decay=0.0;
+        Double_t Epos_weight=0.0,E_ECCweight=0.0, E_H3decay=0.0,E_boil=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio5[jj]==0)continue;
-          var=var+1.0/(Rerr5[jj]*Rerr5[jj]);
-          tmpR=tmpR+Ratio5[jj]/(Rerr5[jj]*Rerr5[jj]);
+          Double_t wi=1.0/(Rerr5[jj]*Rerr5[jj]);
+          var=var+wi;
+          tmpR=tmpR+Ratio5[jj]*wi;
+          E_boil+=pow(wi*R_Boil[kin[jj]]*Ratio5[jj],2);
+
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr5[jj],4);
           E_ECCweight+=pow(ECC_err[jj],2)/pow(Rerr5[jj],4);
           E_H3decay+=pow(TriDecay_err[jj]*Ratio[5],2)/pow(Rerr5[jj],4);
@@ -135,25 +149,43 @@ void Weight_avg_H3He()
         Rerr_pos[ii]=sqrt(Epos_weight)/var;
         Rerr_ECC[ii]=sqrt(E_ECCweight)/var;
         Rerr_H3decay[ii]=sqrt(E_H3decay)/var;
+
+        relBoil[ii]=sqrt(E_boil)/var/Ratio_final[ii];
+
+        rel_totSys[ii]=relTar*relTar+relACC*relACC+relBoil[ii]*relBoil[ii]+relECC*relECC+relRC*relRC+relBCC*relBCC+relH3dec*relH3dec;
+        rel_totSys[ii]=sqrt(rel_totSys[ii]);
     }
 
+    ofstream outfile3;
+    outfile3.open("forThesis.dat");
     for(int ii=0;ii<19;ii++){
         if(Ratio_final[ii]==0)continue;
         gH3He->SetPoint(ii,X_center[ii],Ratio_final[ii]);
-        gH3He->SetPointError(ii,0,Rerr_final[ii]);
-        outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        outfile1<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<"  "
-                <<Rerr_ECC[ii]<<"  "<<Rerr_ECC[ii]/Ratio_final[ii]<<"  "<<Rerr_H3decay[ii]/Ratio[5]<<endl;
+        Double_t totalE=sqrt(pow(Rerr_final[ii]/Ratio_final[ii],2)+rel_totSys[ii]*rel_totSys[ii])*Ratio_final[ii];
+        gH3He->SetPointError(ii,0,totalE);
+        outfile<<setprecision(4);
+        outfile<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "
+                <<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<endl;
+        outfile2<<setprecision(4);
+        outfile2<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relTar<<"  "<<
+                  relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC<<"  "<<"  "<<relH3dec<<"  "<<rel_totSys[ii]<<endl;
+        outfile3<<fixed<<setprecision(2)<<X_center[ii]<<" & "<<setprecision(2)<<Q2[ii]<<" & "<<setprecision(4)<<Ratio_final[ii]<<" & "<<Rerr_final[ii]/Ratio_final[ii]<<" & "<<rel_totSys[ii]<<" \\\\"<<endl;
+        outfile3<<"\\hline"<<endl;
 
     }
     outfile.close();
-    outfile1.close();
+    outfile2.close();
+    outfile3.close();
 
-    TCanvas *c1=new TCanvas("c1","c1",1500,1500);
+    TCanvas *c1=new TCanvas("c1","c1",1500,1200);
     gH3He->SetMarkerStyle(8);
     gH3He->SetMarkerColor(4);
     gH3He->Draw("AP");
-    gH3He->SetTitle("H3/He3;xbj;");
+    gH3He->SetMarkerSize(2);
+    gH3He->SetTitle(";Bjorken x;#sigma({}^{3}H)/#sigma({}^{3}He)");
+    c1->Print("Plots/H3He_final.pdf");
+
+
 /*
     TCanvas *c2=new TCanvas("c2","c2",1500,1500);
     TGraphErrors *gH3He_kin=new TGraphErrors();

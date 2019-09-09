@@ -9,6 +9,17 @@ void Weight_avg_H3D()
     Double_t RadCor[MAXNUM]={0.0};
     Double_t CoulCor[MAXNUM]={0.0};
     Double_t Pos_err[MAXNUM]={0.0};
+    Double_t relTar=1.12/100.0; //relative uncertainty from target thickness uncertainty
+    Double_t R_Boil[12]={0.298/100.0,0.293/100.0,0.303/100.0,0.281/100.,0.385/100.,0.45/100.0,0.384/100.,0.383/100.,0.356/100.,0.349/100.,0.34/100.,0.338/100.}; //rel uncertainty from boiling on each kin
+    Double_t relBoil[MAXNUM]={0.0};//rel uncer from boiling
+    Double_t relACC=0.2/100.0; //rel uncertainty from acceptance cut
+    Double_t relECC=0.3/100.0; //rel uncer from End cap correction
+    Double_t relRC=0.3/100.0;  //rel uncer from radiative correction
+    Double_t R_BCC=0.025/100.0;  //x>=0.75 rel uncer from bin centering on individual bin
+    Double_t relH3dec=0.078/100.0;  //rel uncer from H3 decay
+    Double_t relBCC[MAXNUM]={0.0}; //rel uncer from bin centering
+    Double_t rel_totSys[MAXNUM]={0.0}; //rel total sys err
+
     int kin[MAXNUM]={0};
 
     TString filename;
@@ -123,46 +134,74 @@ cout<<He_conta<<endl;
     TGraphErrors *gH3D=new TGraphErrors();
     ofstream outfile;
     outfile.open("../Results/newbin/H3D_final.dat");
-    outfile<<"x     Ratio     Ratio_err    relative_err"<<endl;
+    outfile<<"x    Q2     Ratio     stat_err    sys_err    rel_stat_err    rel_sys_err    tot    rel_tot"<<endl;
 
-    ofstream outfile1;
-    outfile1.open("ERROR/H3D_error.dat");
-    outfile1<<"x   positron_err  relative_err"<<endl;
+    ofstream outfile2;
+    outfile2.open("../Results/newbin/H3D_final_long.dat");
+    outfile2<<"x  Q2   R   stat(rel)   tar_th(rel)   ACC(rel)   boil(rel)   EC(rel)  RC(rel)   BC(rel)   H3dec(rel)  sys(rel) "<<endl;
+
 
     nn=0;
     for(int ii=0;ii<19;ii++){
         int tmpN=nn+nBin[ii];
         Double_t var=0.0;
         Double_t tmpR=0.0;
-        Double_t Epos_weight=0.0;
+        Double_t Epos_weight=0.0,E_boil=0.0,E_BCC=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio5[jj]==0)continue;
-          var=var+1.0/(Rerr5[jj]*Rerr5[jj]);
-          tmpR=tmpR+Ratio5[jj]/(Rerr5[jj]*Rerr5[jj]);
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr5[jj],4);
+
+          Double_t wi=1.0/(Rerr5[jj]*Rerr5[jj]);
+          var=var+wi;
+          tmpR=tmpR+Ratio5[jj]*wi;
+          E_boil+=pow(wi*R_Boil[kin[jj]]*Ratio5[jj],2);
+          if(x[jj]>=0.75){
+             E_BCC+=pow(wi*R_BCC*Ratio5[jj],2);
+          }
           nn++;
         }
         if(var==0.0)continue;
         Ratio_final[ii]=tmpR/var;
         Rerr_final[ii]=1.0/sqrt(var);
         Rerr_pos[ii]=sqrt(Epos_weight)/var;
+        relBoil[ii]=sqrt(E_boil)/var/Ratio_final[ii];
+        relBCC[ii]=sqrt(E_BCC)/var/Ratio_final[ii];
+
+        rel_totSys[ii]=relTar*relTar+relACC*relACC+relBoil[ii]*relBoil[ii]+relECC*relECC+relRC*relRC+relBCC[ii]*relBCC[ii]+relH3dec*relH3dec;
+        rel_totSys[ii]=sqrt(rel_totSys[ii]);
     }
 
+    ofstream outfile3;
+    outfile3.open("forThesis.dat");
     for(int ii=0;ii<19;ii++){
         if(Ratio_final[ii]==0)continue;
         gH3D->SetPoint(ii,X_center[ii],Ratio_final[ii]);
-        gH3D->SetPointError(ii,0,Rerr_final[ii]);
-        outfile<<X_center[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<endl;
-        outfile1<<X_center[ii]<<"  "<<Rerr_pos[ii]<<"  "<<Rerr_pos[ii]/Ratio_final[ii]<<endl;
+        Double_t totalE=sqrt(pow(Rerr_final[ii]/Ratio_final[ii],2)+rel_totSys[ii]*rel_totSys[ii])*Ratio_final[ii];
+        gH3D->SetPointError(ii,0,totalE);
+        outfile<<setprecision(4);
+        outfile<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "
+                <<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<endl;
+        outfile2<<setprecision(4);
+        outfile2<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relTar<<"  "<<
+                  relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC[ii]<<"  "<<"  "<<relH3dec<<"  "<<rel_totSys[ii]<<endl;
+        outfile3<<fixed<<setprecision(2)<<X_center[ii]<<" & "<<setprecision(2)<<Q2[ii]<<" & "<<setprecision(4)<<Ratio_final[ii]<<" & "<<Rerr_final[ii]/Ratio_final[ii]<<" & "<<rel_totSys[ii]<<" \\\\"<<endl;
+        outfile3<<"\\hline"<<endl;
+
     }
     outfile.close();
-    outfile1.close();
+    outfile2.close();
+    outfile3.close();
 
-    TCanvas *c1=new TCanvas("c1","c1",1500,1500);
+    TCanvas *c1=new TCanvas("c1","c1",1500,1200);
     gH3D->SetMarkerStyle(8);
     gH3D->SetMarkerColor(4);
     gH3D->Draw("AP");
-    gH3D->SetTitle("H3/D2;xbj;");
+
+    gH3D->SetMarkerSize(2);
+    gH3D->SetTitle(";Bjorken x;#sigma({}^{3}H)/#sigma({}^{2}H)");
+    gH3D->GetYaxis()->SetRangeUser(1.22,1.5);
+    c1->Print("Plots/H3D_final.pdf");
+
 /*
     TCanvas *c2=new TCanvas("c2","c2",1500,1500);
     TGraphErrors *gH3D_kin=new TGraphErrors();
