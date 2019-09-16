@@ -187,9 +187,9 @@ void PlotLT(){
 	gH1->SetMarkerStyle(8); 
 	gH1->SetMarkerColor(1); 
 	gD2->SetMarkerStyle(8); 
-	gD2->SetMarkerColor(3); 
+	gD2->SetMarkerColor(4); 
 	gHe->SetMarkerStyle(8); 
-	gHe->SetMarkerColor(4); 
+	gHe->SetMarkerColor(8); 
 	gH3->SetMarkerStyle(8); 
 	gH3->SetMarkerColor(2); 
 
@@ -210,7 +210,7 @@ void PlotLT(){
         leg1->AddEntry(gH3,"{}^{3}H","P");
         leg1->Draw();
 
-	c1->Print("DT.pdf");
+	c1->Print("Thesis_plots/DT.pdf");
 	
 }
 

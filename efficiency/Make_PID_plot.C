@@ -1,7 +1,7 @@
 #include "SetCut.h"
 #include "GetTrees.h"
 void Make_PID_plot(){
-	TCanvas *c1=new TCanvas("c1","c1",1500,1000);
+	TCanvas *c1=new TCanvas("c1","c1",2000,1000);
 	gStyle->SetOptStat(0);
 	gStyle->SetTitleY(0.05);
 	gStyle->SetTitleX(0.5);
@@ -19,16 +19,23 @@ void Make_PID_plot(){
         TH1F *hCer=new TH1F("hCer","electron Cherenkov distribution",200,0,10000);
 
 	c1->Divide(2,1);
-	c1->cd(1);
+        c1->SetLeftMargin(0.15);
+        c1->cd(1);
+        TPad *pad1=(TPad *)c1->GetPad(1);
+        pad1->SetLeftMargin(0.15);
+
         T->Draw("L.cer.asum_c>>hCer",TRK+ACC+trigger2+VZ+beta+W2);
         hCer->SetLineWidth(1);
 	hCer->SetTitle("(a);Cherenkov sum;counts;");
+	hCer->GetXaxis()->SetNdivisions(509);
 
 	TArrow *ar1=new TArrow(1500,100,1500,70,0.01);//,"|>");
 	ar1->SetLineWidth(2);	
 	ar1->Draw();
 
 	c1->cd(2);
+        TPad *pad2=(TPad *)c1->GetPad(2);
+        pad2->SetLeftMargin(0.15);
         T->Draw("(L.prl1.e+L.prl2.e)/(1000*L.gold.p)>>hEp",TRK+ACC+trigger2+VZ+beta+W2);
         hEp->SetLineWidth(1);
 	hEp->SetTitle("(b);E/P;counts;");

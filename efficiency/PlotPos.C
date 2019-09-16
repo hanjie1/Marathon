@@ -11,16 +11,21 @@ void PlotPos(){
      f3->SetLineColor(8);
      f4->SetLineColor(2);
 
+     TCanvas *c1=new TCanvas("c1","c1",1500,1000);
      f1->Draw();
      f2->Draw("same");
      f3->Draw("same");
      f4->Draw("same");
+     f1->GetHistogram()->GetXaxis()->SetTitle("Bjorken x");
+     f1->GetHistogram()->GetYaxis()->SetTitle("C_{e^{+}}");
+     f1->GetHistogram()->SetTitle("");
 
-     auto legend = new TLegend(0.1,0.7,0.48,0.9);
+     auto legend = new TLegend(0.7,0.3,0.85,0.55);
      legend->AddEntry("f1","{}^{1}H","l");
      legend->AddEntry("f2","{}^{2}H","l");
      legend->AddEntry("f3","{}^{3}He","l");
      legend->AddEntry("f4","{}^{3}H","l");
      legend->Draw();
 
+     c1->Print("Thesis_plots/positron.pdf");
 }

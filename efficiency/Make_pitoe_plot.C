@@ -1,7 +1,7 @@
 #include "SetCut.h"
 #include "GetTrees.h"
 void Make_pitoe_plot(){
-	TCanvas *c1=new TCanvas("c1","c1",1500,1200);
+	TCanvas *c1=new TCanvas("c1","c1",2000,1000);
 	gStyle->SetOptStat(0);
 	gStyle->SetTitleY(0.05);
 	gStyle->SetTitleX(0.5);
