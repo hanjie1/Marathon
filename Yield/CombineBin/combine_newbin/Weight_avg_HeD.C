@@ -87,11 +87,11 @@ void Weight_avg_HeD()
     TGraphErrors *gHeD=new TGraphErrors();
     ofstream outfile;
     outfile.open("../Results/newbin/HeD_final.dat");
-    outfile<<"x    Q2     Ratio     stat_err    sys_err    rel_stat_err    rel_sys_err    tot    rel_tot"<<endl;
+    outfile<<"x    Q2     Ratio     stat_err    sys_err    rel_stat_err    rel_sys_err    tot    rel_tot    Norm(rel)"<<endl;
 
     ofstream outfile2;
     outfile2.open("../Results/newbin/HeD_final_long.dat");
-    outfile2<<"x  Q2   R   stat(rel)   tar_th(rel)   ACC(rel)   boil(rel)   EC(rel)  RC(rel)   BC(rel)   sys(rel) "<<endl;
+    outfile2<<"x  Q2   R   stat(rel)   ACC(rel)   boil(rel)   EC(rel)  RC(rel)   BC(rel)   sys(rel)   Norm(rel)"<<endl;
 
     int nn=0;
     for(int ii=0;ii<19;ii++){
@@ -119,7 +119,7 @@ void Weight_avg_HeD()
         relBoil[ii]=sqrt(E_boil)/var/Ratio_final[ii];
         relBCC[ii]=sqrt(E_BCC)/var/Ratio_final[ii];
 	
-        rel_totSys[ii]=relTar*relTar+relACC*relACC+relBoil[ii]*relBoil[ii]+relECC*relECC+relRC*relRC+relBCC[ii]*relBCC[ii];
+        rel_totSys[ii]=relACC*relACC+relBoil[ii]*relBoil[ii]+relECC*relECC+relRC*relRC+relBCC[ii]*relBCC[ii];
         rel_totSys[ii]=sqrt(rel_totSys[ii]);
 
         Rerr_pos[ii]=sqrt(Epos_weight)/var;
@@ -134,11 +134,9 @@ void Weight_avg_HeD()
         Double_t totalE=sqrt(pow(Rerr_final[ii]/Ratio_final[ii],2)+rel_totSys[ii]*rel_totSys[ii])*Ratio_final[ii];
         gHeD->SetPointError(ii,0,totalE);
         outfile<<fixed<<setprecision(4);
-        outfile<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "
-                <<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<endl;
+        outfile<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<"  "<<relTar<<endl;
         outfile2<<setprecision(4);
-        outfile2<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relTar<<"  "<<
-                  relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC[ii]<<"  "<<rel_totSys[ii]<<endl;
+        outfile2<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC[ii]<<"  "<<rel_totSys[ii]<<"  "<<relTar<<endl;
 	outfile3<<fixed<<setprecision(2)<<X_center[ii]<<" & "<<setprecision(2)<<Q2[ii]<<" & "<<setprecision(4)<<Ratio_final[ii]<<" & "<<Rerr_final[ii]/Ratio_final[ii]<<" & "<<rel_totSys[ii]<<" \\\\"<<endl;
 	outfile3<<"\\hline"<<endl;
 

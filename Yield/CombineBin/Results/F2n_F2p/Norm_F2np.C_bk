@@ -1,0 +1,79 @@
+void Norm_F2np(){
+    Double_t x[19],H3He[19],H3He_err[19],HeD[19],HeD_err[19],H3D[19],H3D_err[19];
+    Double_t Dp_x[8],Dp[8],Dp_err[8];
+	
+    ifstream infile;
+    infile.open("results/F2np.dat");
+    if(!infile.is_open())return 0;
+
+    Ssiz_t from=0;
+    TString content,tmp;
+    int nn=0;
+    while(tmp.ReadLine(infile)){
+          if(nn==0){nn++;continue;}
+          if(tmp[0]=='#')continue;
+          tmp.Tokenize(content,from," ");
+          x[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          H3He[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          H3He_err[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          HeD[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          HeD_err[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          H3D[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          H3D_err[nn-1]=atof(content.Data());
+
+          from=0;
+          nn++;
+     }
+    infile.close();
+
+    ifstream infile1;
+    infile1.open("results/F2np_Dp.dat");
+    if(!infile1.is_open())return 0;
+
+    from=0;
+    nn=0;
+    while(tmp.ReadLine(infile1)){
+          if(nn==0){nn++;continue;}
+          if(tmp[0]=='#')continue;
+          tmp.Tokenize(content,from," ");
+          Dp_x[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          Dp[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          Dp_err[nn-1]=atof(content.Data());
+
+          from=0;
+          nn++;
+     }
+    infile1.close();
+
+    TGraphErrors *gDp=new TGraphErrors(8,Dp_x,Dp,0,Dp_err);
+    TGraphErrors *gH3He=new TGraphErrors(19,x,H3He,0,H3He_err);
+    TGraphErrors *gH3D=new TGraphErrors(19,x,H3D,0,H3D_err);
+    TGraphErrors *gHeD=new TGraphErrors(19,x,HeD,0,HeD_err);
+
+    TCanvas *c1=new TCanvas("c1","c1",1000,1000);
+    gDp->Draw("AP*");
+    gDp->Fit("pol2","","",0.2,0.4);
+    TF1 *fDp=gDp->GetFunction("pol2");
+    Double_t FDp_p0=fDp->GetParameter(0);
+    Double_t FDp_p1=fDp->GetParameter(1);
+    Double_t FDp_p2=fDp->GetParameter(2);
+
+    TCanvas *c2=new TCanvas("c2","c2",1000,1000);
+    gH3He->Draw("AP*");
+    gH3He->Fit("pol2","","",0.2,0.4);
+    TF1 *fH3He=gH3He->GetFunction("pol2");
+    Double_t FH3He_p0=fH3He->GetParameter(0);
+    Double_t FH3He_p1=fH3He->GetParameter(1);
+    Double_t FH3He_p2=fH3He->GetParameter(2);
+
+
+
+}
