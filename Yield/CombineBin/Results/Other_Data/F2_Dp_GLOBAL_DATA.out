@@ -1,4 +1,4 @@
-!iexp    x       qsq      rat     drat(frac)  norm(frac)
+#!iexp    x       qsq      rat     drat(frac)  norm(frac)
   1.  0.2750    0.905    0.8645    0.0109    0.0050
   1.  0.2240    0.869    0.8576    0.0099    0.0050
   1.  0.1770    0.824    0.8744    0.0089    0.0050
@@ -1729,8 +1729,8 @@
   9.  0.7500  230.000    0.8167    0.2136    0.0100
 
 ########
-Experiment numbers for GLOBAL_DATA.out:
-SLAC experiments: 1=E49a,2=E49b,3=E61,4=E87,5=E89a,6=E89b
-7 = NMC. Arneodo, et al, Nucl. Phys. B487 (1997) 3
-8 = JLab data
-9 = BCDMS
+#Experiment numbers for GLOBAL_DATA.out:
+#SLAC experiments: 1=E49a,2=E49b,3=E61,4=E87,5=E89a,6=E89b
+#7 = NMC. Arneodo, et al, Nucl. Phys. B487 (1997) 3
+#8 = JLab data
+#9 = BCDMS

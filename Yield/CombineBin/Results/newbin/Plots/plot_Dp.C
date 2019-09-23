@@ -40,7 +40,7 @@ void plot_Dp()
 	hratio1->SetPoint(ii,x[ii],Ratio1[ii]);
 	hratio1->SetPointError(ii,0,Rerr1[ii]);
 	hr1_norm->SetPoint(ii,x[ii],1.4);
-	hr1_norm->SetPointError(ii,0,Ratio1[ii]*2.7/100.0);
+	hr1_norm->SetPointError(ii,0,Ratio1[ii]*1.0/100.0);
    } 
 
    for(int ii=0;ii<nbin2;ii++){
@@ -64,8 +64,8 @@ void plot_Dp()
    hratio->SetMarkerSize(2);
    hratio1->SetFillStyle(3001);
    hratio1->SetFillColor(kCyan-3);
-   hr1_norm->SetFillStyle(3003);
-   hr1_norm->SetFillColor(kCyan+1);
+   hr1_norm->SetFillStyle(3004);
+   hr1_norm->SetFillColor(kAzure);
    hr_norm->SetFillStyle(3003);
    hr_norm->SetFillColor(kRed);
    hratio2->SetLineStyle(9);

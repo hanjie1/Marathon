@@ -92,3 +92,36 @@ int ReadNMC(TString filename,Double_t x[],Double_t Yield[],Double_t Y_loerr[],Do
     return nn-1;
 
 }
+
+int ReadGlobal(TString filename,Double_t nexp[],Double_t x[],Double_t Q2[],Double_t Yield[],Double_t Yerr[],Double_t Ynorm[]){
+    ifstream file;
+    TString myfile=Yieldpath+filename;
+    file.open(myfile);
+    if(!file.is_open())return 0;
+
+    Ssiz_t from=0;
+    TString content,tmp;
+    int nn=0;
+    
+    while(tmp.ReadLine(file)){
+          if(tmp[0]=='#')continue; 
+          tmp.Tokenize(content,from," ");
+          nexp[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          x[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          Q2[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          Yield[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          Yerr[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          Ynorm[nn]=atof(content.Data());
+
+          from=0;
+          nn++;
+     }
+    file.close();
+    return nn;
+
+}
