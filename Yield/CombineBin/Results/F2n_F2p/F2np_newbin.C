@@ -102,6 +102,7 @@ int F2np_newbin(){
 //    mg1->Add(gH3D);
 //    mg1->Add(gHeD);
     mg1->Draw("AP"); 
-
+    mg1->GetYaxis()->SetRangeUser(0.5,0.85);
+  
     return 0;
 }
