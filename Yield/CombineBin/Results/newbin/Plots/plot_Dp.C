@@ -9,6 +9,7 @@ void plot_Dp()
    Double_t x2[MAXBIN]={0.0},Ratio2[MAXBIN]={0.0},Rerr2[MAXBIN]={0.0};
    Double_t x3[MAXBIN]={0.0},Ratio3[MAXBIN]={0.0},Rerr3[MAXBIN]={0.0};
    Double_t x4[MAXBIN]={0.0},Ratio4[MAXBIN]={0.0},Rloerr4[MAXBIN]={0.0},Rhierr4[MAXBIN]={0.0};
+   Double_t x_KP[1100]={0.0},F2p_KP[1100]={0.0},F2d_KP[1100]={0.0};
 
    TString Rfile="newbin/Dp_final.dat";
    int nbin=ReadYield(Rfile,x,Ratio,Rerr); 
@@ -20,6 +21,8 @@ void plot_Dp()
    int nbin3=ReadModel(Rfile,x3,Ratio3,Rerr3); 
    Rfile="Model/F2dp_NMC.out";
    int nbin4=ReadNMC(Rfile,x4,Ratio4,Rloerr4,Rhierr4); 
+   Rfile="Model/F2dis_os1tm1ht1mec1_Dav18_He3Salme";
+   int nbin5=ReadKP(Rfile,x_KP,F2p_KP,F2d_KP); 
 
    TGraphErrors *hratio=new TGraphErrors();
    TGraphErrors *hr_norm=new TGraphErrors(); //MARATHON normalization error
@@ -28,6 +31,7 @@ void plot_Dp()
    TGraphErrors *hratio2=new TGraphErrors(); //Bodek F2d/F2p
    TGraphErrors *hratio3=new TGraphErrors(); //CJ F2d/F2p
    TGraphAsymmErrors *hratio4=new TGraphAsymmErrors(); //NMC F2d/F2p
+   TGraph *hratio5=new TGraph();  //KP F2d/F2p
    
    for(int ii=0;ii<nbin;ii++){
 	hratio->SetPoint(ii,x[ii],Ratio[ii]);
@@ -56,6 +60,12 @@ void plot_Dp()
 	hratio4->SetPointEYlow(ii,Rloerr4[ii]);
 	hratio4->SetPointEYhigh(ii,Rhierr4[ii]);
    } 
+   int nn=0;
+   for(int ii=0;ii<nbin5;ii++){
+	if(x_KP[ii]<x[0] || x_KP[ii]>x[7])continue;
+	hratio5->SetPoint(nn,x_KP[ii],2.0*F2d_KP[ii]/F2p_KP[ii]);
+	nn++;
+   } 
 
    TCanvas *c1=new TCanvas("c1","c1",1500,1200);
    TMultiGraph *mg=new TMultiGraph();
@@ -74,6 +84,9 @@ void plot_Dp()
    hratio3->SetLineStyle(9);
    hratio3->SetLineColor(kRed);
    hratio3->SetLineWidth(2);
+   hratio5->SetLineStyle(1);
+   hratio5->SetLineColor(8);
+   hratio5->SetLineWidth(2);
    hratio4->SetFillStyle(3005);
    hratio4->SetFillColor(kRed-3);
    mg->Add(hr1_norm,"E3");
@@ -82,6 +95,7 @@ void plot_Dp()
    mg->Add(hratio1,"E3");
    mg->Add(hratio2,"L");
    mg->Add(hratio3,"L");
+   mg->Add(hratio5,"L");
    mg->Add(hratio,"P");
    mg->Draw("A");
    mg->SetTitle(";Bjorken x;#sigma({}^{2}H)/#sigma({}^{1}He)");
@@ -94,6 +108,7 @@ void plot_Dp()
    leg1->AddEntry(hratio2,"#scale[2]{Bodek}","L");
    leg1->AddEntry(hratio3,"#scale[2]{CJ15}","L");
    leg1->AddEntry(hratio4,"#scale[2]{NMC}","F");
+   leg1->AddEntry(hratio5,"#scale[2]{K&P}","L");
    leg1->AddEntry(hr_norm,"#scale[2]{MARATHON norm. uncer.}","F");
    leg1->AddEntry(hr1_norm,"#scale[2]{Whitlow norm. uncer.}","F");
    leg1->Draw();
