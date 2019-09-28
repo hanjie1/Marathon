@@ -17,8 +17,8 @@ void plot_Dp()
    int nbin1=ReadModel(Rfile,x1,Ratio1,Rerr1); 
    Rfile="Model/F2dp_Bodek.out";
    int nbin2=ReadModel(Rfile,x2,Ratio2,Rerr2); 
-   Rfile="Model/F2dp_CJ.out";
-   int nbin3=ReadModel(Rfile,x3,Ratio3,Rerr3); 
+   Rfile="Model/CJ_dp.csv";
+   int nbin3=ReadCJ(Rfile,x3,Ratio3,Rerr3); 
    Rfile="Model/F2dp_NMC.out";
    int nbin4=ReadNMC(Rfile,x4,Ratio4,Rloerr4,Rhierr4); 
    Rfile="Model/F2dis_os1tm1ht1mec1_Dav18_He3Salme";
@@ -52,13 +52,15 @@ void plot_Dp()
 	hratio2->SetPointError(ii,0,Rerr2[ii]);
    } 
    for(int ii=0;ii<nbin3;ii++){
-	hratio3->SetPoint(ii,x[ii],Ratio3[ii]);
-	hratio3->SetPointError(ii,0,Rerr3[ii]);
+	hratio3->SetPoint(ii,x[ii],2.0*Ratio3[ii]);
+	hratio3->SetPointError(ii,0,2.0*Rerr3[ii]);
    } 
    for(int ii=0;ii<nbin4;ii++){
 	hratio4->SetPoint(ii,x[ii],Ratio4[ii]);
-	hratio4->SetPointEYlow(ii,Rloerr4[ii]);
-	hratio4->SetPointEYhigh(ii,Rhierr4[ii]);
+//	hratio4->SetPointEYlow(ii,Rloerr4[ii]);
+//	hratio4->SetPointEYhigh(ii,Rhierr4[ii]);
+	hratio4->SetPointEYlow(ii,0.0);
+	hratio4->SetPointEYhigh(ii,0.0);
    } 
    int nn=0;
    for(int ii=0;ii<nbin5;ii++){
@@ -72,45 +74,49 @@ void plot_Dp()
    hratio->SetMarkerStyle(8);
    hratio->SetMarkerColor(2);
    hratio->SetMarkerSize(2);
-   hratio1->SetFillStyle(3001);
-   hratio1->SetFillColor(kCyan-3);
+   hratio1->SetFillStyle(3002);
+   hratio1->SetFillColor(kAzure-3);
    hr1_norm->SetFillStyle(3004);
-   hr1_norm->SetFillColor(kAzure);
-   hr_norm->SetFillStyle(3003);
-   hr_norm->SetFillColor(kRed);
+   hr1_norm->SetFillColor(1);
+   hr_norm->SetFillStyle(3002);
+   hr_norm->SetFillColor(1);
    hratio2->SetLineStyle(9);
-   hratio2->SetLineColor(4);
+   hratio2->SetLineColor(kBlue);
    hratio2->SetLineWidth(2);
-   hratio3->SetLineStyle(9);
-   hratio3->SetLineColor(kRed);
-   hratio3->SetLineWidth(2);
+   hratio3->SetFillStyle(3001);
+   hratio3->SetFillColor(kAzure);
    hratio5->SetLineStyle(1);
    hratio5->SetLineColor(8);
    hratio5->SetLineWidth(2);
-   hratio4->SetFillStyle(3005);
-   hratio4->SetFillColor(kRed-3);
+//   hratio4->SetFillStyle(3005);
+//   hratio4->SetFillColor(kBlue-7);
+   hratio4->SetLineStyle(7);
+   hratio4->SetLineColor(kRed);
+   hratio4->SetLineWidth(2);
    mg->Add(hr1_norm,"E3");
    mg->Add(hr_norm,"E3");
-   mg->Add(hratio4,"E3");
    mg->Add(hratio1,"E3");
+   mg->Add(hratio3,"E3");
    mg->Add(hratio2,"L");
-   mg->Add(hratio3,"L");
+   mg->Add(hratio4,"L");
+ //  mg->Add(hratio3,"L");
    mg->Add(hratio5,"L");
    mg->Add(hratio,"P");
    mg->Draw("A");
-   mg->SetTitle(";Bjorken x;#sigma({}^{2}H)/#sigma({}^{1}He)");
+   mg->SetTitle(";Bjorken x;#sigma({}^{2}H)/#sigma({}^{1}H)");
    mg->GetYaxis()->SetRangeUser(1.3,1.9);
 
-   auto leg1=new TLegend(0.55,0.75,0.9,0.9);
+   auto leg1=new TLegend(0.4,0.75,0.9,0.9);
    leg1->SetNColumns(2);
-   leg1->AddEntry(hratio,"#scale[2]{MARATHON}","P");
-   leg1->AddEntry(hratio1,"#scale[2]{Whitlow}","F");
-   leg1->AddEntry(hratio2,"#scale[2]{Bodek}","L");
-   leg1->AddEntry(hratio3,"#scale[2]{CJ15}","L");
-   leg1->AddEntry(hratio4,"#scale[2]{NMC}","F");
-   leg1->AddEntry(hratio5,"#scale[2]{K&P}","L");
-   leg1->AddEntry(hr_norm,"#scale[2]{MARATHON norm. uncer.}","F");
-   leg1->AddEntry(hr1_norm,"#scale[2]{Whitlow norm. uncer.}","F");
+   leg1->AddEntry(hratio,"#scale[1.5]{MARATHON}","P");
+   leg1->AddEntry(hratio1,"#scale[1.5]{Whitlow}","F");
+   leg1->AddEntry(hratio2,"#scale[1.5]{Bodek}","L");
+   leg1->AddEntry(hratio3,"#scale[1.5]{CJ15}","F");
+   leg1->AddEntry(hratio4,"#scale[1.5]{NMC}","L");
+   leg1->AddEntry(hratio5,"#scale[1.5]{K&P}","L");
+   leg1->AddEntry(hr_norm,"#scale[1.5]{MARATHON norm. uncer.}","F");
+   leg1->AddEntry(hr1_norm,"#scale[1.5]{Whitlow norm. uncer.}","F");
+   leg1->SetMargin(0.4);
    leg1->Draw();
 
    c1->Print("Dp_final.pdf");

@@ -118,3 +118,41 @@ int ReadCJ(TString filename,Double_t x[],Double_t RD[]){
     return nn-1;
 
 }
+int ReadCJall(TString filename,Double_t x[],Double_t F2p[],Double_t F2p_err[],Double_t F2n[],Double_t F2n_err[]){
+    ifstream file;
+    TString myfile=Yieldpath+filename;
+    file.open(myfile);
+    if(!file.is_open())return 0;
+
+    Ssiz_t from=0;
+    TString content,tmp;
+    int nn=0;
+
+    while(tmp.ReadLine(file)){
+          if(nn==0){nn++;continue;}
+          if(tmp[0]=='#')continue;
+          tmp.Tokenize(content,from,",");
+          x[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from,",");
+          tmp.Tokenize(content,from,",");
+          F2p[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from,",");
+          F2p_err[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from,",");
+          tmp.Tokenize(content,from,",");
+          tmp.Tokenize(content,from,",");
+          tmp.Tokenize(content,from,",");
+          tmp.Tokenize(content,from,",");
+          F2n[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from,",");
+          F2n_err[nn-1]=atof(content.Data());
+
+          from=0;
+          nn++;
+     }
+    file.close();
+    return nn-1;
+
+}
+
+

@@ -44,7 +44,7 @@ void plot_Dp_data()
    hratio->SetMarkerSize(2);
 
    
-   for(int ii=0;ii<9;ii++){
+   for(int ii=0;ii<8;ii++){
        hR[ii]->SetMarkerStyle(8);
        hR[ii]->SetMarkerColor(kViolet+ii);
        mg->Add(hR[ii]);

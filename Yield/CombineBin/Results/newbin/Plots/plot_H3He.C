@@ -31,7 +31,8 @@ void plot_H3He()
 
    TCanvas *c1=new TCanvas("c1","c1",1500,1200);
    hratio->SetMarkerStyle(8);
-   hratio->SetMarkerColor(2);
+   hratio->SetMarkerColor(4);
+   hratio->SetMarkerSize(2);
    hratio->Draw("AP");
    hratio->SetTitle(";Bjorken x;#sigma({}^{3}H)/#sigma({}^{3}He)");
  //  hratio->GetYaxis()->SetRangeUser(1.22,1.5);
@@ -39,7 +40,7 @@ void plot_H3He()
 
    f1->SetLineColor(4);
    f1->SetLineStyle(9);
-   f1->Draw("same");
+//   f1->Draw("same");
 
    c1->Print("H3He_final.pdf");
 }

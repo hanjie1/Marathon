@@ -133,10 +133,19 @@ void Weight_avg_H3He()
         Double_t Epos_weight=0.0,E_ECCweight=0.0, E_H3decay=0.0,E_boil=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio5[jj]==0)continue;
+          int KKin=-1;
+          if(kin[jj]<6)KKin=kin[jj];
+          if(kin[jj]==7)KKin=6;
+          if(kin[jj]==9)KKin=7;
+          if(kin[jj]==11)KKin=8;
+          if(kin[jj]==13)KKin=9;
+          if(kin[jj]==15)KKin=10;
+          if(kin[jj]==16)KKin=11;
+
           Double_t wi=1.0/(Rerr5[jj]*Rerr5[jj]);
           var=var+wi;
           tmpR=tmpR+Ratio5[jj]*wi;
-          E_boil+=pow(wi*R_Boil[kin[jj]]*Ratio5[jj],2);
+          E_boil+=pow(wi*R_Boil[KKin]*Ratio5[jj],2);
 
           Epos_weight+=pow(Pos_err[jj],2)/pow(Rerr5[jj],4);
           E_ECCweight+=pow(ECC_err[jj],2)/pow(Rerr5[jj],4);

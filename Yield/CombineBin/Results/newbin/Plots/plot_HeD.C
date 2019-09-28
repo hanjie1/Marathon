@@ -70,31 +70,47 @@ void plot_HeD()
    } 
 
    for(int ii=0;ii<nbinC;ii++){
+	if(xC[ii]>0.83)continue;
 	hratioC->SetPoint(ii,xC[ii],RatioC[ii]);
 	hratioC->SetPointError(ii,0,RerrC[ii]);
    } 
+
+   TGraphErrors *HallC_norm=new TGraphErrors(1);
+   HallC_norm->SetPoint(0,xC[0],1.48);
+   HallC_norm->SetPointError(0,0,RatioC[0]*0.0184);
 
    TCanvas *c1=new TCanvas("c1","c1",1500,1200);
    TMultiGraph *mg1=new TMultiGraph();
    hratio->SetMarkerStyle(8);
    hratio->SetMarkerColor(2);
+   hratio->SetLineColor(2);
+   hratio->SetMarkerSize(2);
    hratioC->SetMarkerStyle(8);
    hratioC->SetMarkerColor(4);
-   mg1->Add(hratio);
-   mg1->Add(hratioC);
-   mg1->Draw("AP");
+   hratioC->SetLineColor(4);
+   hratioC->SetMarkerSize(2);
+   HallC_norm->SetLineColor(8);
+   HallC_norm->SetLineWidth(2);
+   mg1->Add(hratio,"P");
+   mg1->Add(hratioC,"P");
+   mg1->Add(HallC_norm,"L");
+   mg1->Draw("A");
    mg1->SetTitle(";Bjorken x;#sigma({}^{3}He)/#sigma({}^{2}H)");
-   mg1->GetYaxis()->SetRangeUser(1.5,1.75);
+   mg1->GetYaxis()->SetRangeUser(1.4,1.7);
 
    f1->SetLineColor(4);
    f1->SetLineStyle(9);
-   f1->Draw("same");
+//   f1->Draw("same");
 
-   auto leg1=new TLegend(0.7,0.6,0.85,0.85);
+   gStyle->SetEndErrorSize(4);
+   auto leg1=new TLegend(0.2,0.8,0.35,0.9);
    leg1->AddEntry(hratio,"MARATHON","P");
-   leg1->AddEntry(hratioC,"Hall C","P");
+   leg1->AddEntry(hratioC,"E03-103","P");
    leg1->Draw();
 
+   TLatex latex;
+   latex.SetTextSize(0.025);
+   latex.DrawLatex(xC[0]+0.1,1.48,"E03-103 Norm. (1.84%)");
 
    c1->Print("HeD_final.pdf");
 }

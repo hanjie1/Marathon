@@ -122,11 +122,18 @@ void Dp_F2np(){
      gH3He->SetMarkerSize(1.6);
      gDp_CJ->SetMarkerStyle(8);
      gDp_CJ->SetMarkerColor(4);
-     gDp3->SetMarkerStyle(8);
-     gDp3->SetMarkerColor(8);
-     gDp4->SetMarkerStyle(8);
-     gDp4->SetMarkerColor(6);
-     gDp4->SetMarkerSize(1.6);
+//     gDp3->SetMarkerStyle(8);
+//     gDp3->SetMarkerColor(8);
+//     gDp4->SetMarkerStyle(8);
+//     gDp4->SetMarkerColor(6);
+//     gDp4->SetMarkerSize(1.6);
+     gDp3->SetFillStyle(3001);
+     gDp3->SetFillColor(kCyan-3);
+     gDp4->SetFillStyle(3001);
+     gDp4->SetFillColor(kRed-3);
+
+
+
      gDp1->SetLineStyle(8);
      gDp1->SetLineColor(4);
      gDp1->SetLineWidth(2);
@@ -135,10 +142,10 @@ void Dp_F2np(){
      gDp2->SetLineWidth(2);
 //     f1->SetLineStyle(1);
 //     f1->SetLineColor(4);
+     mg->Add(gDp3,"E3");
+     mg->Add(gDp4,"E3");
      mg->Add(gDp,"P");
      mg->Add(gH3He,"P");
-//     mg->Add(gDp3,"P");
-     mg->Add(gDp4,"P");
 //     mg->Add(gDp_CJ,"P");
      mg->Add(gDp1,"L");
      mg->Add(gDp2,"L");
@@ -152,12 +159,12 @@ void Dp_F2np(){
    leg1->SetNColumns(2);
    leg1->AddEntry(gDp,"#scale[1]{MARATHON d/p (KP)}","P");
    leg1->AddEntry(gH3He,"#scale[1]{MARATHON H3/He (KP)}","P");
-   leg1->AddEntry(gDp4,"#scale[1]{Whitlow d/p (CJ)}","P");
+   leg1->AddEntry(gDp4,"#scale[1]{Whitlow d/p (CJ)}","F");
 //   leg1->AddEntry(gDp_CJ,"#scale[1]{MARATHON (CJ)}","P");
    leg1->AddEntry(gDp1,"#scale[1]{CJ15}","L");
    leg1->AddEntry(gDp2,"#scale[1]{NMC}","L");
    leg1->AddEntry(gDp_KP[6],"#scale[1]{KP}","L");
-//   leg1->AddEntry(gDp3,"#scale[1]{SLAC (KP)}","L");
+   leg1->AddEntry(gDp3,"#scale[1]{Whitlow (KP)}","F");
    leg1->Draw();
 
      c1->Print("NP_Dp.pdf");
