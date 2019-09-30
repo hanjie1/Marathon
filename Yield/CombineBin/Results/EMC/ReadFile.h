@@ -1,39 +1,6 @@
 #define MAXBIN 26
 TString Yieldpath="/w/halla-scifs17exp/triton/hanjie/MARATHON/analysis/Yield/CombineBin/Results/";
-int ReadYield(TString filename,Double_t x[],Double_t Yield[],Double_t Y_err[]){
-    ifstream file;
-    TString myfile=Yieldpath+filename;
-    file.open(myfile);
-    if(!file.is_open())return 0;
-
-    Ssiz_t from=0;
-    TString content,tmp;
-    int nn=0;
-    
-    while(tmp.ReadLine(file)){
-          if(nn==0){nn++;continue;}
-          if(tmp[0]=='#')continue; 
-          tmp.Tokenize(content,from," ");
-          x[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from," ");
-          tmp.Tokenize(content,from," ");
-          Yield[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from," ");
-          tmp.Tokenize(content,from," ");
-          tmp.Tokenize(content,from," ");
-          tmp.Tokenize(content,from," ");
-          tmp.Tokenize(content,from," ");
-          Y_err[nn-1]=atof(content.Data());
-
-          from=0;
-          nn++;
-     }
-    file.close();
-    return nn-1;
-
-}
-
-int ReadYieldFinal(TString filename,Double_t x[],Double_t Q2[],Double_t Yield[],Double_t ST[],Double_t SY[]){
+int ReadYield(TString filename,Double_t x[], Double_t Q2[],Double_t Yield[],Double_t Yerr[],Double_t ST[],Double_t SY[]){
     ifstream file;
     TString myfile=Yieldpath+filename;
     file.open(myfile);
@@ -56,6 +23,10 @@ int ReadYieldFinal(TString filename,Double_t x[],Double_t Q2[],Double_t Yield[],
           ST[nn-1]=atof(content.Data());
           tmp.Tokenize(content,from," ");
           SY[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
+	  Yerr[nn-1]=atof(content.Data());
 
           from=0;
           nn++;
@@ -65,38 +36,7 @@ int ReadYieldFinal(TString filename,Double_t x[],Double_t Q2[],Double_t Yield[],
 
 }
 
-
-int ReadModel(TString filename,Double_t x[],Double_t Q2[],Double_t Ratio[],Double_t Rerr[]){
-    ifstream file;
-    TString myfile=Yieldpath+filename;
-    file.open(myfile);
-    if(!file.is_open())return 0;
-
-    Ssiz_t from=0;
-    TString content,tmp;
-    int nn=0;
-    
-    while(tmp.ReadLine(file)){
-          if(nn==0){nn++;continue;}
-          if(tmp[0]=='#')continue; 
-          tmp.Tokenize(content,from," ");
-          x[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from," ");
-          Q2[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from," ");
-          Ratio[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from," ");
-          Rerr[nn-1]=atof(content.Data());
-
-          from=0;
-          nn++;
-     }
-    file.close();
-    return nn-1;
-
-}
-
-int ReadKP(TString filename,Double_t x[],Double_t F2P[],Double_t F2N[]){
+int ReadNP(TString filename,Double_t x[],Double_t Yield[],Double_t Yerr[],Double_t ST[],Double_t SY[]){
     ifstream file;
     TString myfile=Yieldpath+filename;
     file.open(myfile);
@@ -113,19 +53,23 @@ int ReadKP(TString filename,Double_t x[],Double_t F2P[],Double_t F2N[]){
           x[nn-1]=atof(content.Data());
           tmp.Tokenize(content,from," ");
           tmp.Tokenize(content,from," ");
-          F2P[nn-1]=atof(content.Data());
+          Yield[nn-1]=atof(content.Data());
           tmp.Tokenize(content,from," ");
-          F2N[nn-1]=atof(content.Data());
+          Yerr[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          ST[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          SY[nn-1]=atof(content.Data());
 
           from=0;
           nn++;
      }
     file.close();
-    return nn-1;
+    return nn;
 
 }
 
-int ReadCJ(TString filename,Double_t x[],Double_t RD[]){
+int ReadHallC(TString filename,Double_t x[],Double_t R[],Double_t ST[],Double_t SY[]){
     ifstream file;
     TString myfile=Yieldpath+filename;
     file.open(myfile);
@@ -142,7 +86,13 @@ int ReadCJ(TString filename,Double_t x[],Double_t RD[]){
           x[nn-1]=atof(content.Data());
           tmp.Tokenize(content,from," ");
           tmp.Tokenize(content,from," ");
-          RD[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
+          R[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          ST[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          SY[nn-1]=atof(content.Data());
 
           from=0;
           nn++;
@@ -151,7 +101,8 @@ int ReadCJ(TString filename,Double_t x[],Double_t RD[]){
     return nn-1;
 
 }
-int ReadCJall(TString filename,Double_t x[],Double_t F2p[],Double_t F2p_err[],Double_t F2n[],Double_t F2n_err[]){
+
+int ReadHERMES(TString filename,Double_t x[],Double_t R[],Double_t ST[],Double_t SY[]){
     ifstream file;
     TString myfile=Yieldpath+filename;
     file.open(myfile);
@@ -160,26 +111,19 @@ int ReadCJall(TString filename,Double_t x[],Double_t F2p[],Double_t F2p_err[],Do
     Ssiz_t from=0;
     TString content,tmp;
     int nn=0;
-
+    
     while(tmp.ReadLine(file)){
           if(nn==0){nn++;continue;}
-          if(tmp[0]=='#')continue;
-          tmp.Tokenize(content,from,",");
+          if(tmp[0]=='#')continue; 
+          tmp.Tokenize(content,from," ");
           x[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from,",");
-          tmp.Tokenize(content,from,",");
-          F2p[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from,",");
-          F2p_err[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from,",");
-          tmp.Tokenize(content,from,",");
-          tmp.Tokenize(content,from,",");
-          tmp.Tokenize(content,from,",");
-          tmp.Tokenize(content,from,",");
-          F2n[nn-1]=atof(content.Data());
-          tmp.Tokenize(content,from,",");
-          F2n_err[nn-1]=atof(content.Data());
-
+          tmp.Tokenize(content,from," ");
+          tmp.Tokenize(content,from," ");
+          R[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          ST[nn-1]=atof(content.Data());
+          tmp.Tokenize(content,from," ");
+          SY[nn-1]=atof(content.Data());
           from=0;
           nn++;
      }
@@ -188,4 +132,31 @@ int ReadCJall(TString filename,Double_t x[],Double_t F2p[],Double_t F2p_err[],Do
 
 }
 
+int ReadISO(TString filename,Double_t x[],Double_t Yield[],Double_t ST[],Double_t SY[]){
+    ifstream file;
+    TString myfile=filename;
+    file.open(myfile);
+    if(!file.is_open())return 0;
 
+    Ssiz_t from=0;
+    TString content,tmp;
+    int nn=0;
+    
+    while(tmp.ReadLine(file)){
+          if(tmp[0]=='\\')continue; 
+          tmp.Tokenize(content,from," & ");
+          x[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," & ");
+          tmp.Tokenize(content,from," & ");
+          Yield[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," & ");
+          ST[nn]=atof(content.Data());
+          tmp.Tokenize(content,from," & ");
+          SY[nn]=atof(content.Data());
+          from=0;
+          nn++;
+     }
+    file.close();
+    return nn;
+
+}

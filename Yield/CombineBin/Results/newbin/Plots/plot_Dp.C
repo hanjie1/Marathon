@@ -69,7 +69,7 @@ void plot_Dp()
 	nn++;
    } 
 
-   TCanvas *c1=new TCanvas("c1","c1",1500,1200);
+   TCanvas *c1=new TCanvas("c1","c1",1600,1200);
    TMultiGraph *mg=new TMultiGraph();
    hratio->SetMarkerStyle(8);
    hratio->SetMarkerColor(2);

@@ -9,3 +9,9 @@ Double_t NMC_NP(Double_t x, Double_t Q2){
 	Double_t np=Ax*pow(Q2/20.0,Bx)*(1.0+x*x/Q2);
 	return np;
 } 
+
+Double_t KP_NP(Double_t x){
+	Double_t np=0.796662+2.60099*x-35.502*pow(x,2)+166.623*pow(x,3)-426.665*pow(x,4)+654.965*pow(x,5)
+		   -612.24*pow(x,6)+326.537*pow(x,7)-76.721*pow(x,8);
+	return np;
+}

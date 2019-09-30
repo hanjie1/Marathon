@@ -1,6 +1,13 @@
 #include "ReadFile.h"
-#include "libEMC.h"
+#include "libEMCR.h"
+#include "libNP.h"
 void Norm_KP(){
+   Double_t xmin=0.0,xmax=1.0;
+   cout<<"what is the minimum x?   ";
+   cin>>xmin;
+   cout<<"what is the maximum x?   ";
+   cin>>xmax;
+
    Double_t x[19]={0.0},H3D[19]={0.0},H3D_err[19]={0.0};
    Double_t HeD[19]={0.0},HeD_err[19]={0.0};
    Double_t H3He[19]={0.0},H3He_err[19]={0.0};
@@ -15,47 +22,15 @@ void Norm_KP(){
    Rfile="newbin/H3He_final.dat";
    nbin2=ReadYield(Rfile,x,H3He,H3He_err);
 
-    Double_t Dp_np[8]={0.0},Dp_npErr[8]={0.0};
-    for(int ii=0;ii<8;ii++){
-	Double_t D2_R=D2_EMC(Dp_x[ii]);
-	Dp_np[ii]=Dp[ii]/D2_R-1.0;
-	Dp_npErr[ii]=1.0/D2_R*Dp_err[ii];
-    } 
-    TGraphErrors *gDp=new TGraphErrors(8,Dp_x,Dp_np,0,Dp_npErr);
-
-    Double_t FDp_p[3]={0.0};
-    TF1 *fDp;
-    Double_t np_fix=0.0;
-    if(nfun==2){
-       fDp=new TF1("fDp","pol2",xlo,xup);
-       gDp->Fit("fDp","QR");
-       fDp=gDp->GetFunction("fDp");
-       FDp_p[0]=fDp->GetParameter(0);
-       FDp_p[1]=fDp->GetParameter(1);
-       FDp_p[2]=fDp->GetParameter(2);
-       np_fix=FDp_p[0]+0.3*FDp_p[1]+0.3*0.3*FDp_p[2];
-    }
-
-    if(nfun==1){
-       fDp=new TF1("fDp","pol1",xlo,xup);
-       gDp->Fit("fDp","QR");
-       fDp=gDp->GetFunction("fDp");
-       FDp_p[0]=fDp->GetParameter(0);
-       FDp_p[1]=fDp->GetParameter(1);
-       np_fix=FDp_p[0]+0.3*FDp_p[1];
-    }
-
-
     Double_t H3He_np[19]={0.0},H3He_npErr[19]={0.0};
-    Double_t H3He_np_final[19]={0.0},H3He_npErr_final[19]={0.0};
-    TH1F *hChi_H3He=new TH1F("hChi_H3He","chi square distribution",7,0,0.4);
-    Double_t dmin=1.0;
+    Double_t chi2_min=100.0;
     Double_t Nc_H3He=0.0;
 
-    TGraphErrors *gfinal;
+    TGraphErrors *gfinal_H3He;
 
     for(int ii=0;ii<71;ii++){
 	Double_t Nc=-0.035+ii*0.001;
+	Double_t tmpChi2=0.0;
 	for(int jj=0;jj<19;jj++){
 	    Double_t He_R=He_EMC(x[jj]);
 	    Double_t H3_R=H3_EMC(x[jj]);
@@ -64,47 +39,153 @@ void Norm_KP(){
 	    Double_t tmp_H3He_err=(1.0-Nc)*H3He_err[jj];
             H3He_np[jj]=(2.0*tmp_H3He-SR)/(2.0*SR-tmp_H3He);
 	    H3He_npErr[jj]=abs(3.0*SR/((2.0*SR-tmp_H3He)*(2.0*SR-tmp_H3He)))*tmp_H3He_err;
+	
+	    if(x[jj]<xmin || x[jj]>xmax)continue;
+	    Double_t tmpKP=KP_NP(x[jj]);
+	    tmpChi2=tmpChi2+pow((H3He_np[jj]-tmpKP)/H3He_npErr[jj],2);
   	 } 
 	    TGraphErrors *gH3He=new TGraphErrors(19,x,H3He_np,0,H3He_npErr);
 	    Double_t np_H3He=0.0;
-	    TF1 *fH3He;
-	    if(nfun==2){
-               gH3He->Fit("pol2","Q","",xlo,xup);
-               fH3He=gH3He->GetFunction("pol2");
-               Double_t FH3He_p0=fH3He->GetParameter(0);
-               Double_t FH3He_p1=fH3He->GetParameter(1);
-               Double_t FH3He_p2=fH3He->GetParameter(2);
-               np_H3He=FH3He_p0+0.3*FH3He_p1+0.3*0.3*FH3He_p2;
-	    }
-	    if(nfun==1){
-               gH3He->Fit("pol1","Q","",xlo,xup);
-               fH3He=gH3He->GetFunction("pol1");
-               Double_t FH3He_p0=fH3He->GetParameter(0);
-               Double_t FH3He_p1=fH3He->GetParameter(1);
-               np_H3He=FH3He_p0+0.3*FH3He_p1;
-	    }
-	    Double_t chi2=fH3He->GetChisquare()/fH3He->GetNDF();
-	    hChi_H3He->Fill(chi2);
-	    cout<<Nc<<"  "<<abs(np_H3He-np_fix)<<endl;
-	    if(abs(np_H3He-np_fix)<dmin){
-		gfinal=(TGraphErrors*)gH3He->Clone();
+
+	    if(tmpChi2<chi2_min){
+		gfinal_H3He=(TGraphErrors*)gH3He->Clone();
 		Nc_H3He=Nc;
-		dmin=abs(np_H3He-np_fix);
+		chi2_min=tmpChi2;
 	    }
 	
     }
-    cout<<Nc_H3He<<endl;
+
+    Double_t H3D_np[19]={0.0},H3D_npErr[19]={0.0};
+    chi2_min=100.0;
+    Double_t Nc_H3D=0.0;
+    TGraphErrors *gfinal_H3D;
+    for(int ii=0;ii<71;ii++){
+	Double_t Nc=-0.035+ii*0.001;
+	Double_t tmpChi2=0.0;
+	for(int jj=0;jj<19;jj++){
+	    Double_t D2_R=D2_EMC(x[jj]);
+	    Double_t H3_R=H3_EMC(x[jj]);
+	    Double_t SR=H3_R/D2_R;
+	    Double_t tmp_H3D=(1.0-Nc)*H3D[jj];
+	    Double_t tmp_H3D_err=(1.0-Nc)*H3D_err[jj];
+            H3D_np[jj]=(tmp_H3D-SR)/(2.0*SR-tmp_H3D);
+            H3D_npErr[jj]=abs(SR/((2.0*SR-tmp_H3D)*(2.0*SR-tmp_H3D)))*tmp_H3D_err;
+	
+	    if(x[jj]<xmin || x[jj]>xmax)continue;
+	    Double_t tmpKP=KP_NP(x[jj]);
+	    tmpChi2=tmpChi2+pow((H3D_np[jj]-tmpKP)/H3D_npErr[jj],2);
+  	 } 
+	    TGraphErrors *gH3D=new TGraphErrors(19,x,H3D_np,0,H3D_npErr);
+	    if(tmpChi2<chi2_min){
+		gfinal_H3D=(TGraphErrors*)gH3D->Clone();
+		Nc_H3D=Nc;
+		chi2_min=tmpChi2;
+	    }
+    }
+
+    Double_t HeD_np[19]={0.0},HeD_npErr[19]={0.0};
+    chi2_min=100.0;
+    Double_t Nc_HeD=0.0;
+    TGraphErrors *gfinal_HeD;
+    for(int ii=0;ii<71;ii++){
+	Double_t Nc=-0.035+ii*0.001;
+	Double_t tmpChi2=0.0;
+	for(int jj=0;jj<19;jj++){
+	    Double_t D2_R=D2_EMC(x[jj]);
+	    Double_t He_R=He_EMC(x[jj]);
+	    Double_t SR=He_R/D2_R;
+	    Double_t tmp_HeD=(1.0-Nc)*HeD[jj];
+	    Double_t tmp_HeD_err=(1.0-Nc)*HeD_err[jj];
+            HeD_np[jj]=(tmp_HeD-2.0*SR)/(SR-tmp_HeD);
+            HeD_npErr[jj]=abs(SR/((SR-tmp_HeD)*(SR-tmp_HeD)))*tmp_HeD_err;
+
+	    if(x[jj]<xmin || x[jj]>xmax)continue;
+	    Double_t tmpKP=KP_NP(x[jj]);
+	    tmpChi2=tmpChi2+pow((HeD_np[jj]-tmpKP)/HeD_npErr[jj],2);
+  	 } 
+	    TGraphErrors *gHeD=new TGraphErrors(19,x,HeD_np,0,HeD_npErr);
+	    if(tmpChi2<chi2_min){
+		gfinal_HeD=(TGraphErrors*)gHeD->Clone();
+		Nc_HeD=Nc;
+		chi2_min=tmpChi2;
+	    }
+    }
+
+    Double_t Dp_np[8]={0.0},Dp_npErr[8]={0.0};
+    chi2_min=100.0;
+    Double_t Nc_Dp=0.0;
+    TGraphErrors *gfinal_Dp;
+    for(int ii=0;ii<71;ii++){
+	Double_t Nc=-0.035+ii*0.001;
+	Double_t tmpChi2=0.0;
+	for(int jj=0;jj<8;jj++){
+	    Double_t D2_R=D2_EMC(Dp_x[jj]);
+	    Double_t tmp_Dp=(1.0-Nc)*Dp[jj];
+	    Double_t tmp_Dp_err=(1.0-Nc)*Dp_err[jj];
+            Dp_np[jj]=tmp_Dp/D2_R-1.0;
+            Dp_npErr[jj]=abs(1.0/D2_R)*tmp_Dp_err;
+
+	    if(Dp_x[jj]<xmin || Dp_x[jj]>xmax)continue;
+	    Double_t tmpKP=KP_NP(Dp_x[jj]);
+	    tmpChi2=tmpChi2+pow((Dp_np[jj]-tmpKP)/Dp_npErr[jj],2);
+  	 } 
+	    TGraphErrors *gDp=new TGraphErrors(8,Dp_x,Dp_np,0,Dp_npErr);
+	    if(tmpChi2<chi2_min){
+		gfinal_Dp=(TGraphErrors*)gDp->Clone();
+		Nc_Dp=Nc;
+		chi2_min=tmpChi2;
+	    }
+    }
+
+    TGraph *gKP=new TGraph();
+    for(int ii=0;ii<19;ii++){
+        gKP->SetPoint(ii,x[ii],KP_NP(x[ii]));
+    }
+
+    cout<<"H3He:   "<<Nc_H3He<<endl;
+    cout<<"H3D:   "<<Nc_H3D<<endl;
+    cout<<"HeD:   "<<Nc_HeD<<endl;
+    cout<<"Dp:   "<<Nc_Dp<<endl;
 
     TCanvas *c1=new TCanvas("c1","c1",1500,1000);
     TMultiGraph *mg=new TMultiGraph();
-    gfinal->SetMarkerStyle(8);
-    gfinal->SetMarkerColor(4);
-    gfinal->SetMarkerSize(2);
-    gDp->SetMarkerStyle(22);
-    gDp->SetMarkerColor(2);
-    gDp->SetMarkerSize(2);
-    mg->Add(gfinal);
-    mg->Add(gDp);
-    mg->Draw("AP");
+    gfinal_Dp->SetMarkerColor(4);
+    gfinal_Dp->SetMarkerStyle(24);
+    gfinal_Dp->SetMarkerSize(2);
+    gfinal_Dp->SetLineColor(4);
+    gfinal_H3He->SetMarkerColor(2);
+    gfinal_H3He->SetMarkerStyle(26);
+    gfinal_H3He->SetMarkerSize(2);
+    gfinal_H3He->SetLineColor(2);
+    gfinal_HeD->SetMarkerColor(kViolet-1);
+    gfinal_HeD->SetMarkerStyle(32);
+    gfinal_HeD->SetMarkerSize(2);
+    gfinal_HeD->SetLineColor(kViolet-1);
+    gfinal_H3D->SetMarkerColor(1);
+    gfinal_H3D->SetMarkerStyle(25);
+    gfinal_H3D->SetMarkerSize(2);
+    gfinal_H3D->SetLineColor(1);
+    gKP->SetLineStyle(1);
+    gKP->SetLineColor(8);
+    mg->Add(gfinal_H3He,"P");
+    mg->Add(gfinal_H3D,"P");
+    mg->Add(gfinal_HeD,"P");
+    mg->Add(gfinal_Dp,"P");
+    mg->Add(gKP,"L");
+    mg->Draw("A");
+    mg->SetTitle(";Bjorken x;F_{2}^{n} / F_{2}^{p}");
+    mg->GetXaxis()->SetRangeUser(0.2,0.4);
+    mg->GetYaxis()->SetRangeUser(0.5,0.8);
+
+   auto leg1=new TLegend(0.65,0.65,0.88,0.88);
+   leg1->AddEntry(gfinal_Dp,"#scale[0.8]{F_{2}^{^{2}H} / F_{2}^{^{1}H} (+0.6%)}","P");
+   leg1->AddEntry(gfinal_H3He,"#scale[0.8]{F_{2}^{^{3}H} / F_{2}^{^{3}He} (-2.6%)}","P");
+   leg1->AddEntry(gfinal_H3D,"#scale[0.8]{F_{2}^{^{3}H} / F_{2}^{^{2}H} (-0.2%)}","P");
+   leg1->AddEntry(gfinal_HeD,"#scale[0.8]{F_{2}^{^{3}He} / F_{2}^{^{2}H} (+2.4%)}","P");
+   leg1->AddEntry(gKP,"#scale[0.7]{KP model}","L");
+   leg1->SetMargin(0.4);
+   leg1->Draw();
+
+
     c1->Print("fit.pdf");
 }

@@ -3,7 +3,7 @@
 #include "ReadFile.h"
 void Weight_avg_H3D()
 {
-    Double_t x[MAXNUM]={0.0},Q2[MAXNUM]={0.0},Ratio[MAXNUM]={0.0},Rerr[MAXNUM]={0.0};
+    Double_t x[MAXNUM]={0.0},Q2[MAXNUM]={0.0},Ratio[MAXNUM]={0.0},Rerr[MAXNUM]={0.0},Q2_bin[MAXNUM]={0.0};
     Double_t Ratio1[MAXNUM]={0.0},Ratio2[MAXNUM]={0.0},Ratio3[MAXNUM]={0.0},Ratio4[MAXNUM]={0.0},Ratio5[MAXNUM]={0.0};  
     Double_t Rerr1[MAXNUM]={0.0},Rerr2[MAXNUM]={0.0},Rerr3[MAXNUM]={0.0},Rerr4[MAXNUM]={0.0},Rerr5[MAXNUM]={0.0};  
     Double_t RadCor[MAXNUM]={0.0};
@@ -145,6 +145,7 @@ void Weight_avg_H3D()
         int tmpN=nn+nBin[ii];
         Double_t var=0.0;
         Double_t tmpR=0.0;
+        Double_t tmpQ2=0.0;
         Double_t Epos_weight=0.0,E_boil=0.0,E_BCC=0.0;
         for(int jj=nn;jj<tmpN;jj++){
           if(Ratio5[jj]==0)continue;
@@ -162,6 +163,7 @@ void Weight_avg_H3D()
           Double_t wi=1.0/(Rerr5[jj]*Rerr5[jj]);
           var=var+wi;
           tmpR=tmpR+Ratio5[jj]*wi;
+          tmpQ2=tmpQ2+Q2[jj]*wi;
           E_boil+=pow(wi*R_Boil[KKin]*Ratio5[jj],2);
           if(x[jj]>=0.75){
              E_BCC+=pow(wi*R_BCC*Ratio5[jj],2);
@@ -170,6 +172,7 @@ void Weight_avg_H3D()
         }
         if(var==0.0)continue;
         Ratio_final[ii]=tmpR/var;
+        Q2_bin[ii]=tmpQ2/var;
         Rerr_final[ii]=1.0/sqrt(var);
         Rerr_pos[ii]=sqrt(Epos_weight)/var;
         relBoil[ii]=sqrt(E_boil)/var/Ratio_final[ii];
@@ -187,10 +190,10 @@ void Weight_avg_H3D()
         Double_t totalE=sqrt(pow(Rerr_final[ii]/Ratio_final[ii],2)+rel_totSys[ii]*rel_totSys[ii])*Ratio_final[ii];
         gH3D->SetPointError(ii,0,totalE);
         outfile<<setprecision(4);
-        outfile<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<"  "<<relTar<<endl;
+        outfile<<X_center[ii]<<"  "<<Q2_bin[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]<<"  "<<rel_totSys[ii]*Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"   "<<rel_totSys[ii]<<"   "<<totalE<<"   "<<totalE/Ratio_final[ii]<<"  "<<relTar<<endl;
         outfile2<<setprecision(4);
-        outfile2<<X_center[ii]<<"  "<<Q2[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC[ii]<<"  "<<"  "<<relH3dec<<"  "<<rel_totSys[ii]<<"  "<<relTar<<endl;
-        outfile3<<fixed<<setprecision(2)<<X_center[ii]<<" & "<<setprecision(2)<<Q2[ii]<<" & "<<setprecision(4)<<Ratio_final[ii]<<" & "<<Rerr_final[ii]/Ratio_final[ii]<<" & "<<rel_totSys[ii]<<" \\\\"<<endl;
+        outfile2<<X_center[ii]<<"  "<<Q2_bin[ii]<<"  "<<Ratio_final[ii]<<"  "<<Rerr_final[ii]/Ratio_final[ii]<<"  "<<relACC<<"  "<<relBoil[ii]<<"  "<<relECC<<"  "<<relRC<<"  "<<relBCC[ii]<<"  "<<"  "<<relH3dec<<"  "<<rel_totSys[ii]<<"  "<<relTar<<endl;
+        outfile3<<fixed<<setprecision(2)<<X_center[ii]<<" & "<<setprecision(2)<<Q2_bin[ii]<<" & "<<setprecision(4)<<Ratio_final[ii]<<" & "<<Rerr_final[ii]/Ratio_final[ii]<<" & "<<rel_totSys[ii]<<" \\\\"<<endl;
         outfile3<<"\\hline"<<endl;
 
     }
