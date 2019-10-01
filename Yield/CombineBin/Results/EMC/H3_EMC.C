@@ -39,7 +39,7 @@ void H3_EMC(){
      auto f1_KP=new TF1("f1_KP","He_ISO(x)",0.16,0.85);
      auto f1_SLAC=new TF1("f1_SLAC","SLAC_EMC(x)",0.16,0.85);
 
-     TLine *l1=new TLine(0.15,1,0.88,1);
+     TLine *l1=new TLine(0.05,1,0.9,1);
      l1->SetLineColor(1);
      l1->SetLineStyle(7);
 
@@ -58,8 +58,8 @@ void H3_EMC(){
      mg->Add(gH3D_iso,"P");
      mg->Draw("A");
      mg->SetTitle(";Bjorken x;(F_{2}^{^{3}H}/F_{2}^{^{2}H})_{iso}");
+     mg->GetXaxis()->SetLimits(0.05,0.9);
      mg->GetYaxis()->SetRangeUser(0.8,1.15);
-     mg->GetXaxis()->SetRangeUser(0.15,0.88);
 
      f1_KP->SetLineColor(12);
      f1_KP->SetLineStyle(1);

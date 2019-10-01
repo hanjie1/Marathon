@@ -114,7 +114,7 @@ int F2np_newbin(){
     gKP->SetLineWidth(2);
     gCJ->SetFillColor(29);
     gCJ->SetFillStyle(3001);
-//    mg1->Add(gCJ,"E3");
+    mg1->Add(gCJ,"E3");
     mg1->Add(gDp,"P");
     mg1->Add(gH3He,"P");
     mg1->Add(gKP,"L");
@@ -131,7 +131,7 @@ int F2np_newbin(){
    leg1->AddEntry(gDp,"#scale[0.8]{F_{2}^{^{2}H} / F_{2}^{^{1}H}}","P");
    leg1->AddEntry(gH3He,"#scale[0.8]{F_{2}^{^{3}H} / F_{2}^{^{3}He}}","P");
    leg1->AddEntry(gKP,"#scale[0.7]{KP model}","L");
-//   leg1->AddEntry(gCJ,"#scale[0.7]{CJ model}","F");
+   leg1->AddEntry(gCJ,"#scale[0.7]{CJ model}","F");
    leg1->SetMargin(0.4);
    leg1->Draw();
 

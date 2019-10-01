@@ -38,9 +38,9 @@ void Compare(){
      
      mg->SetTitle(";Bjorken x;");
      mg->GetYaxis()->SetRangeUser(0.90,1.1);
-     mg->GetXaxis()->SetRangeUser(0,0.9);
+     mg->GetXaxis()->SetLimits(0.05,0.9);
 
-     TLine *l1=new TLine(0.15,1,0.88,1);
+     TLine *l1=new TLine(0.05,1,0.9,1);
      l1->SetLineColor(1);
      l1->SetLineStyle(7);
      l1->Draw("same");

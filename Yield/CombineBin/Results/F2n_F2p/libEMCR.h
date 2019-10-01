@@ -20,3 +20,30 @@ Double_t H3_EMC(Double_t x){
 
         return R;
 }
+
+Double_t D2EMC_ERROR(Double_t x){
+	 Double_t R=0.0;
+         R=1.69123-45.5375*x+585.576*pow(x,2)-4174.74*pow(x,3)+17904.8*pow(x,4)-47620*pow(x,5)+78775.9*pow(x,6)
+          -78722.1*pow(x,7)+43482.4*pow(x,8)-10191.3*pow(x,9);
+	 R=R/100.0;
+
+        return R;
+}
+
+Double_t H3EMC_ERROR(Double_t x){
+	 Double_t R=0.0;
+         R=6.74195-180.328*x+2182.81*pow(x,2)-14749.7*pow(x,3)+60718.2*pow(x,4)-157320*pow(x,5)+257010*pow(x,6)
+          -256507*pow(x,7)+142755*pow(x,8)-33945.1*pow(x,9);
+	 R=R/100.0;
+
+        return R;
+}
+
+Double_t HeEMC_ERROR(Double_t x){
+	 Double_t R=0.0;
+         R=12.7752-290.548*x+2969.05*pow(x,2)-17442.9*pow(x,3)+64366.9*pow(x,4)-153392*pow(x,5)+234949*pow(x,6)
+          -222825*pow(x,7)+118926*pow(x,8)-27288.7*pow(x,9);
+	 R=R/100.0;
+
+        return R;
+}

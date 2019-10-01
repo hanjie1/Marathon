@@ -27,7 +27,6 @@ void Norm_KP(){
     Double_t Nc_H3He=0.0;
 
     TGraphErrors *gfinal_H3He;
-
     for(int ii=0;ii<71;ii++){
 	Double_t Nc=-0.035+ii*0.001;
 	Double_t tmpChi2=0.0;
@@ -55,6 +54,8 @@ void Norm_KP(){
 	
     }
 
+    ofstream outfile1;
+    outfile1.open("H3D_Norm_err.dat");
     Double_t H3D_np[19]={0.0},H3D_npErr[19]={0.0};
     chi2_min=100.0;
     Double_t Nc_H3D=0.0;
@@ -62,6 +63,7 @@ void Norm_KP(){
     for(int ii=0;ii<71;ii++){
 	Double_t Nc=-0.035+ii*0.001;
 	Double_t tmpChi2=0.0;
+        outfile1<<"-------- "<<Nc<<"-------"<<endl;
 	for(int jj=0;jj<19;jj++){
 	    Double_t D2_R=D2_EMC(x[jj]);
 	    Double_t H3_R=H3_EMC(x[jj]);
@@ -74,6 +76,12 @@ void Norm_KP(){
 	    if(x[jj]<xmin || x[jj]>xmax)continue;
 	    Double_t tmpKP=KP_NP(x[jj]);
 	    tmpChi2=tmpChi2+pow((H3D_np[jj]-tmpKP)/H3D_npErr[jj],2);
+
+	    Double_t tmpER31=H3EMC_ERROR(x[jj]);
+	    Double_t tmpER21=D2EMC_ERROR(x[jj]);
+	    Double_t tmpErr=SR*sqrt(tmpER31*tmpER31+tmpER21*tmpER21);
+	    Double_t relKP=tmp_H3D/pow((2.0*SR-tmp_H3D),2)*tmpErr/H3D_np[jj];
+	    outfile1<<x[jj]<<"  "<<relKP<<"  "<<tmpErr<<"  "<<H3D_npErr[jj]/H3D_np[jj]<<endl;
   	 } 
 	    TGraphErrors *gH3D=new TGraphErrors(19,x,H3D_np,0,H3D_npErr);
 	    if(tmpChi2<chi2_min){
@@ -82,6 +90,7 @@ void Norm_KP(){
 		chi2_min=tmpChi2;
 	    }
     }
+    outfile1.close();
 
     Double_t HeD_np[19]={0.0},HeD_npErr[19]={0.0};
     chi2_min=100.0;
@@ -111,6 +120,8 @@ void Norm_KP(){
 	    }
     }
 
+    ofstream outfile3;
+    outfile3.open("Dp_Norm_err.dat");
     Double_t Dp_np[8]={0.0},Dp_npErr[8]={0.0};
     chi2_min=100.0;
     Double_t Nc_Dp=0.0;
@@ -118,6 +129,7 @@ void Norm_KP(){
     for(int ii=0;ii<71;ii++){
 	Double_t Nc=-0.035+ii*0.001;
 	Double_t tmpChi2=0.0;
+	outfile3<<"-----------"<<Nc<<"----------"<<endl;
 	for(int jj=0;jj<8;jj++){
 	    Double_t D2_R=D2_EMC(Dp_x[jj]);
 	    Double_t tmp_Dp=(1.0-Nc)*Dp[jj];
@@ -128,6 +140,10 @@ void Norm_KP(){
 	    if(Dp_x[jj]<xmin || Dp_x[jj]>xmax)continue;
 	    Double_t tmpKP=KP_NP(Dp_x[jj]);
 	    tmpChi2=tmpChi2+pow((Dp_np[jj]-tmpKP)/Dp_npErr[jj],2);
+
+	    Double_t tmpER21=D2EMC_ERROR(x[jj])*D2_R;
+	    Double_t relKP=tmp_Dp/pow(D2_R,2)*tmpER21/Dp_np[jj];
+	    outfile3<<x[jj]<<"  "<<relKP<<"  "<<tmpER21<<"  "<<Dp_npErr[jj]/Dp_np[jj]<<endl;
   	 } 
 	    TGraphErrors *gDp=new TGraphErrors(8,Dp_x,Dp_np,0,Dp_npErr);
 	    if(tmpChi2<chi2_min){
@@ -136,6 +152,7 @@ void Norm_KP(){
 		chi2_min=tmpChi2;
 	    }
     }
+    outfile3.close();
 
     TGraph *gKP=new TGraph();
     for(int ii=0;ii<19;ii++){

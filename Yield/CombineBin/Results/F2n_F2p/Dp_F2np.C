@@ -6,6 +6,7 @@ void Dp_F2np(){
      Double_t x1[MAXBIN]={0.0},Q2[MAXBIN]={0.0},F2np1[MAXBIN]={0.0},F2np_err1[MAXBIN]={0.0};
      Double_t x_KP[7][110]={0.0},F2n_KP[7][110]={0.0},F2p_KP[7][110]={0.0};
      Double_t x_CJ[MAXBIN]={0.0},RD[MAXBIN]={0.0};
+     Double_t x_CJ1[15]={0.0},F2n_CJ[15]={0.0},F2p_CJ[15]={0.0},F2nE_CJ[15]={0.0},F2pE_CJ[15]={0.0};
      Double_t x2[MAXBIN]={0.0},Ratio2[MAXBIN]={0.0},Rerr2[MAXBIN]={0.0},F2np2[MAXBIN]={0.0},F2np2_err[MAXBIN]={0.0};
      Double_t x_H3He[MAXBIN]={0.0},Ratio_H3He[MAXBIN]={0.0},Rerr_H3He[MAXBIN]={0.0},F2np_H3He[MAXBIN]={0.0},F2np_err_H3He[MAXBIN]={0.0};
      
@@ -19,6 +20,8 @@ void Dp_F2np(){
      int nbin_CJ=ReadCJ(Rfile,x_CJ,RD);
      Rfile="Model/F2dp_Whitlow.out";
      int nbin_W=ReadModel(Rfile,x2,Q2,Ratio2,Rerr2);
+     Rfile="Model/CJ_all.csv";
+     int nbin_CJ1=ReadCJall(Rfile,x_CJ1,F2p_CJ,F2pE_CJ,F2n_CJ,F2nE_CJ);
 
 
      Rfile="Model/F2dis_os0tm0ht0mec0_Dav18_He3Salme";
@@ -88,9 +91,14 @@ void Dp_F2np(){
 	gDp4->SetPointError(ii,0.0,tmpNPerr);
      }
 
+    for(int ii=0;ii<nbin_CJ;ii++){
+        gDp1->SetPoint(ii,x_CJ1[ii],F2n_CJ[ii]/F2p_CJ[ii]);
+        Double_t tmpErr=F2n_CJ[ii]/F2p_CJ[ii]*sqrt(pow(F2pE_CJ[ii]/F2p_CJ[ii],2)+pow(F2nE_CJ[ii]/F2n_CJ[ii],2));
+        gDp1->SetPointError(ii,0,tmpErr);
+    }
+
+
      for(int ii=0;ii<nbin1;ii++){
-	gDp1->SetPoint(ii,x1[ii],F2np1[ii]);
-	gDp1->SetPointError(ii,0.0,F2np_err1[ii]);
 	Double_t tmpNP=NMC_NP(x1[ii],Q2[ii]);
 //	Double_t tmpNP=NMC_NP(x1[ii],14.0*x1[ii]);
 	gDp2->SetPoint(ii,x1[ii],tmpNP);
@@ -127,27 +135,26 @@ void Dp_F2np(){
 //     gDp4->SetMarkerStyle(8);
 //     gDp4->SetMarkerColor(6);
 //     gDp4->SetMarkerSize(1.6);
-     gDp3->SetFillStyle(3001);
-     gDp3->SetFillColor(kCyan-3);
-     gDp4->SetFillStyle(3001);
-     gDp4->SetFillColor(kRed-3);
+     gDp3->SetFillStyle(3003);
+     gDp3->SetFillColor(38);
+     gDp4->SetFillStyle(3004);
+     gDp4->SetFillColor(46);
 
 
 
-     gDp1->SetLineStyle(8);
-     gDp1->SetLineColor(4);
-     gDp1->SetLineWidth(2);
+     gDp1->SetFillStyle(3001);
+     gDp1->SetFillColor(40);
      gDp2->SetLineStyle(8);
-     gDp2->SetLineColor(8);
+     gDp2->SetLineColor(2);
      gDp2->SetLineWidth(2);
 //     f1->SetLineStyle(1);
 //     f1->SetLineColor(4);
      mg->Add(gDp3,"E3");
      mg->Add(gDp4,"E3");
+     mg->Add(gDp1,"E3");
      mg->Add(gDp,"P");
      mg->Add(gH3He,"P");
 //     mg->Add(gDp_CJ,"P");
-     mg->Add(gDp1,"L");
      mg->Add(gDp2,"L");
      mg->Add(gDp_KP[6],"L");
      mg->Draw("A");
@@ -161,7 +168,7 @@ void Dp_F2np(){
    leg1->AddEntry(gH3He,"#scale[1]{MARATHON H3/He (KP)}","P");
    leg1->AddEntry(gDp4,"#scale[1]{Whitlow d/p (CJ)}","F");
 //   leg1->AddEntry(gDp_CJ,"#scale[1]{MARATHON (CJ)}","P");
-   leg1->AddEntry(gDp1,"#scale[1]{CJ15}","L");
+   leg1->AddEntry(gDp1,"#scale[1]{CJ15}","F");
    leg1->AddEntry(gDp2,"#scale[1]{NMC}","L");
    leg1->AddEntry(gDp_KP[6],"#scale[1]{KP}","L");
    leg1->AddEntry(gDp3,"#scale[1]{Whitlow (KP)}","F");
