@@ -38,6 +38,8 @@ void H3_EMC(){
 
      auto f1_KP=new TF1("f1_KP","He_ISO(x)",0.16,0.85);
      auto f1_SLAC=new TF1("f1_SLAC","SLAC_EMC(x)",0.16,0.85);
+     auto f1_SLAC_den=new TF1("f1_SLAC_den","SLAC_EMC_Den(x,3.0,1.0)",0.16,0.85);
+
 
      TLine *l1=new TLine(0.05,1,0.9,1);
      l1->SetLineColor(1);
@@ -68,14 +70,20 @@ void H3_EMC(){
      f1_SLAC->SetLineColor(12);
      f1_SLAC->SetLineStyle(3);
      f1_SLAC->Draw("same");
+
+     f1_SLAC_den->SetLineColor(12);
+     f1_SLAC_den->SetLineStyle(7);
+     f1_SLAC_den->Draw("same");
+
      l1->Draw("same");
      
-   auto leg1=new TLegend(0.6,0.73,0.88,0.88);
-  // leg1->SetNColumns(2);
+   auto leg1=new TLegend(0.55,0.73,0.88,0.88);
+   leg1->SetNColumns(2);
    leg1->AddEntry(gH3D_iso,"#scale[1]{MARATHON}","P");
    leg1->AddEntry(gH3D,"#scale[1]{MARATHON no Iso. Cor.}","P");
    leg1->AddEntry(f1_KP,"#scale[1]{KP model}","L");
    leg1->AddEntry(f1_SLAC,"#scale[1]{SLAC}","L");
+   leg1->AddEntry(f1_SLAC_den,"#scale[1]{SLAC density model}","L");
    //leg1->SetMargin(0.4);
    leg1->Draw();
 

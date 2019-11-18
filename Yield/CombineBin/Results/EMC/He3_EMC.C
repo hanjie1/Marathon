@@ -68,6 +68,7 @@ void He3_EMC(){
 
      auto f1_KP=new TF1("f1_KP","He_ISO(x)",0.16,0.85);
      auto f1_SLAC=new TF1("f1_SLAC","SLAC_EMC(x)",0.16,0.85);
+     auto f1_SLAC_den=new TF1("f1_SLAC_den","SLAC_EMC_Den(x,3.0,2.0)",0.16,0.85);
 
      TLine *l1=new TLine(0,1,0.9,1);
      l1->SetLineColor(1);
@@ -106,7 +107,7 @@ void He3_EMC(){
      mg->Add(HallC_norm,"L");
      mg->Draw("A");
      mg->SetTitle(";Bjorken x;(F_{2}^{^{3}He}/F_{2}^{^{2}H})_{iso}");
-     mg->GetYaxis()->SetRangeUser(0.85,1.2);
+     mg->GetYaxis()->SetRangeUser(0.85,1.25);
      mg->GetXaxis()->SetRangeUser(0,0.9);
 
      f1_KP->SetLineColor(12);
@@ -116,17 +117,24 @@ void He3_EMC(){
      f1_SLAC->SetLineColor(12);
      f1_SLAC->SetLineStyle(3);
      f1_SLAC->Draw("same");
+
+     f1_SLAC_den->SetLineColor(12);
+     f1_SLAC_den->SetLineStyle(7);
+     f1_SLAC_den->Draw("same");
+
      l1->Draw("same");
+
      
-   auto leg1=new TLegend(0.15,0.7,0.4,0.88);
-   leg1->SetNColumns(2);
+   auto leg1=new TLegend(0.15,0.75,0.65,0.9);
+   leg1->SetNColumns(3);
    leg1->AddEntry(gHeD_iso,"#scale[2]{MARATHON}","P");
    leg1->AddEntry(gHeD_norm,"#scale[2]{MARATHON no Iso. Cor.}","P");
    leg1->AddEntry(gHeD_C,"#scale[2]{E03-103}","P");
    leg1->AddEntry(gHeD_herme,"#scale[2]{HERMES}","P");
    leg1->AddEntry(f1_KP,"#scale[2]{KP model}","L");
    leg1->AddEntry(f1_SLAC,"#scale[2]{SLAC}","L");
-   //leg1->SetMargin(0.4);
+   leg1->AddEntry(f1_SLAC_den,"#scale[2]{SLAC density model}","L");
+   leg1->SetMargin(0.4);
    leg1->Draw();
 
    TLatex latex;

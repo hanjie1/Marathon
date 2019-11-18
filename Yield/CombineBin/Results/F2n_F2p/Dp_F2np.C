@@ -144,7 +144,7 @@ void Dp_F2np(){
 
      gDp1->SetFillStyle(3001);
      gDp1->SetFillColor(40);
-     gDp2->SetLineStyle(8);
+     gDp2->SetLineStyle(1);
      gDp2->SetLineColor(2);
      gDp2->SetLineWidth(2);
 //     f1->SetLineStyle(1);

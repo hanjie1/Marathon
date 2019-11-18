@@ -204,5 +204,5 @@ void Norm_KP(){
    leg1->Draw();
 
 
-    c1->Print("fit.pdf");
+//    c1->Print("fit.pdf");
 }
