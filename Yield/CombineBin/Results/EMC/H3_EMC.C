@@ -77,13 +77,13 @@ void H3_EMC(){
 
      l1->Draw("same");
      
-   auto leg1=new TLegend(0.55,0.73,0.88,0.88);
+   auto leg1=new TLegend(0.55,0.73,0.9,0.9);
    leg1->SetNColumns(2);
-   leg1->AddEntry(gH3D_iso,"#scale[1]{MARATHON}","P");
-   leg1->AddEntry(gH3D,"#scale[1]{MARATHON no Iso. Cor.}","P");
-   leg1->AddEntry(f1_KP,"#scale[1]{KP model}","L");
-   leg1->AddEntry(f1_SLAC,"#scale[1]{SLAC}","L");
-   leg1->AddEntry(f1_SLAC_den,"#scale[1]{SLAC density model}","L");
+   leg1->AddEntry(gH3D_iso,"#scale[1.5]{MARATHON}","P");
+   leg1->AddEntry(gH3D,"#scale[1.5]{MARATHON no Iso. Cor.}","P");
+   leg1->AddEntry(f1_KP,"#scale[1.5]{KP model}","L");
+   leg1->AddEntry(f1_SLAC,"#scale[1.5]{SLAC A fit}","L");
+   leg1->AddEntry(f1_SLAC_den,"#scale[1.5]{SLAC density model}","L");
    //leg1->SetMargin(0.4);
    leg1->Draw();
 

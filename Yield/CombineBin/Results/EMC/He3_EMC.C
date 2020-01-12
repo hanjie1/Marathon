@@ -125,16 +125,16 @@ void He3_EMC(){
      l1->Draw("same");
 
      
-   auto leg1=new TLegend(0.15,0.75,0.65,0.9);
+   auto leg1=new TLegend(0.15,0.75,0.7,0.9);
    leg1->SetNColumns(3);
    leg1->AddEntry(gHeD_iso,"#scale[2]{MARATHON}","P");
    leg1->AddEntry(gHeD_norm,"#scale[2]{MARATHON no Iso. Cor.}","P");
    leg1->AddEntry(gHeD_C,"#scale[2]{E03-103}","P");
    leg1->AddEntry(gHeD_herme,"#scale[2]{HERMES}","P");
    leg1->AddEntry(f1_KP,"#scale[2]{KP model}","L");
-   leg1->AddEntry(f1_SLAC,"#scale[2]{SLAC}","L");
+   leg1->AddEntry(f1_SLAC,"#scale[2]{SLAC A fit}","L");
    leg1->AddEntry(f1_SLAC_den,"#scale[2]{SLAC density model}","L");
-   leg1->SetMargin(0.4);
+   leg1->SetMargin(0.3);
    leg1->Draw();
 
    TLatex latex;
