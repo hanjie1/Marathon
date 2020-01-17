@@ -61,7 +61,7 @@ int H3He_np(){
    Rfile="Model/F2dis_os1tm1ht1mec1_Dav18_He3Salme";
    int nbin_KP=ReadKP(Rfile,x_KP,F2p_KP,F2n_KP);
 
-   Double_t Nc=0.976;
+   Double_t Nc=0.024;
 
     ofstream outfile;
     outfile.open("results/F2np_final.dat");
@@ -77,9 +77,9 @@ int H3He_np(){
 	Double_t H3_R=H3_EMC(x[ii]);
 	Double_t SR=H3_R/He_R;
 
-	Double_t tmpH3He=H3He[ii]*Nc;
-	Double_t tmpST=H3He_ST[ii]*Nc;
-	Double_t tmpSY=H3He_SY[ii]*Nc;
+	Double_t tmpH3He=H3He[ii]/(1.0+Nc);
+	Double_t tmpST=H3He_ST[ii]/(1.0+Nc);
+	Double_t tmpSY=H3He_SY[ii]/(1.0+Nc);
 	Double_t tmpH3He_err=sqrt(tmpST*tmpST+tmpSY*tmpSY);
  	
 	H3He_np[ii]=(2.0*tmpH3He-SR)/(2.0*SR-tmpH3He);
@@ -156,30 +156,31 @@ int H3He_np(){
     gWally->SetMarkerSize(2);
 
     mg1->Add(gH3He,"P");
-    mg1->Add(gWit_P,"P");
-    mg1->Add(gWit_R,"P");
-    mg1->Add(gWit_B,"P");
+//    mg1->Add(gWit_P,"P");
+//    mg1->Add(gWit_R,"P");
+//    mg1->Add(gWit_B,"P");
 //    mg1->Add(gWit_E,"P");
-    mg1->Add(gWally,"P");
-    //mg1->Add(gKP,"L");
+//    mg1->Add(gWally,"P");
+    mg1->Add(gKP,"L");
     mg1->Draw("A"); 
     mg1->SetTitle(";Bjorken x;F_{2}^{n} / F_{2}^{p}");
     mg1->GetYaxis()->SetLabelOffset(0.0005);
 //    mg1->GetYaxis()->SetRangeUser(0.3,0.85);
  
    auto leg1=new TLegend(0.48,0.7,0.9,0.9);
-   leg1->SetNColumns(2);
-   leg1->AddEntry(gH3He,"#scale[1.8]{MARATHON}","P");
-   //leg1->AddEntry(gKP,"#scale[1]{KP model}","L");
-   leg1->AddEntry(gWally,"#scale[1.8]{Melnitchouk and Thomas}","P");
-   leg1->AddEntry(gWit_P,"#scale[1.8]{Whitlow et al. (Paris)}","P");
-   leg1->AddEntry(gWit_R,"#scale[1.8]{Whitlow et al. (Reid)}","P");
-   leg1->AddEntry(gWit_B,"#scale[1.8]{Whitlow et al. (Bonn)}","P");
+//   leg1->SetNColumns(2);
+   leg1->AddEntry(gH3He,"#scale[1.]{MARATHON}","P");
+   leg1->AddEntry(gKP,"#scale[1]{KP model}","L");
+//   leg1->AddEntry(gWally,"#scale[1.8]{Melnitchouk and Thomas}","P");
+//   leg1->AddEntry(gWit_P,"#scale[1.8]{Whitlow et al. (Paris)}","P");
+//   leg1->AddEntry(gWit_R,"#scale[1.8]{Whitlow et al. (Reid)}","P");
+//   leg1->AddEntry(gWit_B,"#scale[1.8]{Whitlow et al. (Bonn)}","P");
 //   leg1->AddEntry(gWit_E,"#scale[1.8]{Whitlow et al. (Frankfurt and Strikman)}","P");
    leg1->SetMargin(0.2);
    leg1->Draw();
 
-   c1->Print("F2np_final_compare.pdf");
+//   c1->Print("F2np_final_compare.pdf");
+   c1->Print("F2np_final");
 
     return 0;
 }

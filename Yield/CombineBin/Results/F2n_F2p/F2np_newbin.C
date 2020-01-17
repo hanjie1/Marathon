@@ -29,12 +29,14 @@ int F2np_newbin(){
     ofstream outfile1;
     outfile1.open("results/F2np.dat");
     outfile1<<"x    H3He   H3He_err    HeD    HeD_err    H3D    H3D_err "<<endl;
+    Double_t SR_norm=0.0;
     for(int ii=0;ii<19;ii++){
 	Double_t He_R=He_EMC(x[ii]);
 	Double_t H3_R=H3_EMC(x[ii]);
 	Double_t D2_R=D2_EMC(x[ii]);
 
 	Double_t SR=H3_R/He_R;
+        if(ii==3) SR_norm=SR;
 	Double_t SR_HeD=He_R/D2_R;
 	Double_t SR_H3D=H3_R/D2_R;
 
@@ -83,22 +85,30 @@ int F2np_newbin(){
     }
 
    TGraphErrors *Dp_norm=new TGraphErrors(1);
-   Dp_norm->SetPoint(0,Dp_x[3],0.4);
+   Dp_norm->SetPoint(0,Dp_x[3],0.45);
    Dp_norm->SetPointError(0,0,0.0079*Dp[3]/D2_R[3]);
+
+
+   TGraphErrors *H3He_norm=new TGraphErrors(1);
+   H3He_norm->SetPoint(0,x[3],0.35);
+   H3He_norm->SetPointError(0,0,0.0144*H3He[3]*abs(3.0*SR_norm/((2.0*SR_norm-H3He[3])*(2.0*SR_norm-H3He[3]))));
+cout<<0.0144*H3He[3]*abs(3.0*SR_norm/((2.0*SR_norm-H3He[3])*(2.0*SR_norm-H3He[3])))/H3He_np[3]<<endl;
 
    gStyle->SetEndErrorSize(4);
 
     TCanvas *c1=new TCanvas("c1","c1",1500,1200);
     TMultiGraph *mg1=new TMultiGraph();
     gDp->SetMarkerColor(4);
-    gDp->SetMarkerStyle(24);
+    gDp->SetMarkerStyle(20);
     gDp->SetMarkerSize(2);
     gDp->SetLineColor(4);
     Dp_norm->SetLineColor(4);
     Dp_norm->SetLineWidth(2);
+    H3He_norm->SetLineColor(2);
+    H3He_norm->SetLineWidth(2);
     
     gH3He->SetMarkerColor(2);
-    gH3He->SetMarkerStyle(26);
+    gH3He->SetMarkerStyle(22);
     gH3He->SetMarkerSize(2);
     gH3He->SetLineColor(2);
     gHeD->SetMarkerColor(kViolet-1);
@@ -114,11 +124,12 @@ int F2np_newbin(){
     gKP->SetLineWidth(2);
     gCJ->SetFillColor(29);
     gCJ->SetFillStyle(3001);
-    mg1->Add(gCJ,"E3");
+//    mg1->Add(gCJ,"E3");
     mg1->Add(gDp,"P");
     mg1->Add(gH3He,"P");
     mg1->Add(gKP,"L");
     mg1->Add(Dp_norm,"L");
+    mg1->Add(H3He_norm,"L");
 //    mg1->Add(gH3D);
 //    mg1->Add(gHeD);
     mg1->Draw("A"); 
@@ -131,13 +142,14 @@ int F2np_newbin(){
    leg1->AddEntry(gDp,"#scale[0.8]{F_{2}^{^{2}H} / F_{2}^{^{1}H}}","P");
    leg1->AddEntry(gH3He,"#scale[0.8]{F_{2}^{^{3}H} / F_{2}^{^{3}He}}","P");
    leg1->AddEntry(gKP,"#scale[0.7]{KP model}","L");
-   leg1->AddEntry(gCJ,"#scale[0.7]{CJ model}","F");
+//   leg1->AddEntry(gCJ,"#scale[0.7]{CJ model}","F");
    leg1->SetMargin(0.4);
    leg1->Draw();
 
    TLatex latex;
    latex.SetTextSize(0.025);
-   latex.DrawLatex(Dp_x[3]+0.04,0.4,"Norm. uncer. from F_{2}^{^{2}H} / F_{2}^{^{1}H}");
+   latex.DrawLatex(Dp_x[3]+0.04,0.45,"Norm. uncer. from F_{2}^{^{2}H} / F_{2}^{^{1}H}");
+   latex.DrawLatex(x[3]+0.04,0.35,"Norm. uncer. from F_{2}^{^{3}H} / F_{2}^{^{3}He}");
 
    c1->Print("F2np_H3He.pdf");
 
@@ -164,7 +176,7 @@ int F2np_newbin(){
 //   leg2->AddEntry(gCJ,"#scale[0.7]{CJ model}","F");
    leg2->SetMargin(0.4);
    leg2->Draw();
-   c2->Print("F2np_all.pdf");
+//   c2->Print("F2np_all.pdf");
  
     return 0;
 }

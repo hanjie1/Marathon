@@ -10,6 +10,7 @@ void plot_Dp()
    Double_t x3[MAXBIN]={0.0},Ratio3[MAXBIN]={0.0},Rerr3[MAXBIN]={0.0};
    Double_t x4[MAXBIN]={0.0},Ratio4[MAXBIN]={0.0},Rloerr4[MAXBIN]={0.0},Rhierr4[MAXBIN]={0.0};
    Double_t x_KP[1100]={0.0},F2p_KP[1100]={0.0},F2d_KP[1100]={0.0};
+   Double_t Q2[8]={2.42,2.72,3.10,3.48,4.02,4.50,4.91,5.32};
 
    TString Rfile="newbin/Dp_final.dat";
    int nbin=ReadYield(Rfile,x,Ratio,Rerr); 
@@ -25,6 +26,7 @@ void plot_Dp()
    int nbin5=ReadKP(Rfile,x_KP,F2p_KP,F2d_KP); 
 
    TGraphErrors *hratio=new TGraphErrors();
+   TGraphErrors *hratio_Q2=new TGraphErrors();
    TGraphErrors *hr_norm=new TGraphErrors(); //MARATHON normalization error
    TGraphErrors *hratio1=new TGraphErrors(); //Whtilow F2d/F2p without normalization error
    TGraphErrors *hr1_norm=new TGraphErrors(); //Whtilow normalization error
@@ -36,6 +38,8 @@ void plot_Dp()
    for(int ii=0;ii<nbin;ii++){
 	hratio->SetPoint(ii,x[ii],Ratio[ii]);
 	hratio->SetPointError(ii,0,Rerr[ii]);
+	hratio_Q2->SetPoint(ii,Q2[ii],Ratio[ii]);
+	hratio_Q2->SetPointError(ii,0,Rerr[ii]);
 	hr_norm->SetPoint(ii,x[ii],1.4);
 	hr_norm->SetPointError(ii,0,0.79/100*Ratio[ii]);
    } 
@@ -70,6 +74,7 @@ void plot_Dp()
    } 
 
    TCanvas *c1=new TCanvas("c1","c1",1600,1200);
+
    TMultiGraph *mg=new TMultiGraph();
    hratio->SetMarkerStyle(8);
    hratio->SetMarkerColor(2);
@@ -105,6 +110,7 @@ void plot_Dp()
    mg->Draw("A");
    mg->SetTitle(";Bjorken x;#sigma({}^{2}H)/#sigma({}^{1}H)");
    mg->GetYaxis()->SetRangeUser(1.3,1.9);
+   mg->GetXaxis()->SetRangeUser(0.16,0.39);
 
    auto leg1=new TLegend(0.4,0.75,0.9,0.9);
    leg1->SetNColumns(2);
